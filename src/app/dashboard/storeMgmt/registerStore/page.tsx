@@ -129,6 +129,7 @@ export default function StoreRegistrationPage() {
       });
       return;
     }
+    console.log(addToast)
 
     // Otherwise proceed with success logic
     setSuccess(true);

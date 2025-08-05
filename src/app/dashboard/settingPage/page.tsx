@@ -11,20 +11,7 @@ export default function SettingsPage() {
         <p className="text-sm text-muted-foreground">Manage your store and account preferences</p>
       </header>
 
-      {/* Store Registration / Update */}
-      <section className="rounded-2xl border bg-background p-6 shadow-sm hover:shadow-md transition-all">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Store Information</h2>
-            <p className="text-sm text-muted-foreground">Register a new store or update existing one.</p>
-          </div>
-          <Link href="settingPage/storeInfo">
-          <Button>
-          Register / Update
-          </Button>
-          </Link>
-        </div>
-      </section>
+
 
       {/* Change Email and User Info */}
       <section className="rounded-2xl border bg-background p-6 shadow-sm hover:shadow-md transition-all">

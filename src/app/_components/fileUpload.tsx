@@ -1,84 +1,55 @@
-"use client";
+import React, { useState } from "react";
 
-import React, { useState, useEffect, useRef } from "react";
-
-interface FileUploadFieldProps {
+interface FileUploadProps {
   label: string;
   name: string;
   accept: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement> | null) => void; // null when removing
-  preview?: string | null;
+  onChange: (e: React.ChangeEvent<HTMLInputElement> | null) => void;
 }
 
-const FileUploadField: React.FC<FileUploadFieldProps> = ({ label, name, accept, onChange, preview }) => {
-  const [fileName, setFileName] = useState("No file chosen");
-  const inputRef = useRef<HTMLInputElement>(null);
+export default function FileUploadField({
+  label,
+  name,
+  accept,
+  onChange,
+}: FileUploadProps) {
+  const [fileName, setFileName] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (preview) {
-      setFileName("Uploaded file");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
     } else {
-      setFileName("No file chosen");
-      if (inputRef.current) {
-        inputRef.current.value = ""; // clear file input when preview is cleared
-      }
+      setFileName(null);
     }
-  }, [preview]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setFileName(e.target.files[0].name);
-      onChange(e);
-    } else {
-      setFileName("No file chosen");
-      onChange(null);
-    }
-  };
-
-  const handleRemoveFile = () => {
-    setFileName("No file chosen");
-    if (inputRef.current) {
-      inputRef.current.value = ""; // clear the file input value
-    }
-    onChange(null);
+    onChange(e);
   };
 
   return (
     <div>
-      <label className="block text-gray-300 mb-1">{label}</label>
-      <div className="flex items-center gap-3">
-        <label className="px-4 py-2 bg-gray-700 text-white rounded-md shadow-sm cursor-pointer hover:bg-gray-600 transition">
-          <span className="text-sm font-medium">Choose File</span>
-          <input
-            type="file"
-            name={name}
-            accept={accept}
-            onChange={handleFileChange}
-            className="hidden"
-            ref={inputRef}
-          />
-        </label>
-        <span className="text-sm text-gray-400 truncate">{fileName}</span>
+      <label className="block mb-1 text-gray-300">{label}</label>
+      <div className="flex items-center bg-gray-800 border-gray-700 text-white p-2 rounded w-full">
+        {/* The filename container truncates long names */}
+        <span className="flex-1 truncate overflow-hidden whitespace-nowrap">
+          {fileName || "No file selected"}
+        </span>
 
-        {preview && (
-          <button
-            type="button"
-            onClick={handleRemoveFile}
-            className="text-red-500 hover:text-red-700 text-sm font-semibold"
-          >
-            Remove
-          </button>
-        )}
-      </div>
-      {preview && (
-        <img
-          src={preview}
-          alt={`${label} Preview`}
-          className="mt-2 h-16 object-contain rounded"
+        {/* Hide the actual input and trigger it via label */}
+        <input
+          id={name}
+          type="file"
+          name={name}
+          accept={accept}
+          onChange={handleChange}
+          className="hidden"
         />
-      )}
+        <label
+          htmlFor={name}
+          className="cursor-pointer bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white ml-2 whitespace-nowrap"
+        >
+          Browse…
+        </label>
+      </div>
     </div>
   );
-};
-
-export default FileUploadField;
+}

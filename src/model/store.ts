@@ -1,5 +1,6 @@
 export interface SetStoreData {
     name: string; 
+    logo?: string | null;
     store_type: "DEPT" | "SUPER" | "LOCAL" | "ONLINE"; 
     city: string; 
     district: string; 
@@ -19,7 +20,6 @@ export interface SetStoreData {
     orders_received?: number; 
     cover_image?: string | null; 
     bio?: string | null; 
-    user: number; 
     followers?: number[]; 
 }
 

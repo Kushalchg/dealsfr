@@ -1,49 +1,11 @@
 import api from "@/lib/axios"
+import { UserLoginResponse } from "@/model/userData"
 
-export interface TokenResponse {
-  access: string
-  refresh: string
-}
-
-export interface UserData {
-  id: number
-  email: string
-  first_name: string
-  last_name: string
-  user_type: string
-  profile_image: string
-  store: {
-    id: number
-    logo: string
-    name: string
-    store_type: string
-    city: string
-    district: string
-    location_link: string
-    address: string
-    phone: string
-    email: string
-    social_media_links: any
-    latitude: string
-    longitude: string
-    created_at: string
-    updated_at: string
-    is_verified: boolean
-    business_registration_number: string
-    documents: string
-    admin_notes: string
-    views: number
-    clicks_on_discounts: number
-    orders_received: number
-    user: number
-    followers: number[]
-  }
-}
 
 // ------------------
 // Token Utils
 // ------------------
-export const getStoredTokens = (): TokenResponse | null => {
+export const getStoredTokens = (): UserLoginResponse | null => {
   if (typeof window === "undefined") return null
 
   const access = localStorage.getItem("access_token")
@@ -52,7 +14,7 @@ export const getStoredTokens = (): TokenResponse | null => {
   return access && refresh ? { access, refresh } : null
 }
 
-export const storeTokens = (tokens: TokenResponse) => {
+export const storeTokens = (tokens: UserLoginResponse) => {
   if (typeof window === "undefined") return
 
   localStorage.setItem("access_token", tokens.access)
@@ -94,7 +56,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 export const fetchWithAuth = async <T = any>(
   url: string,
   options: {
-    method?: "GET" | "POST" | "PUT" | "DELETE"
+    method?: "GET" | "POST" | "PUT" | "PATCH" |"DELETE"
     data?: any
     headers?: Record<string, string>
   } = {}
@@ -133,17 +95,5 @@ export const fetchWithAuth = async <T = any>(
       }
     }
     throw error
-  }
-}
-
-// ------------------
-// Fetch Current User
-// ------------------
-export const fetchUserData = async (): Promise<UserData> => {
-  try {
-    const data = await fetchWithAuth<UserData>("/api/me/")
-    return data
-  } catch (error) {
-    throw new Error("Failed to fetch user data")
   }
 }

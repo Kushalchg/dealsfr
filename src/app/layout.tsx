@@ -1,6 +1,6 @@
-import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
+import { Providers } from "./providers"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://thedealsfr.com"), // ✅ Fixes warning
   title: "TheDealsFr - Discover Local Deals, Effortlessly",
   description:
     "TheDealsFr connects you with exclusive discounts from nearby stores. Save smarter, support local businesses in your community.",
@@ -59,15 +60,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-900 text-white`}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

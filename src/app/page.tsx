@@ -95,7 +95,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mb-8 md:mb-12 px-4">
               <Link
-              href={'/loginStore'}>
+              href={'/register/registerCustomer'}>
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg shadow-lg hover:shadow-emerald-500/25 transform hover:scale-105 transition-all duration-300 cursor-pointer"
@@ -104,6 +104,8 @@ export default function LandingPage() {
                 Join as Customer
               </Button>
               </Link>
+              <Link
+              href={'/register/registerStore'}>
               <Button
                 size="lg"
                 variant="outline"
@@ -112,6 +114,7 @@ export default function LandingPage() {
                 <Building2 className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                 Register Store
               </Button>
+              </Link>
             </div>
 
             {/* Feature Pills */}

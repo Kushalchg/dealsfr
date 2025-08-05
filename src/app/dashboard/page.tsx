@@ -1,82 +1,22 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { StatsCard } from "@/app/_components/dashboardComp/stats-card"
 import { StoreInfoCard } from "@/app/_components/dashboardComp/store-info-card"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
-import { fetchWithAuth, getStoredTokens } from "@/lib/auth"
+import { getStoredTokens } from "@/lib/auth"
 import { Eye, MousePointer, ShoppingCart, Users, TrendingUp, Calendar } from "lucide-react"
-
-interface UserData {
-  id: number
-  email: string
-  first_name: string
-  last_name: string
-  store?: {
-    id: number
-    logo: string
-    name: string
-    store_type: string
-    city: string
-    district: string
-    location_link: string
-    address: string
-    phone: string
-    email: string
-    social_media_links: any
-    latitude: string
-    longitude: string
-    created_at: string
-    updated_at: string
-    is_verified: boolean
-    business_registration_number: string
-    documents: string
-    admin_notes: string
-    views: number
-    clicks_on_discounts: number
-    orders_received: number
-    user: number
-    followers: number[]
-  }
-}
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "@/redux/store"
+import { getUser } from "@/redux/actions/user_api/getUserData"
 
 export default function DashboardPage() {
-  const [userData, setUserData] = useState<UserData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const dispatch = useDispatch<AppDispatch>()
+  const { user, store, loading, error } = useSelector(
+    (state: RootState) => state.userData
+  )
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const tokens = getStoredTokens()
-        if (!tokens) {
-          window.location.href = "/loginStore"
-          return
-        }
-
-        const fetchUserData = async (): Promise<UserData> => {
-          try {
-            const data = await fetchWithAuth<UserData>("/api/me/")
-            return data
-          } catch (error) {
-            throw new Error("Failed to fetch user data")
-          }
-        }
-
-        const data = await fetchUserData()
-        setUserData(data)
-      } catch (err) {
-        setError("Failed to load dashboard data. Please try logging in again.")
-        console.error("Dashboard error:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadUserData()
-  }, [])
 
   if (loading) {
     return (
@@ -90,7 +30,7 @@ export default function DashboardPage() {
     )
   }
 
-  if (error || !userData) {
+  if (error || !user) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
         <Alert className="max-w-md bg-red-900 border-red-700">
@@ -100,7 +40,6 @@ export default function DashboardPage() {
     )
   }
 
-  const { store } = userData
   const views = store?.views ?? 0
   const discountClicks = store?.clicks_on_discounts ?? 0
   const orders = store?.orders_received ?? 0
@@ -116,7 +55,7 @@ export default function DashboardPage() {
     <div className="p-6 space-y-6 bg-background">
       {/* Welcome Section */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-white">Welcome back, {userData.first_name}!</h1>
+        <h1 className="text-3xl font-bold text-white">Welcome back, {user.first_name}!</h1>
         <p className="text-gray-400">Here's what's happening with your store today.</p>
       </div>
 

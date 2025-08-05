@@ -38,7 +38,7 @@ api.interceptors.response.use(
       const originalRequest = error.config;
       if (!originalRequest.url.includes("/api/accounts/login")) {
         console.warn("Unauthorized. Redirecting...");
-        window.location.href = "/loginStore";
+        window.location.href = "/loginUser";
       }
     }
     return Promise.reject(error);

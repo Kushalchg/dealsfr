@@ -21,6 +21,16 @@
   --input: #374151;
   --ring: #10b981; /* emerald-500 */
   --radius: 0.5rem;
+
+  --toast-success-bg: #059669;
+  --toast-success-color: white;
+  --toast-error-bg: #dc2626;
+  --toast-error-color: white;
+  --toast-loading-bg: #2563eb;
+  --toast-loading-color: white;
+  --toast-blank-bg: #4b5563;
+  --toast-blank-color: white;
+
 }
 
 @theme inline {

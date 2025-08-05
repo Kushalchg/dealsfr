@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import api from "@/lib/axios"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -12,18 +11,46 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Eye, EyeOff, Store, User } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useAppDispatch, useAppSelector } from "@/redux/hooks"
+import { loginUser } from "@/redux/actions/user_api/user"
+import { getUser } from "@/redux/actions/user_api/getUserData"
+import { UserLoginRequest } from "../../model/userData"
 
 export default function LoginPage() {
   const [loginType, setLoginType] = useState<"store" | "customer">("store")
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserLoginRequest>({
     email: "",
     phone_number: "",
     password: "",
   })
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [isAuthenticating, setIsAuthenticating] = useState(false)
+
   const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { loading, error, isAuthenticated, user } = useAppSelector((state) => state.userData)
+
+  // Clear local error state when redux error changes
+  const [localError, setLocalError] = useState<string | null>(null)
+  useEffect(() => {
+    setLocalError(error)
+  }, [error])
+
+  // Handle complete authentication flow
+  useEffect(() => {
+    if (isAuthenticated && user && !loading) {
+      // User is fully authenticated and data is loaded, redirect to dashboard
+      router.push("/dashboard")
+    }
+  }, [isAuthenticated, user, loading, router])
+
+  // Handle authentication process
+  useEffect(() => {
+    if (isAuthenticated && !user && !loading) {
+      // Login successful but user data not loaded yet, fetch user data
+      dispatch(getUser())
+    }
+  }, [isAuthenticated, user, loading, dispatch])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -33,20 +60,13 @@ export default function LoginPage() {
     }))
   }
 
-  useEffect(() => {
-  if (error) {
-    const timer = setTimeout(() => {
-      setError("");
-    }, 5000);
-    return () => clearTimeout(timer);
-  }
-}, [error]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setIsAuthenticating(true)
+    setLocalError(null)
 
-    const loginData = {
+    // Prepare login payload according to user type
+    const payload = {
       password: formData.password,
       ...(loginType === "store"
         ? { email: formData.email, phone_number: "" }
@@ -54,17 +74,54 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await api.post("/api/accounts/login/", loginData)
-      const data = response.data
-      localStorage.setItem("access_token", data.data.access)
-      localStorage.setItem("refresh_token", data.data.refresh)
-
-      router.push("/dashboard")
-    } catch (error: any) {
-      setError(error?.response?.data?.message || "Login failed. Please check your credentials.")
-    } finally {
-      setIsLoading(false)
+      await dispatch(loginUser(payload)).unwrap()
+    } catch (error) {
+      setIsAuthenticating(false)
     }
+  }
+
+  // Show loading state during authentication
+  if (isAuthenticating || (isAuthenticated && !user) || loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+        <div className="w-full max-w-md text-center">
+          {/* Logo */}
+          <div className="mb-8">
+            <Link href="/" className="inline-block">
+              <div className="text-3xl font-bold text-white mb-2">
+                <Image
+                  src="/images/TheDealsFr.png"
+                  alt="TheDealsFr"
+                  width={120}
+                  height={40}
+                  className="h-8 md:h-10 w-auto"
+                />
+              </div>
+              <div className="text-emerald-400 text-sm">Deals For Real</div>
+            </Link>
+          </div>
+
+          <Card className="bg-gray-900 border-none">
+            <CardContent className="pt-8 pb-8">
+              <div className="flex flex-col items-center space-y-4">
+                <Loader2 className="h-12 w-12 animate-spin text-emerald-400" />
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold text-white mb-2">
+                    {isAuthenticated && !user ? "Loading your dashboard..." : "Signing you in..."}
+                  </h2>
+                  <p className="text-gray-400">
+                    {isAuthenticated && !user 
+                      ? "Please wait while we load your account information"
+                      : "Please wait while we verify your credentials"
+                    }
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -74,7 +131,13 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <div className="text-3xl font-bold text-white mb-2">
-            <Image src="/images/TheDealsFr.png" alt="TheDealsFr" width={120} height={40} className="h-8 md:h-10 w-auto" />
+              <Image
+                src="/images/TheDealsFr.png"
+                alt="TheDealsFr"
+                width={120}
+                height={40}
+                className="h-8 md:h-10 w-auto"
+              />
             </div>
             <div className="text-emerald-400 text-sm">Deals For Real</div>
           </Link>
@@ -91,9 +154,9 @@ export default function LoginPage() {
           </CardHeader>
 
           <CardContent>
-            {error && (
+            {localError && (
               <Alert className="mb-4 bg-red-900 border-red-700">
-                <AlertDescription className="text-red-200">{error}</AlertDescription>
+                <AlertDescription className="text-red-200">{localError}</AlertDescription>
               </Alert>
             )}
 
@@ -121,10 +184,12 @@ export default function LoginPage() {
               </TabsList>
             </Tabs>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               {loginType === "store" ? (
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-300">Store Email</Label>
+                  <Label htmlFor="email" className="text-gray-300">
+                    Store Email
+                  </Label>
                   <Input
                     id="email"
                     name="email"
@@ -138,7 +203,9 @@ export default function LoginPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <Label htmlFor="phone_number" className="text-gray-300">Customer Phone Number</Label>
+                  <Label htmlFor="phone_number" className="text-gray-300">
+                    Customer Phone Number
+                  </Label>
                   <Input
                     id="phone_number"
                     name="phone_number"
@@ -153,7 +220,9 @@ export default function LoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-300">Password</Label>
+                <Label htmlFor="password" className="text-gray-300">
+                  Password
+                </Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -184,10 +253,10 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isAuthenticating}
                 className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-md transition-colors btn-glow"
               >
-                {isLoading ? (
+                {isAuthenticating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Signing In...
@@ -201,7 +270,7 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-gray-400">
                 {"Don't have an account?"}{" "}
-                <Link href="/registerStore" className="text-emerald-400 hover:text-emerald-300 font-medium">
+                <Link href={loginType === "store" ?"/register/registerStore" : "/register/registerCustomer"} className="text-emerald-400 hover:text-emerald-300 font-medium">
                   Create account
                 </Link>
               </p>

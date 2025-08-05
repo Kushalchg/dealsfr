@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Eye, EyeOff, Store, User } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { AxiosError } from "axios"
 
 export default function LoginPage() {
   const [loginType, setLoginType] = useState<"store" | "customer">("store")
@@ -60,8 +61,9 @@ export default function LoginPage() {
       localStorage.setItem("refresh_token", data.data.refresh)
 
       router.push("/dashboard")
-    } catch (error: any) {
-      setError(error?.response?.data?.message || "Login failed. Please check your credentials.")
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message?: string }>
+      setError(err.response?.data?.message || "Login failed. Please check your credentials.")
     } finally {
       setIsLoading(false)
     }

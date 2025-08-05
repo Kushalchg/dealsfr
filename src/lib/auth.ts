@@ -23,7 +23,7 @@ export interface UserData {
     address: string
     phone: string
     email: string
-    social_media_links: any
+    social_media_links: Record<string, string>
     latitude: string
     longitude: string
     created_at: string
@@ -91,11 +91,11 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 // ------------------
 // Authenticated Request Wrapper
 // ------------------
-export const fetchWithAuth = async <T = any>(
+export const fetchWithAuth = async <T = unknown>(
   url: string,
   options: {
     method?: "GET" | "POST" | "PUT" | "DELETE"
-    data?: any
+    data?: unknown
     headers?: Record<string, string>
   } = {}
 ): Promise<T> => {
@@ -113,27 +113,27 @@ export const fetchWithAuth = async <T = any>(
       },
     })
     return response.data
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      const newAccess = await refreshAccessToken()
-      if (newAccess) {
-        // Retry original request with new access token
-        const retryResponse = await api.request<T>({
-          url,
-          method: options.method || "GET",
-          data: options.data,
-          headers: {
-            ...options.headers,
-            Authorization: `Bearer ${newAccess}`,
-          },
-        })
-        return retryResponse.data
-      } else {
+    } catch (error: unknown) {
+      const err = error as import("axios").AxiosError
+      if (err.response?.status === 401) {
+        const newAccess = await refreshAccessToken()
+        if (newAccess) {
+          // Retry original request with new access token
+          const retryResponse = await api.request<T>({
+            url,
+            method: options.method || "GET",
+            data: options.data,
+            headers: {
+              ...options.headers,
+              Authorization: `Bearer ${newAccess}`,
+            },
+          })
+          return retryResponse.data
+        }
         throw new Error("Authentication failed. Could not refresh token.")
       }
+      throw err
     }
-    throw error
-  }
 }
 
 // ------------------
@@ -143,7 +143,7 @@ export const fetchUserData = async (): Promise<UserData> => {
   try {
     const data = await fetchWithAuth<UserData>("/api/me/")
     return data
-  } catch (error) {
-    throw new Error("Failed to fetch user data")
-  }
+    } catch {
+      throw new Error("Failed to fetch user data")
+    }
 }

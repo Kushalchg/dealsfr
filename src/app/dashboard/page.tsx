@@ -25,7 +25,7 @@ interface UserData {
     address: string
     phone: string
     email: string
-    social_media_links: any
+    social_media_links: Record<string, string>
     latitude: string
     longitude: string
     created_at: string
@@ -60,7 +60,7 @@ export default function DashboardPage() {
           try {
             const data = await fetchWithAuth<UserData>("/api/me/")
             return data
-          } catch (error) {
+          } catch {
             throw new Error("Failed to fetch user data")
           }
         }
@@ -117,7 +117,7 @@ export default function DashboardPage() {
       {/* Welcome Section */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-white">Welcome back, {userData.first_name}!</h1>
-        <p className="text-gray-400">Here's what's happening with your store today.</p>
+          <p className="text-gray-400">Here&apos;s what&apos;s happening with your store today.</p>
       </div>
 
       {/* Stats Grid */}

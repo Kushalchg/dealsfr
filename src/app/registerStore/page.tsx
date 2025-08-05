@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Eye, EyeOff } from "lucide-react"
+import type { AxiosError } from "axios"
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -59,8 +60,9 @@ export default function RegisterPage() {
         password: "",
         confirm_password: "",
       })
-    } catch (error: any) {
-      setError(error?.response?.data?.message || "Registration failed. Please try again.")
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message?: string }>
+      setError(err.response?.data?.message || "Registration failed. Please try again.")
     } finally {
       setIsLoading(false)
     }

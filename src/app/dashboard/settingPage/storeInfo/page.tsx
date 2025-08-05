@@ -35,37 +35,42 @@ export default function StoreRegistrationPage() {
   const [coverPreview, setCoverPreview] = useState<string | null>(store?.cover_image || null);
   const [success, setSuccess] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | null) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    > | null,
+  ) => {
     if (!e) {
-        // User removed the file
-        setForm(prev => ({ ...prev, logo: "", cover_image: "", documents: "" }));
-        setLogoPreview(null);
-        setCoverPreview(null);
-        return;
-      }
-    
-    const { name, value, files } = e.target as any;
-    if (name === "logo" && files && files[0]) {
-      const file = files[0];
+      // User removed the file
+      setForm((prev) => ({ ...prev, logo: "", cover_image: "", documents: "" }));
+      setLogoPreview(null);
+      setCoverPreview(null);
+      return;
+    }
+
+    const target = e.target as
+      | HTMLInputElement
+      | HTMLSelectElement
+      | HTMLTextAreaElement;
+    const { name, value } = target;
+
+    if (
+      target instanceof HTMLInputElement &&
+      target.files &&
+      target.files[0]
+    ) {
+      const file = target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, logo: reader.result as string }));
-        setLogoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else if (name === "cover_image" && files && files[0]) {
-      const file = files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, cover_image: reader.result as string }));
-        setCoverPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else if (name === "documents" && files && files[0]) {
-      const file = files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, documents: reader.result as string }));
+        if (name === "logo") {
+          setForm((prev) => ({ ...prev, logo: reader.result as string }));
+          setLogoPreview(reader.result as string);
+        } else if (name === "cover_image") {
+          setForm((prev) => ({ ...prev, cover_image: reader.result as string }));
+          setCoverPreview(reader.result as string);
+        } else if (name === "documents") {
+          setForm((prev) => ({ ...prev, documents: reader.result as string }));
+        }
       };
       reader.readAsDataURL(file);
     } else {

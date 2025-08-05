@@ -38,7 +38,7 @@ export interface GetStoreData {
     latitude?: string | null; 
     longitude?: string | null; 
     is_verified?: boolean; 
-    business_registration_number?: string; 
+    business_registration_number: string; 
     documents?: string | null; 
     admin_notes?: string; 
     views?: number; 

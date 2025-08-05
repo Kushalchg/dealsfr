@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SetStoreData } from "@/model/store";
 import FileUploadField from "@/app/_components/fileUpload";
+import { useToast } from "@/components/ui/toast-manager"; // toast hook
 
 const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
@@ -15,43 +16,39 @@ export default function StoreRegistrationPage() {
   const user = useSelector((state: RootState) => state.userData.user);
   const store = useSelector((state: RootState) => state.userData.store);
 
-  // Initial form state consistent with SetStoreData interface
-  const initialForm: SetStoreData = {
+  // Access the toast function
+  const { addToast } = useToast();
+
+  // Initialize form state with SetStoreData model
+  const [form, setForm] = useState<SetStoreData>({
     name: store?.name || "",
     store_type: store?.store_type || "",
     city: store?.city || "",
     district: store?.district || "",
-    location_link: store?.location_link ?? null,
+    location_link: store?.location_link || "",
     address: store?.address || "",
     phone: store?.phone || "",
     email: store?.email || "",
-    social_media_links: store?.social_media_links ?? null,
-    latitude: store?.latitude ?? null,
-    longitude: store?.longitude ?? null,
-    is_verified: store?.is_verified ?? false,
     business_registration_number:
       store?.business_registration_number || "",
-    documents: store?.documents ?? null,
-    admin_notes: store?.admin_notes ?? "",
-    views: store?.views ?? 0,
-    clicks_on_discounts: store?.clicks_on_discounts ?? 0,
-    orders_received: store?.orders_received ?? 0,
-    cover_image: store?.cover_image ?? null,
-    bio: store?.bio ?? null,
-    logo: store?.logo ?? null,
-    followers: store?.followers ?? [],
-  };
+    documents: store?.documents || null,
+    cover_image: store?.cover_image || null,
+    bio: store?.bio || null,
+    logo: store?.logo || null,
+  });
 
-  const [form, setForm] = useState<SetStoreData>(initialForm);
+  // Previews for image/pdf files
   const [logoPreview, setLogoPreview] = useState<string | null>(
     store?.logo || null
   );
   const [coverPreview, setCoverPreview] = useState<string | null>(
     store?.cover_image || null
   );
+  const [documentPreview, setDocumentPreview] = useState<string | null>(
+    store?.documents || null
+  );
   const [success, setSuccess] = useState(false);
 
-  // Unified change handler that accommodates text, select, textarea, and file inputs
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -60,7 +57,7 @@ export default function StoreRegistrationPage() {
       | null
   ) => {
     if (!e) {
-      // User removed the file
+      // Reset file fields if user clicks "remove"
       setForm((prev) => ({
         ...prev,
         logo: null,
@@ -69,12 +66,14 @@ export default function StoreRegistrationPage() {
       }));
       setLogoPreview(null);
       setCoverPreview(null);
+      setDocumentPreview(null);
       return;
     }
 
     const target = e.target;
     const { name, value } = target as { name: keyof SetStoreData; value: any };
 
+    // Handle file inputs
     if (
       target instanceof HTMLInputElement &&
       target.files &&
@@ -83,42 +82,65 @@ export default function StoreRegistrationPage() {
       const file = target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
+        const result = reader.result as string;
         if (name === "logo") {
-          setForm((prev) => ({
-            ...prev,
-            logo: reader.result as string,
-          }));
-          setLogoPreview(reader.result as string);
+          setForm((prev) => ({ ...prev, logo: result }));
+          setLogoPreview(result);
         } else if (name === "cover_image") {
-          setForm((prev) => ({
-            ...prev,
-            cover_image: reader.result as string,
-          }));
-          setCoverPreview(reader.result as string);
+          setForm((prev) => ({ ...prev, cover_image: result }));
+          setCoverPreview(result);
         } else if (name === "documents") {
-          setForm((prev) => ({
-            ...prev,
-            documents: reader.result as string,
-          }));
+          setForm((prev) => ({ ...prev, documents: result }));
+          setDocumentPreview(result);
         }
       };
       reader.readAsDataURL(file);
     } else {
-      setForm((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      // Handle text/select/textarea inputs
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
+  // Submit handler with a single toast for any missing required fields
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Required fields to validate
+    const requiredValues = [
+      form.name,
+      form.store_type,
+      form.city,
+      form.district,
+      form.address,
+      form.phone,
+      form.email,
+      form.business_registration_number,
+    ];
+
+    // If any required field is empty or blank, show one toast and stop
+    const allFilled = requiredValues.every(
+      (val) => typeof val === "string" && val.trim() !== ""
+    );
+    if (!allFilled) {
+      addToast({
+        type: "error",
+        message:
+          "Please fill in all the fields properly. All fields are required.",
+      });
+      return;
+    }
+
+    // Otherwise proceed with success logic
     setSuccess(true);
   };
 
+  // Helpers to decide whether document is an image or a PDF
+  const isImage = (dataUrl: string) => dataUrl.startsWith("data:image/");
+  const isPdf = (dataUrl: string) =>
+    dataUrl.startsWith("data:application/pdf");
+
   return (
     <div className="flex justify-center w-full">
-      {/* Adjust max width as desired; use a larger value if you want it broader */}
       <div className="w-full max-w-5xl px-4">
         <Link
           href="/dashboard/storeMgmt"
@@ -138,12 +160,9 @@ export default function StoreRegistrationPage() {
             Store {store ? "updated" : "registered"} successfully!
           </div>
         ) : (
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6 max-w-5xl mx-auto p-4"
-          >
+          <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl mx-auto p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Store Name */}
+              {/* Name */}
               <div>
                 <label className="block mb-1 text-gray-300">Store Name</label>
                 <Input
@@ -156,9 +175,11 @@ export default function StoreRegistrationPage() {
                 />
               </div>
 
-              {/* Store Type */}
+              {/* Type */}
               <div>
-                <label className="block mb-1 text-gray-300">Store Type</label>
+                <label className="block mb-1 text-gray-300">
+                  Store Type
+                </label>
                 <select
                   name="store_type"
                   value={form.store_type}
@@ -199,7 +220,7 @@ export default function StoreRegistrationPage() {
                 />
               </div>
 
-              {/* Location Link */}
+              {/* Location link */}
               <div className="md:col-span-2">
                 <label className="block mb-1 text-gray-300">
                   Location Link (Google Maps)
@@ -250,7 +271,7 @@ export default function StoreRegistrationPage() {
                 />
               </div>
 
-              {/* Business Registration Number */}
+              {/* Business reg number */}
               <div className="md:col-span-2">
                 <label className="block mb-1 text-gray-300">
                   Business Registration Number
@@ -265,28 +286,73 @@ export default function StoreRegistrationPage() {
               </div>
 
               {/* Documents upload */}
-              <FileUploadField
-                label="Documents (PDF/Image)"
-                name="documents"
-                accept="application/pdf,image/*"
-                onChange={handleChange}
-              />
+              <div className="md:col-span-2">
+                <FileUploadField
+                  label="Documents (PDF/Image)"
+                  name="documents"
+                  accept="application/pdf,image/*"
+                  onChange={handleChange}
+                />
+                {documentPreview && (
+                  <div className="mt-2">
+                    {isImage(documentPreview) ? (
+                      <img
+                        src={documentPreview}
+                        alt="Document preview"
+                        className="h-20 w-auto object-contain rounded"
+                      />
+                    ) : isPdf(documentPreview) ? (
+                      <iframe
+                        src={documentPreview}
+                        title="PDF preview"
+                        className="h-20 w-full border border-gray-600 rounded"
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-400">
+                        {form.documents ? "File selected" : ""}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
 
               {/* Logo upload */}
-              <FileUploadField
-                label="Store Logo"
-                name="logo"
-                accept="image/*"
-                onChange={handleChange}
-              />
+              <div>
+                <FileUploadField
+                  label="Store Logo"
+                  name="logo"
+                  accept="image/*"
+                  onChange={handleChange}
+                />
+                {logoPreview && (
+                  <div className="mt-2">
+                    <img
+                      src={logoPreview}
+                      alt="Logo preview"
+                      className="h-20 w-auto object-contain rounded"
+                    />
+                  </div>
+                )}
+              </div>
 
-              {/* Cover image upload */}
-              <FileUploadField
-                label="Cover Image"
-                name="cover_image"
-                accept="image/*"
-                onChange={handleChange}
-              />
+              {/* Cover image (banner) upload */}
+              <div>
+                <FileUploadField
+                  label="Cover Image"
+                  name="cover_image"
+                  accept="image/*"
+                  onChange={handleChange}
+                />
+                {coverPreview && (
+                  <div className="mt-2">
+                    <img
+                      src={coverPreview}
+                      alt="Cover preview"
+                      className="h-20 w-auto object-contain rounded"
+                    />
+                  </div>
+                )}
+              </div>
 
               {/* Bio */}
               <div className="md:col-span-2">
@@ -295,7 +361,7 @@ export default function StoreRegistrationPage() {
                   name="bio"
                   value={form.bio || ""}
                   onChange={handleChange}
-                  rows={3}  
+                  rows={3}
                   placeholder="Tell us about your store..."
                   className="bg-gray-800 border-gray-700 text-white w-full rounded p-2"
                 />

@@ -1,5 +1,5 @@
 import { GetUserData } from "./userData"
-import { GetStoreData } from "./storeData"
+import { GetStoreData } from "./store"
 
 export interface UserState {
   user: GetUserData | null

@@ -12,7 +12,7 @@ export const registerUser = createAsyncThunk<
       headers: { "Content-Type": "application/json" },
     });
 
-    return response.data; // assuming API returns user info
+    return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || error.message || "Registration failed"

@@ -1,6 +1,6 @@
 export interface SetStoreData {
     name: string; 
-    logo?: string | null;
+    logo?: string | File | null;
     store_type: "DEPT" | "SUPER" | "LOCAL" | "ONLINE"; 
     city: string; 
     district: string; 
@@ -8,17 +8,17 @@ export interface SetStoreData {
     address: string; 
     phone: string; 
     email: string; 
-    social_media_links?: any | null; 
+    social_media_links?: Record<string, unknown> | null; 
     latitude?: string | null;   
     longitude?: string | null; 
     is_verified?: boolean; 
     business_registration_number?: string; 
-    documents?: string | null; 
+    documents?: string | File | null; 
     admin_notes?: string; 
     views?: number; 
     clicks_on_discounts?: number; 
     orders_received?: number; 
-    cover_image?: string | null; 
+    cover_image?: string | File | null; 
     bio?: string | null; 
     followers?: number[]; 
 }
@@ -34,7 +34,7 @@ export interface GetStoreData {
     address: string; 
     phone: string; 
     email: string; 
-    social_media_links?: any | null; 
+    social_media_links?: Record<string, unknown> | null; 
     latitude?: string | null; 
     longitude?: string | null; 
     is_verified?: boolean; 

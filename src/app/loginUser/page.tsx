@@ -270,7 +270,7 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-gray-400">
                 {"Don't have an account?"}{" "}
-                <Link href={loginType === "store" ?"/register/registerStore" : "/register/registerCustomer"} className="text-emerald-400 hover:text-emerald-300 font-medium">
+                <Link href={loginType === "store" ?"/register/registerStoreAdmin" : "/register/registerCustomer"} className="text-emerald-400 hover:text-emerald-300 font-medium">
                   Create account
                 </Link>
               </p>

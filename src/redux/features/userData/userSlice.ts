@@ -91,7 +91,7 @@ const userSlice = createSlice({
           state.loading = false
           const { store, ...userData } = action.payload
           state.user = userData
-          state.store = store || null
+          state.store = store !== undefined ? store : null
           state.isAuthenticated = true
         }
       )

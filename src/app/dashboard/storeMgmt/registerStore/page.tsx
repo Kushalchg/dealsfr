@@ -8,7 +8,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SetStoreData } from "@/model/store";
 import FileUploadField from "@/app/_components/fileUpload";
-import { useToast } from "@/components/ui/toast-manager"; // toast hook
+import { useToast } from "@/components/ui/toast-manager"; 
+import api from "@/lib/axios"; 
 
 const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
@@ -22,7 +23,7 @@ export default function StoreRegistrationPage() {
   // Initialize form state with SetStoreData model
   const [form, setForm] = useState<SetStoreData>({
     name: store?.name || "",
-    store_type: store?.store_type || "",
+    store_type: store?.store_type || "DEPT",
     city: store?.city || "",
     district: store?.district || "",
     location_link: store?.location_link || "",
@@ -71,7 +72,7 @@ export default function StoreRegistrationPage() {
     }
 
     const target = e.target;
-    const { name, value } = target as { name: keyof SetStoreData; value: any };
+    const { name, value } = target as { name: keyof SetStoreData; value: string };
 
     // Handle file inputs
     if (
@@ -84,13 +85,13 @@ export default function StoreRegistrationPage() {
       reader.onloadend = () => {
         const result = reader.result as string;
         if (name === "logo") {
-          setForm((prev) => ({ ...prev, logo: result }));
+          setForm((prev) => ({ ...prev, logo: file }));
           setLogoPreview(result);
         } else if (name === "cover_image") {
-          setForm((prev) => ({ ...prev, cover_image: result }));
+          setForm((prev) => ({ ...prev, cover_image: file }));
           setCoverPreview(result);
         } else if (name === "documents") {
-          setForm((prev) => ({ ...prev, documents: result }));
+          setForm((prev) => ({ ...prev, documents: file }));
           setDocumentPreview(result);
         }
       };
@@ -102,7 +103,7 @@ export default function StoreRegistrationPage() {
   };
 
   // Submit handler with a single toast for any missing required fields
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Required fields to validate
@@ -129,10 +130,44 @@ export default function StoreRegistrationPage() {
       });
       return;
     }
-    console.log(addToast)
 
-    // Otherwise proceed with success logic
-    setSuccess(true);
+    // Prepare payload; use FormData if you need to send files
+    const payload = new FormData();
+    payload.append("name", form.name);
+    payload.append("store_type", form.store_type);
+    payload.append("city", form.city);
+    payload.append("district", form.district);
+    payload.append("address", form.address);
+    payload.append("phone", form.phone);
+    payload.append("email", form.email);
+    payload.append(
+      "business_registration_number",
+      form.business_registration_number || ""
+    );
+    if (form.location_link)
+      payload.append("location_link", form.location_link);
+    if (form.bio) payload.append("bio", form.bio);
+    if (form.logo instanceof File) payload.append("logo", form.logo);
+    if (form.documents instanceof File)
+      payload.append("documents", form.documents);
+    if (form.cover_image instanceof File)
+      payload.append("cover_image", form.cover_image);
+
+
+ 
+
+    try {
+      await api.post("/api/stores/", payload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setSuccess(true);
+    } catch (error) {
+      console.error(error);
+      addToast({
+        type: "error",
+        message: "Failed to submit store. Please try again.",
+      });
+    }
   };
 
   // Helpers to decide whether document is an image or a PDF
@@ -161,7 +196,7 @@ export default function StoreRegistrationPage() {
             Store {store ? "updated" : "registered"} successfully!
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl mx-auto p-4">
+          <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6 max-w-5xl mx-auto p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Name */}
               <div>
@@ -170,7 +205,6 @@ export default function StoreRegistrationPage() {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  required
                   placeholder="e.g. My Awesome Store"
                   className="bg-gray-800 border-gray-700 text-white"
                 />
@@ -185,7 +219,6 @@ export default function StoreRegistrationPage() {
                   name="store_type"
                   value={form.store_type}
                   onChange={handleChange}
-                  required
                   className="bg-gray-800 border-gray-700 text-white p-2 rounded w-full"
                 >
                   <option value="">Select Type</option>
@@ -204,7 +237,6 @@ export default function StoreRegistrationPage() {
                   name="city"
                   value={form.city}
                   onChange={handleChange}
-                  required
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
@@ -216,7 +248,6 @@ export default function StoreRegistrationPage() {
                   name="district"
                   value={form.district}
                   onChange={handleChange}
-                  required
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
@@ -242,7 +273,6 @@ export default function StoreRegistrationPage() {
                   name="address"
                   value={form.address}
                   onChange={handleChange}
-                  required
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
@@ -254,7 +284,6 @@ export default function StoreRegistrationPage() {
                   name="phone"
                   value={form.phone}
                   onChange={handleChange}
-                  required
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
@@ -267,7 +296,6 @@ export default function StoreRegistrationPage() {
                   type="email"
                   value={form.email}
                   onChange={handleChange}
-                  required
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
@@ -281,7 +309,6 @@ export default function StoreRegistrationPage() {
                   name="business_registration_number"
                   value={form.business_registration_number}
                   onChange={handleChange}
-                  required
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>

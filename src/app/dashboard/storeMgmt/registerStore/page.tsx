@@ -31,7 +31,7 @@ export default function StoreRegistrationPage() {
     phone: store?.phone || "",
     email: store?.email || "",
     business_registration_number:
-      store?.business_registration_number || "",
+    store?.business_registration_number || "",
     documents: store?.documents || null,
     cover_image: store?.cover_image || null,
     bio: store?.bio || null,

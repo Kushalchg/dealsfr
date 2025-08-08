@@ -13,6 +13,7 @@ import { useAppSelector } from "@/redux/hooks"
 import LayoutPreview from "@/model/layoutPreview"
 import { fetchWithAuth } from "@/lib/auth"
 
+
 interface LayoutResponse extends LayoutPreview {
   id: number
 }
@@ -22,7 +23,7 @@ interface PaginatedResponse<T> {
   next: string | null
   previous: string | null
   results: T[]
-}
+
 
 export default function StoreLayoutPreview() {
   const storeId = useAppSelector((state) => state.userData.store?.id)
@@ -53,11 +54,14 @@ export default function StoreLayoutPreview() {
     }
   }, [storeId])
 
+
+
   useEffect(() => {
     if (storeId) {
       fetchLayouts()
     }
   }, [storeId, fetchLayouts])
+   
 
   const handleLayoutSelect = (value: string) => {
     const layout = layouts.find((l) => l.id === Number(value))

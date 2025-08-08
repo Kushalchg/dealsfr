@@ -1,10 +1,11 @@
 "use client"
 
 
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { X } from "lucide-react"
-import CustomerStoreView from "./customer_view_layout"
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { X } from "lucide-react";
+import CustomerWebView from "./customer_view_web";
+import CustomerMobileView from "./customer_view_mobile";
 
 
 interface StorePreviewModalProps {
@@ -32,12 +33,12 @@ export default function StorePreviewModal({ isOpen, onClose, selectedView, patte
         <div className="flex-1 overflow-hidden bg-muted">
           {selectedView === "web" ? (
             <div className="h-full overflow-auto">
-              <CustomerStoreView pattern={pattern} />
+              <CustomerWebView pattern={pattern} />
             </div>
           ) : (
-            <div className="h-full flex justify-center items-start pt-8 overflow-auto">
-              <div className="w-96 h-full bg-white rounded-lg shadow-xl overflow-auto">
-                <CustomerStoreView isMobile={true} pattern={pattern} />
+            <div className="h-full flex justify-center items-start pt-8 overflow-hidden">
+              <div className="w-full max-w-sm h-full bg-white rounded-lg shadow-xl overflow-y-auto">
+                <CustomerMobileView />
               </div>
             </div>
           )}

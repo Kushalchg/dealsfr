@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import CustomerProductCard from "./productCard";
 
-// Gaming store inventory data
+// Gaming store inventory data (same as in web view)
 const gamingProducts = [
   {
     id: 1,
@@ -150,20 +150,16 @@ const gamingProducts = [
     sku: "CTL-PS5-DS",
     status: "In Stock",
   },
-]
+];
 
-
-export default function CustomerStoreView({ isMobile = false, pattern }: { isMobile?: boolean; pattern: number[] }) {
-  const organizeProductsIntoRows = (
-    products: typeof gamingProducts,
-    isMobile = false
-  ) => {
+export default function CustomerMobileView() {
+  const organizeProductsIntoRows = (products: typeof gamingProducts) => {
     const rows = [];
     let currentIndex = 0;
-    const currentPattern = isMobile ? [1] : pattern;
+    const pattern = [1];
 
     while (currentIndex < products.length) {
-      for (const count of currentPattern) {
+      for (const count of pattern) {
         if (currentIndex >= products.length) break;
         const rowProducts = products.slice(currentIndex, currentIndex + count);
         rows.push({ count, products: rowProducts });
@@ -173,51 +169,50 @@ export default function CustomerStoreView({ isMobile = false, pattern }: { isMob
     return rows;
   };
 
-   const[searchTerm, setSearchTerm] = useState("");
-  const[filteredProducts, setFilteredProducts] = useState(gamingProducts);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState(gamingProducts);
 
   useEffect(() => {
-    const filtered = gamingProducts.filter(product => {
-    const term = searchTerm.toLowerCase();
-    return (
-      product.name.toLowerCase().includes(term) ||
-      product.category.toLowerCase().includes(term) ||
-      product.sku?.toLowerCase().includes(term)
-    );
-  });
-  setFilteredProducts(filtered);
-    
+    const filtered = gamingProducts.filter((product) => {
+      const term = searchTerm.toLowerCase();
+      return (
+        product.name.toLowerCase().includes(term) ||
+        product.category.toLowerCase().includes(term) ||
+        product.sku?.toLowerCase().includes(term)
+      );
+    });
+    setFilteredProducts(filtered);
   }, [searchTerm]);
 
   return (
-    <div className={`w-full h-full bg-muted ${isMobile ? "w-full" : ""}`}>
-      <div className={`${isMobile ? "max-w-sm" : "max-w-7xl"} mx-auto p-6`}>
+    <div className="w-full h-full bg-muted">
+      <div className="max-w-sm mx-auto p-6">
         <header className="mb-8">
           <div className="text-center mb-6">
-            <h1 className={`${isMobile ? "text-2xl" : "text-4xl"} font-bold text-foreground mb-2`}>GameZone Store</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-2">GameZone Store</h1>
             <p className="text-muted-foreground">Premium Gaming Equipment & Accessories</p>
           </div>
           <div className="relative max-w-md mx-auto mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-            <Input type="text" placeholder="Search products..." className="pl-10 pr-4 py-2 w-full" 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}/>
+            <Input
+              type="text"
+              placeholder="Search products..."
+              className="pl-10 pr-4 py-2 w-full"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </header>
 
         <div className="space-y-6">
-          {organizeProductsIntoRows(filteredProducts, isMobile).map((row, rowIndex) => (
-            <div
-              key={rowIndex}
-              className={`grid gap-4 ${isMobile ? "grid-cols-1" : ""}`}
-              style={!isMobile ? { gridTemplateColumns: `repeat(${row.count}, 1fr)` } : {}}
-            >
+          {organizeProductsIntoRows(filteredProducts).map((row, rowIndex) => (
+            <div key={rowIndex} className="grid gap-4 grid-cols-1">
               {row.products.map((product) => (
                 <CustomerProductCard
                   key={product.id}
                   product={product}
-                  columnSpan={isMobile ? 1 : row.count}
-                  isMobile={isMobile}
+                  columnSpan={1}
+                  isMobile
                 />
               ))}
             </div>
@@ -227,3 +222,4 @@ export default function CustomerStoreView({ isMobile = false, pattern }: { isMob
     </div>
   );
 }
+

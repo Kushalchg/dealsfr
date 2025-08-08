@@ -27,11 +27,7 @@ export default function StoreLayoutPreview() {
   const [selectedView, setSelectedView] = useState<"web" | "mobile">("web")
   const [showPreview, setShowPreview] = useState(false)
 
-  useEffect(() => {
-    if (storeId) {
-      fetchLayouts()
-    }
-  }, [storeId, fetchLayouts])
+
 
   const fetchLayouts = useCallback(async () => {
     try {
@@ -42,6 +38,12 @@ export default function StoreLayoutPreview() {
       console.error("Failed to fetch layouts", error)
     }
   }, [storeId])
+
+    useEffect(() => {
+    if (storeId) {
+      fetchLayouts()
+    }
+  }, [storeId, fetchLayouts])
 
   const handleLayoutSelect = (value: string) => {
     const layout = layouts.find((l) => l.id === Number(value))

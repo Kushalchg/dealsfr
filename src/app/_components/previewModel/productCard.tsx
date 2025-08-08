@@ -38,8 +38,10 @@ export default function CustomerProductCard({ product, columnSpan, isMobile = fa
  
 
   return (
-    <Card className="overflow-hidden h-full flex flex-col hover:shadow-xl transition-all duration-300 bg-grey border border-muted rounded-2xl">
-      <div className={`${aspectRatio} relative overflow-hidden`}>
+    <Card
+      className="overflow-hidden h-full flex flex-col hover:shadow-xl transition-all duration-300 bg-grey border border-muted rounded-2xl"
+    >
+        <div className={aspectRatio + " relative overflow-hidden"}>
         <img
           src={product.image || "/placeholder.svg"}
           alt={product.name}
@@ -54,30 +56,34 @@ export default function CustomerProductCard({ product, columnSpan, isMobile = fa
           <Badge className="absolute top-2 left-2 bg-yellow-500 text-white shadow-md">Low Stock</Badge>
         )}
       </div>
-      <CardContent className="flex-grow p-4">
+      <CardContent className={isMobile ? "flex-grow p-3" : "flex-grow p-4"}>
         <div className="space-y-2">
-          <h3 className={`font-semibold ${isMobile ? "text-base" : "text-lg"} line-clamp-2 text-foreground`}>
+          <h3 className={(isMobile ? "font-semibold text-sm" : "font-semibold text-lg") + " line-clamp-2 text-foreground"}>
             {product.name}
           </h3>
           <div className="flex items-center gap-1">
-            <div className="flex text-yellow-400 text-sm">
+              <div className={(isMobile ? "flex text-yellow-400 text-xs" : "flex text-yellow-400 text-sm")}>
               {[...Array(5)].map((_, i) => (
                 <span key={i}>{i < Math.floor(product.rating) ? "★" : "☆"}</span>
               ))}
             </div>
-            <span className="text-sm text-muted-foreground">({product.rating})</span>
+            <span className={(isMobile ? "text-xs" : "text-sm") + " text-muted-foreground"}>
+              ({product.rating})
+            </span>
           </div>
-          <p className="text-muted-foreground text-sm line-clamp-2">{product.description}</p>
+          <p className={ isMobile ? "text-muted-foreground text-xs line-clamp-2" : "text-muted-foreground text-sm line-clamp-2"}>
+            {product.description}
+          </p>
         </div>
       </CardContent>
-      <CardFooter className="border-t border-border p-4 bg-muted/50">
+      <CardFooter className={isMobile ? "border-t border-border p-3 bg-muted/50" : "border-t border-border p-4 bg-muted/50"}>
         <div className="w-full flex justify-between items-center">
-          <span className={`font-bold ${isMobile ? "text-lg" : "text-xl"} text-primary`}>
+          <span className={isMobile ? "font-bold text-base text-primary" : "font-bold text-xl text-primary"}>
             ${product.price.toFixed(2)}
           </span>
           <Button
             variant="default"
-            size="sm"
+            size={isMobile ? "sm" : "lg"}
             disabled={product.stock === 0}
             className="bg-blue-600 hover:bg-blue-700"
           >

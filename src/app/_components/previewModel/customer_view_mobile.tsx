@@ -152,14 +152,17 @@ const gamingProducts = [
   },
 ];
 
-export default function CustomerMobileView() {
-  const organizeProductsIntoRows = (products: typeof gamingProducts) => {
+export default function CustomerMobileView({ pattern }: { pattern: number[] }) {
+  const organizeProductsIntoRows = (
+    products: typeof gamingProducts,
+    viewPattern: number[]
+  ) => {
     const rows = [];
     let currentIndex = 0;
-    const pattern = [1];
+    const mobilePattern = viewPattern.map((count) => Math.min(count, 2));
 
     while (currentIndex < products.length) {
-      for (const count of pattern) {
+      for (const count of mobilePattern) {
         if (currentIndex >= products.length) break;
         const rowProducts = products.slice(currentIndex, currentIndex + count);
         rows.push({ count, products: rowProducts });
@@ -205,21 +208,26 @@ export default function CustomerMobileView() {
         </header>
 
         <div className="space-y-6">
-          {organizeProductsIntoRows(filteredProducts).map((row, rowIndex) => (
-            <div key={rowIndex} className="grid gap-4 grid-cols-1">
-              {row.products.map((product) => (
-                <CustomerProductCard
-                  key={product.id}
-                  product={product}
-                  columnSpan={1}
-                  isMobile
-                />
-              ))}
-            </div>
-          ))}
+          {organizeProductsIntoRows(filteredProducts, pattern).map(
+            (row, rowIndex) => (
+              <div
+                key={rowIndex}
+                className="grid gap-4"
+                style={{ gridTemplateColumns: `repeat(${row.count}, 1fr)` }}
+              >
+                {row.products.map((product) => (
+                  <CustomerProductCard
+                    key={product.id}
+                    product={product}
+                    columnSpan={row.count}
+                    isMobile
+                  />
+                ))}
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>
   );
 }
-

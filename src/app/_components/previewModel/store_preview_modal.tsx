@@ -35,8 +35,8 @@ export default function StorePreviewModal({ isOpen, onClose, selectedView, patte
               <CustomerStoreView pattern={pattern} />
             </div>
           ) : (
-            <div className="h-full flex justify-center items-start pt-8 overflow-auto">
-              <div className="w-96 h-full bg-white rounded-lg shadow-xl overflow-auto">
+            <div className="h-full flex justify-center items-start pt-8 overflow-hidden">
+              <div className="w-full max-w-sm h-full bg-white rounded-lg shadow-xl overflow-y-auto">
                 <CustomerStoreView isMobile={true} pattern={pattern} />
               </div>
             </div>

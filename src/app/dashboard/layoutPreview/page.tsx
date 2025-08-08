@@ -23,7 +23,7 @@ interface PaginatedResponse<T> {
   next: string | null
   previous: string | null
   results: T[]
-
+}
 
 export default function StoreLayoutPreview() {
   const storeId = useAppSelector((state) => state.userData.store?.id)

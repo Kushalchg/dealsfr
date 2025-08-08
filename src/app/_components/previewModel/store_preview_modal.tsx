@@ -30,7 +30,7 @@ export default function StorePreviewModal({ isOpen, onClose, selectedView, patte
             <X className="h-4 w-4" />
           </Button>
         </DialogHeader>
-        <div className="flex-1 overflow-hidden bg-muted">
+        <div className="flex-1 overflow-hidden bg-white">
           {selectedView === "web" ? (
             <div className="h-full overflow-auto">
               <CustomerWebView pattern={pattern} />

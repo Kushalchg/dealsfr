@@ -159,7 +159,7 @@ export default function CustomerMobileView({ pattern }: { pattern: number[] }) {
   ) => {
     const rows = [];
     let currentIndex = 0;
-    const mobilePattern = viewPattern.map((count) => Math.min(count, 2));
+    const mobilePattern = viewPattern.map((count) => Math.min(count, 3));
 
     while (currentIndex < products.length) {
       for (const count of mobilePattern) {
@@ -188,7 +188,7 @@ export default function CustomerMobileView({ pattern }: { pattern: number[] }) {
   }, [searchTerm]);
 
   return (
-    <div className="w-full h-full bg-muted">
+    <div className="w-full h-full bg-white">
       <div className="max-w-sm mx-auto p-6">
         <header className="mb-8">
           <div className="text-center mb-6">

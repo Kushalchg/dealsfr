@@ -13,9 +13,17 @@ import { useAppSelector } from "@/redux/hooks"
 import LayoutPreview from "@/model/layoutPreview"
 import { fetchWithAuth } from "@/lib/auth"
 
+
 interface LayoutResponse extends LayoutPreview {
   id: number
 }
+
+interface PaginatedResponse<T> {
+  count: number
+  next: string | null
+  previous: string | null
+  results: T[]
+
 
 export default function StoreLayoutPreview() {
   const storeId = useAppSelector((state) => state.userData.store?.id)
@@ -27,23 +35,33 @@ export default function StoreLayoutPreview() {
   const [selectedView, setSelectedView] = useState<"web" | "mobile">("web")
   const [showPreview, setShowPreview] = useState(false)
 
-
-
   const fetchLayouts = useCallback(async () => {
+    if (!storeId) return
     try {
-      const data = await fetchWithAuth<LayoutResponse[]>("/api/layouts/")
-      const storeLayouts = data.filter((layout) => layout.store === storeId)
-      setLayouts(storeLayouts)
+      const allLayouts: LayoutResponse[] = []
+      let page = 1
+      while (true) {
+        const data = await fetchWithAuth<PaginatedResponse<LayoutResponse>>(
+          `/api/layouts/?page=${page}`
+        )
+        allLayouts.push(...data.results.filter((layout) => layout.store === storeId))
+        if (!data.next) break
+        page += 1
+      }
+      setLayouts(allLayouts)
     } catch (error) {
       console.error("Failed to fetch layouts", error)
     }
   }, [storeId])
 
-    useEffect(() => {
+
+
+  useEffect(() => {
     if (storeId) {
       fetchLayouts()
     }
   }, [storeId, fetchLayouts])
+   
 
   const handleLayoutSelect = (value: string) => {
     const layout = layouts.find((l) => l.id === Number(value))

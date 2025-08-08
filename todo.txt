@@ -1,0 +1,3 @@
+1. Banner page.
+2. product list.
+3. 

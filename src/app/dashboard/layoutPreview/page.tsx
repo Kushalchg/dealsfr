@@ -26,7 +26,7 @@ interface PaginatedResponse<T> {
 }
 
 export default function StoreLayoutPreview() {
-  const storeId = useAppSelector((state) => state.userData.store?.id)
+  const storeId = useAppSelector((state) => state.userData.stores[0]?.id)
 
   const [layouts, setLayouts] = useState<LayoutResponse[]>([])
   const [selectedLayoutId, setSelectedLayoutId] = useState<number | undefined>(undefined)

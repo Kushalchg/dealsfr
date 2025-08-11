@@ -14,7 +14,7 @@ const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
 export default function StoreRegistrationPage() {
   const user = useSelector((state: RootState) => state.userData.user);
-  const store = useSelector((state: RootState) => state.userData.store);
+  const store = useSelector((state: RootState) => state.userData.stores[0]);
   const [form, setForm] = useState({
     name: store?.name || "",
     store_type: store?.store_type || "",

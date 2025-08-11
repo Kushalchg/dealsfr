@@ -39,9 +39,10 @@ const StoreManager = () => {
       {stores.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {stores.map((store) => (
-            <Card key={store.id} className="max-w-md mx-auto bg-gray-900 border-gray-800">
-              <CardHeader className="flex flex-row items-center gap-4">
-                <Avatar className="h-12 w-12">
+
+            <Card key={store.id} className="max-w-md mx-auto">
+              <CardContent className="text-center">
+                <Avatar className="h-16 w-16 mx-auto">
                   <AvatarImage src={store.logo} alt={store.name} />
                   <AvatarFallback>
                     {store.name.substring(0, 2).toUpperCase()}
@@ -71,7 +72,7 @@ const StoreManager = () => {
               <CardFooter className="flex justify-end">
                 <Button asChild variant="outline">
                   <Link href="/dashboard/storeMgmt/registerStore">Manage</Link>
-                </Button>
+
               </CardFooter>
             </Card>
           ))}

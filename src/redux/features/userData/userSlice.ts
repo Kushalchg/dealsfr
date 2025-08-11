@@ -8,7 +8,7 @@ import { MeApiResponse } from "../../../model/meApiResponse";
 
 const initialState: UserState = {
   user: null,
-  store: null,
+  stores: [],
   accessToken: null,
   refreshToken: null,
   isAuthenticated: false,
@@ -22,7 +22,7 @@ const userSlice = createSlice({
   reducers: {
     "resetUserState": (state) => {
       state.user = null;
-      state.store = null,
+      state.stores = [];
       state.loading = false;
       state.error = null;
     }
@@ -74,6 +74,7 @@ const userSlice = createSlice({
         state.accessToken = null;
         state.refreshToken = null;
         state.isAuthenticated = false;
+        state.stores = [];
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -92,7 +93,7 @@ const userSlice = createSlice({
           state.loading = false
           const { store, ...userData } = action.payload
           state.user = userData
-          state.store = store !== undefined ? store : null
+          state.stores = Array.isArray(store) ? store : []
           state.isAuthenticated = true
         }
       )

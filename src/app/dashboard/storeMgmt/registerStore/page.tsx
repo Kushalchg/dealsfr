@@ -1,4 +1,3 @@
-//#TODO: To make store an array of object
 "use client";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -16,7 +15,7 @@ const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
 export default function StoreRegistrationPage() {
   const user = useSelector((state: RootState) => state.userData.user);
-  const store = useSelector((state: RootState) => state.userData.store);
+  const store = useSelector((state: RootState) => state.userData.stores[0]);
 
   // Access the toast function
   const { addToast } = useToast();

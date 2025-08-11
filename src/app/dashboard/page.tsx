@@ -6,15 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Eye, MousePointer, ShoppingCart, Users, TrendingUp, Calendar } from "lucide-react"
-import { useDispatch, useSelector } from "react-redux"
-import { AppDispatch, RootState } from "@/redux/store"
-import { getUser } from "@/redux/actions/user_api/getUserData"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store"
 
 export default function DashboardPage() {
-  const dispatch = useDispatch<AppDispatch>()
-  const { user, store, loading, error } = useSelector(
+  const { user, stores, loading, error } = useSelector(
     (state: RootState) => state.userData
   )
+  const store = stores[0]
 
 
   if (loading) {

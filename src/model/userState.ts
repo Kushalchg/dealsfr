@@ -3,7 +3,7 @@ import { GetStoreData } from "./store"
 
 export interface UserState {
   user: GetUserData | null
-  store: GetStoreData | null
+  stores: GetStoreData[]
   accessToken: string | null
   refreshToken: string | null
   isAuthenticated: boolean

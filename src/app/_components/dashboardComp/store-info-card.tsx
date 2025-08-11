@@ -36,7 +36,7 @@ export function StoreInfoCard({ store }: StoreInfoCardProps) {
           <Avatar className="h-12 w-12">
             <AvatarImage src={store.logo || "/placeholder.svg"} alt={store.name} />
             <AvatarFallback className="bg-emerald-600 text-white">
-              {store.name.substring(0, 2).toUpperCase()}
+              {(store?.name ?? "").substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div>

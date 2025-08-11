@@ -28,7 +28,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Home, Store, BarChart3, Users, Settings, HelpCircle, LogOut, Bell } from "lucide-react"
+import { Home, Store, BarChart3, Users, Settings, HelpCircle, LogOut, Bell, Percent, Package } from "lucide-react"
 import { clearTokens } from "@/lib/auth"
 import Image from "next/image"
 import { useSelector } from "react-redux"
@@ -65,16 +65,20 @@ const navigationItems = [
     href: "/dashboard/layoutPreview",
   },
   {
-    title: "Customers",
-    icon: Users,
-    href: "/dashboard/customers",
+    title: "Discounts",
+    icon: Percent,
+    href: "/dashboard/discounts",
+  },
+  {
+    title: "Products",
+    icon: Package,
+    href: "/dashboard/product",
   },
 ]
 
 export function DashboardNav({ children }: { children: React.ReactNode }) {
 
-  const user = useSelector((state: RootState) => state.userData.user)
-  const loading = useSelector((state: RootState) => state.userData.loading)
+  const {user,loading,error} = useSelector((state: RootState) => state.userData)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleLogout = () => {

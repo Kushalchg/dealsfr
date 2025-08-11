@@ -28,7 +28,7 @@ export default function CustomerProductCard({ product, columnSpan, isMobile = fa
       case 2:
         return "aspect-[4/3]";
       case 3:
-        return "aspect-video";
+        return "aspect-square";
       default:
         return "aspect-video";
     }

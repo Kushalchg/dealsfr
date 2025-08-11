@@ -42,7 +42,7 @@ export default function StoreLayoutPreview() {
       let page = 1
       while (true) {
         const data = await fetchWithAuth<PaginatedResponse<LayoutResponse>>(
-          `/api/layouts/?page=${page}`
+          `/api/layouts/`
         )
         allLayouts.push(...data.results.filter((layout) => layout.store === storeId))
         if (!data.next) break

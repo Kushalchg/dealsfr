@@ -188,7 +188,7 @@ export default function CustomerMobileView({ pattern }: { pattern: number[] }) {
   }, [searchTerm]);
 
   return (
-    <div className="w-full h-full bg-white">
+    <div className="w-full h-full bg-muted">
       <div className="max-w-sm mx-auto p-6">
         <header className="mb-8">
           <div className="text-center mb-6">
@@ -207,7 +207,7 @@ export default function CustomerMobileView({ pattern }: { pattern: number[] }) {
           </div>
         </header>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           {organizeProductsIntoRows(filteredProducts, pattern).map(
             (row, rowIndex) => (
               <div

@@ -18,12 +18,7 @@ interface LayoutResponse extends LayoutPreview {
   id: number
 }
 
-interface PaginatedResponse<T> {
-  count: number
-  next: string | null
-  previous: string | null
-  results: T[]
-}
+
 
 export default function StoreLayoutPreview() {
   const storeId = useAppSelector((state) => state.userData.stores[0]?.id)
@@ -41,12 +36,11 @@ export default function StoreLayoutPreview() {
       const allLayouts: LayoutResponse[] = []
       let page = 1
       while (true) {
-        const data = await fetchWithAuth<PaginatedResponse<LayoutResponse>>(
+        const data = await fetchWithAuth<LayoutResponse[]>(
           `/api/layouts/`
         )
-        allLayouts.push(...data.results.filter((layout) => layout.store === storeId))
-        if (!data.next) break
-        page += 1
+        allLayouts.push(...data.filter((layout) => layout.store === storeId))
+        if (data.length < 10) break
       }
       setLayouts(allLayouts)
     } catch (error) {

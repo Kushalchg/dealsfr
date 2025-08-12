@@ -40,49 +40,53 @@ const StoreManager = () => {
       {stores.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {stores.map((store) => (
+            <Card
+              key={store.id}
+              className="w-full bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors flex flex-col h-full"
+            >
+              <CardHeader className="items-center text-center pb-0">
+                <Avatar className="h-16 w-16 mb-3">
+                  <AvatarImage
+                    src={store.logo || undefined}
+                    alt={store.name}
+                    className="object-cover"
+                    onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+                  />
+                  <AvatarFallback className="bg-emerald-600 text-white">
+                    {(store?.name ?? "").substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
 
-      <Card key={store.id} className="max-w-md mx-auto">
-      <CardHeader className="text-center">
-          <Avatar className="h-16 w-16 mx-auto">
-            <AvatarImage
-        src={store.logo || undefined}
-        onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
-      />
-      <AvatarFallback>
-        {(store?.name ?? "").substring(0, 2).toUpperCase()}
-      </AvatarFallback>
-    </Avatar>
+                <CardTitle className="text-white text-xl">{store.name}</CardTitle>
+                <CardDescription className="mt-1">
+                  <Badge
+                    variant="secondary"
+                    className="bg-emerald-900 text-emerald-200 text-xs"
+                  >
+                    {storeTypeLabels[store.store_type] || store.store_type}
+                  </Badge>
+                </CardDescription>
+              </CardHeader>
 
-    <div>
-      <CardTitle className="text-white">{store.name}</CardTitle>
-      <CardDescription>
-        <Badge variant="secondary" className="text-xs">
-          {storeTypeLabels[store.store_type] || store.store_type}
-        </Badge>
-      </CardDescription>
-    </div>
-  </CardHeader>
+              <CardContent className="space-y-2 text-sm text-gray-300 flex-1">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-emerald-400" />
+                  <span>
+                    {store.city}, {store.district}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-emerald-400" />
+                  <span>{store.phone}</span>
+                </div>
+              </CardContent>
 
-  <CardContent className="text-sm text-gray-300 space-y-2">
-    <div className="flex items-center gap-2">
-      <MapPin className="h-4 w-4" />
-      <span>
-        {store.city}, {store.district}
-      </span>
-    </div>
-    <div className="flex items-center gap-2">
-      <Phone className="h-4 w-4" />
-      <span>{store.phone}</span>
-    </div>
-  </CardContent>
-
-  <CardFooter className="flex justify-end">
-    <Button asChild variant="outline">
-      <Link href="/dashboard/storeMgmt/registerStore">Manage</Link>
-    </Button>
-  </CardFooter>
-</Card>
-
+              <CardFooter className="pt-4">
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/dashboard/storeMgmt/registerStore">Manage</Link>
+                </Button>
+              </CardFooter>
+            </Card>
           ))}
         </div>
       ) : (

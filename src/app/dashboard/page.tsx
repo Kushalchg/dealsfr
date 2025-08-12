@@ -2,6 +2,7 @@
 
 import { StatsCard } from "@/app/_components/dashboardComp/stats-card"
 import { StoreInfoCard } from "@/app/_components/dashboardComp/store-info-card"
+import { StoreAnalyticsOverview } from "@/app/_components/dashboardComp/store-analytics-overview"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -13,7 +14,21 @@ export default function DashboardPage() {
   const { user, stores, loading, error } = useSelector(
     (state: RootState) => state.userData
   )
-  const store = stores[0]
+  const primaryStore = stores[0]
+
+  const totalViews = stores.reduce((sum, s) => sum + (s.views ?? 0), 0)
+  const totalDiscountClicks = stores.reduce(
+    (sum, s) => sum + (s.clicks_on_discounts ?? 0),
+    0
+  )
+  const totalOrders = stores.reduce(
+    (sum, s) => sum + (s.orders_received ?? 0),
+    0
+  )
+  const totalFollowers = stores.reduce(
+    (sum, s) => sum + (s.followers?.length ?? 0),
+    0
+  )
 
 
   if (loading) {
@@ -38,15 +53,14 @@ export default function DashboardPage() {
     )
   }
 
-  const views = store?.views ?? 0
-  const discountClicks = store?.clicks_on_discounts ?? 0
-  const orders = store?.orders_received ?? 0
-  const followersCount = store?.followers?.length ?? 0
-  const storeType = store?.store_type ?? "N/A"
-  const businessId = store?.business_registration_number ?? "N/A"
-  const isVerified = store?.is_verified ?? false
-  const createdDate = store?.created_at
-    ? new Date(store.created_at).toLocaleDateString()
+  const views = primaryStore?.views ?? 0
+  const discountClicks = primaryStore?.clicks_on_discounts ?? 0
+  const orders = primaryStore?.orders_received ?? 0
+  const storeType = primaryStore?.store_type ?? "N/A"
+  const businessId = primaryStore?.business_registration_number ?? "N/A"
+  const isVerified = primaryStore?.is_verified ?? false
+  const createdDate = primaryStore?.created_at
+    ? new Date(primaryStore.created_at).toLocaleDateString()
     : "N/A"
 
   return (
@@ -54,22 +68,27 @@ export default function DashboardPage() {
       {/* Welcome Section */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-white">Welcome back, {user.first_name}!</h1>
-        <p className="text-gray-400">Here's what's happening with your store today.</p>
+        <p className="text-gray-400">Here&apos;s what&apos;s happening with your store today.</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard title="Total Views" value={views} icon={Eye} description="Store profile views" trend={{ value: 12, isPositive: true }} />
-        <StatsCard title="Discount Clicks" value={discountClicks} icon={MousePointer} description="Clicks on your deals" trend={{ value: 8, isPositive: true }} />
-        <StatsCard title="Orders Received" value={orders} icon={ShoppingCart} description="Total orders" trend={{ value: 15, isPositive: true }} />
-        <StatsCard title="Followers" value={followersCount} icon={Users} description="Store followers" trend={{ value: 5, isPositive: true }} />
+        <StatsCard title="Total Views" value={totalViews} icon={Eye} description="Store profile views" trend={{ value: 12, isPositive: true }} />
+        <StatsCard title="Discount Clicks" value={totalDiscountClicks} icon={MousePointer} description="Clicks on your deals" trend={{ value: 8, isPositive: true }} />
+        <StatsCard title="Orders Received" value={totalOrders} icon={ShoppingCart} description="Total orders" trend={{ value: 15, isPositive: true }} />
+        <StatsCard title="Followers" value={totalFollowers} icon={Users} description="Store followers" trend={{ value: 5, isPositive: true }} />
       </div>
+
+      {/* Stores Overview */}
+      {stores.length > 0 && (
+        <StoreAnalyticsOverview stores={stores} />
+      )}
 
       {/* Store Information and Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          {store ? (
-            <StoreInfoCard store={store} />
+          {primaryStore ? (
+            <StoreInfoCard store={primaryStore} />
           ) : (
             <Card className="bg-gray-900 border-gray-800 p-4 text-white">
               <p>No store data found for this account.</p>

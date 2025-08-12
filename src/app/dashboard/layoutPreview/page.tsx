@@ -34,19 +34,15 @@ export default function StoreLayoutPreview() {
     if (!storeId) return
     try {
       const allLayouts: LayoutResponse[] = []
-      let page = 1
-      while (true) {
-        const data = await fetchWithAuth<LayoutResponse[]>(
-          `/api/layouts/`
-        )
-        allLayouts.push(...data.filter((layout) => layout.store === storeId))
-        if (data.length < 10) break
-      }
+      const data = await fetchWithAuth<LayoutResponse[]>(
+        `/api/layouts/`
+      )
+      allLayouts.push(...data.filter((layout) => layout.store === storeId))
       setLayouts(allLayouts)
     } catch (error) {
       console.error("Failed to fetch layouts", error)
     }
-  }, [storeId])
+  }, [])
 
 
 
@@ -54,7 +50,7 @@ export default function StoreLayoutPreview() {
     if (storeId) {
       fetchLayouts()
     }
-  }, [storeId, fetchLayouts])
+  }, [])
    
 
   const handleLayoutSelect = (value: string) => {
@@ -62,7 +58,7 @@ export default function StoreLayoutPreview() {
     if (layout) {
       setSelectedLayoutId(layout.id)
       setName(layout.name)
-      setPositions(layout.values as number[])
+      setPositions(layout.layout_array as number[])
     }
   }
 
@@ -74,7 +70,7 @@ export default function StoreLayoutPreview() {
 
   const handleSave = async () => {
     if (!storeId) return
-    const payload: LayoutPreview = { name, values: positions as LayoutPreview["values"], store: storeId }
+    const payload: LayoutPreview = { name, layout_array: positions as LayoutPreview["layout_array"], store: storeId }
     try {
       if (selectedLayoutId) {
         const updated = await fetchWithAuth<LayoutResponse>(`/api/layouts/${selectedLayoutId}`, {
@@ -98,7 +94,7 @@ export default function StoreLayoutPreview() {
   const handleDelete = async () => {
     if (!selectedLayoutId) return
     try {
-      await fetchWithAuth(`/api/layouts/${selectedLayoutId}`, { method: "DELETE" })
+      await fetchWithAuth(`/api/layouts/${selectedLayoutId}/`, { method: "DELETE" })
       setLayouts((prev) => prev.filter((l) => l.id !== selectedLayoutId))
       resetForm()
     } catch (error) {

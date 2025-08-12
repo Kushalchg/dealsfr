@@ -3,6 +3,6 @@ type ValuesArray = [number, number, number] | [number, number, number, number];
 export default interface LayoutPreview {
   id?: number;
   name: string;
-  values: ValuesArray;
+  layout_array: ValuesArray;
   store: number;
 }

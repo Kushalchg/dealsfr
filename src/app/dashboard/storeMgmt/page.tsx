@@ -19,7 +19,8 @@ import { MapPin, Phone } from "lucide-react"
 
 const StoreManager = () => {
 
-  const stores = useSelector((state: RootState) => state.userData.stores)
+  const stores = useSelector((s: RootState) => s.userData.stores) ?? [];
+
 
   const storeTypeLabels: Record<string, string> = {
     DEPT: "Department Store",
@@ -40,41 +41,48 @@ const StoreManager = () => {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {stores.map((store) => (
 
-            <Card key={store.id} className="max-w-md mx-auto">
-              <CardContent className="text-center">
-                <Avatar className="h-16 w-16 mx-auto">
-                  <AvatarImage src={store.logo} alt={store.name} />
-                  <AvatarFallback>
-                    {store.name.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <CardTitle className="text-white">{store.name}</CardTitle>
-                  <CardDescription>
-                    <Badge variant="secondary" className="text-xs">
-                      {storeTypeLabels[store.store_type] || store.store_type}
-                    </Badge>
-                  </CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="text-sm text-gray-300 space-y-2">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  <span>
-                    {store.city}, {store.district}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  <span>{store.phone}</span>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-end">
-                <Button asChild variant="outline">
-                  <Link href="/dashboard/storeMgmt/registerStore">Manage</Link>
+      <Card key={store.id} className="max-w-md mx-auto">
+      <CardHeader className="text-center">
+          <Avatar className="h-16 w-16 mx-auto">
+            <AvatarImage
+        src={store.logo || undefined}
+        onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+      />
+      <AvatarFallback>
+        {(store?.name ?? "").substring(0, 2).toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
 
-              </CardFooter>
-            </Card>
+    <div>
+      <CardTitle className="text-white">{store.name}</CardTitle>
+      <CardDescription>
+        <Badge variant="secondary" className="text-xs">
+          {storeTypeLabels[store.store_type] || store.store_type}
+        </Badge>
+      </CardDescription>
+    </div>
+  </CardHeader>
+
+  <CardContent className="text-sm text-gray-300 space-y-2">
+    <div className="flex items-center gap-2">
+      <MapPin className="h-4 w-4" />
+      <span>
+        {store.city}, {store.district}
+      </span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Phone className="h-4 w-4" />
+      <span>{store.phone}</span>
+    </div>
+  </CardContent>
+
+  <CardFooter className="flex justify-end">
+    <Button asChild variant="outline">
+      <Link href="/dashboard/storeMgmt/registerStore">Manage</Link>
+    </Button>
+  </CardFooter>
+</Card>
+
           ))}
         </div>
       ) : (

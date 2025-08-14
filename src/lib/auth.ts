@@ -1,10 +1,10 @@
 import api from "@/lib/axios"
 import { UserLoginResponse } from "@/model/userData"
 
-
 // ------------------
 // Token Utils
 // ------------------
+
 export const getStoredTokens = (): UserLoginResponse | null => {
   if (typeof window === "undefined") return null
 
@@ -56,7 +56,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 export const fetchWithAuth = async <T = any>(
   url: string,
   options: {
-    method?: "GET" | "POST" | "PUT" | "PATCH" |"DELETE"
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
     data?: any
     headers?: Record<string, string>
   } = {}

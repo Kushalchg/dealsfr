@@ -1,4 +1,4 @@
-import api from "../../../lib/axios"; 
+import api from "../../../lib/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { SetUserData, GetUserData, UserLoginResponse, UserLoginRequest } from "../../../model/userData";
 
@@ -21,8 +21,8 @@ export const registerUser = createAsyncThunk<
 });
 
 export const loginUser = createAsyncThunk<
- UserLoginResponse,
- UserLoginRequest,
+  UserLoginResponse,
+  UserLoginRequest,
   { rejectValue: string }
 >("userData/loginUser", async (loginData, thunkAPI) => {
   try {

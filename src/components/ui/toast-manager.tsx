@@ -1,7 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState } from "react"
-import { Toast } from "@/components/ui/toast"
+import { Toast } from "./toast"
 
 export type ToastType = "success" | "error" | "info" | "warning" | "loading" | "delete"
 

@@ -1,30 +1,39 @@
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import { Providers } from "./providers"
-import "./globals.css"
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import StoreProvider from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-})
+});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-})
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thedealsfr.com"), // ✅ Fixes warning
   title: "TheDealsFr - Discover Local Deals, Effortlessly",
   description:
     "TheDealsFr connects you with exclusive discounts from nearby stores. Save smarter, support local businesses in your community.",
-  keywords: ["local deals", "discounts", "local business", "savings", "community", "Nepal", "Lalitpur"],
+  keywords: [
+    "local deals",
+    "discounts",
+    "local business",
+    "savings",
+    "community",
+    "Nepal",
+    "Lalitpur",
+  ],
   authors: [{ name: "TheDealsFr Team" }],
   creator: "TheDealsFr",
   publisher: "TheDealsFr",
   openGraph: {
     title: "TheDealsFr - Discover Local Deals, Effortlessly",
-    description: "Connect with exclusive discounts from nearby stores. Save smarter, support local.",
+    description:
+      "Connect with exclusive discounts from nearby stores. Save smarter, support local.",
     url: "https://thedealsfr.com",
     siteName: "TheDealsFr",
     images: [
@@ -41,7 +50,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "TheDealsFr - Discover Local Deals, Effortlessly",
-    description: "Connect with exclusive discounts from nearby stores. Save smarter, support local.",
+    description:
+      "Connect with exclusive discounts from nearby stores. Save smarter, support local.",
     images: ["/logo.png"],
   },
   robots: {
@@ -58,14 +68,20 @@ export const metadata: Metadata = {
   verification: {
     google: "your-google-verification-code",
   },
-}
+};
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-900 text-white`}>
-        <Providers>{children}</Providers>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-900 text-white`}
+      >
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
-  )
+  );
 }

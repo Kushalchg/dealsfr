@@ -41,7 +41,7 @@ const userSlice = createSlice({
           state.accessToken = action.payload.access;
           state.refreshToken = action.payload.refresh;
           state.isAuthenticated = true;
-          
+
         }
       )
       .addCase(loginUser.rejected, (state, action) => {
@@ -80,7 +80,6 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Logout failed";
       })
-
 
       // meResponse
       .addCase(getUser.pending, (state) => {

@@ -8,8 +8,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SetStoreData } from "@/model/store";
 import FileUploadField from "@/app/_components/fileUpload";
-import { useToast } from "@/components/ui/toast-manager"; 
-import api from "@/lib/axios"; 
+import { useToast } from "@/components/ui/toast-manager";
+import api from "@/lib/axios";
 
 const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
@@ -31,7 +31,7 @@ export default function StoreRegistrationPage() {
     phone: store?.phone || "",
     email: store?.email || "",
     business_registration_number:
-    store?.business_registration_number || "",
+      store?.business_registration_number || "",
     documents: store?.documents || null,
     cover_image: store?.cover_image || null,
     bio: store?.bio || null,
@@ -153,9 +153,6 @@ export default function StoreRegistrationPage() {
     if (form.cover_image instanceof File)
       payload.append("cover_image", form.cover_image);
 
-
- 
-
     try {
       await api.post("/api/stores/", payload, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -171,7 +168,7 @@ export default function StoreRegistrationPage() {
   };
 
   // Helpers to decide whether document is an image or a PDF
-  const isImage = (dataUrl: string) => dataUrl.startsWith("data:image/");
+  const isImage = (dataUrl: string) => dataUrl?.startsWith("data:image/");
   const isPdf = (dataUrl: string) =>
     dataUrl.startsWith("data:application/pdf");
 

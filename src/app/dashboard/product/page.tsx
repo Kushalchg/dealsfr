@@ -3,9 +3,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 
 
-
 export default function ProductsPage(): JSX.Element {
-  // --- Types ---
+
   interface Product {
     id: string;
     mainCategory: string;
@@ -18,7 +17,6 @@ export default function ProductsPage(): JSX.Element {
 
   // --- Constants ---
   const LS_KEY = "products:v2"; // bump key because schema changed
-
   const MAIN_CATEGORIES = ["Electronics", "Apparel", "Home"] as const;
   const SUB_CATEGORIES: Record<(typeof MAIN_CATEGORIES)[number], string[]> = {
     Electronics: ["Laptops", "Mobiles", "Accessories"],

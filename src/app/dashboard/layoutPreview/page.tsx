@@ -18,8 +18,6 @@ interface LayoutResponse extends LayoutPreview {
   id: number
 }
 
-
-
 export default function StoreLayoutPreview() {
   const storeId = useAppSelector((state) => state.userData.stores[0]?.id)
 
@@ -51,7 +49,7 @@ export default function StoreLayoutPreview() {
       fetchLayouts()
     }
   }, [])
-   
+
 
   const handleLayoutSelect = (value: string) => {
     const layout = layouts.find((l) => l.id === Number(value))

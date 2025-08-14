@@ -1,6 +1,6 @@
 type ValuesArray = [number, number, number] | [number, number, number, number];
 
-export default interface LayoutPreview {
+export interface LayoutItem {
   id?: number;
   name: string;
   layout_array: ValuesArray;

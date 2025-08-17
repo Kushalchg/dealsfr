@@ -60,7 +60,7 @@ const BannerPage = () => {
     formData.append("banner_type", "custom");
 
     try {
-      addToast("Saving banner...", "loading");
+      // addToast("Saving banner...", "loading");
       dispatch(createBanner(formData));
       addToast("Banner saved successfully!", "success");
       setBannerName("");
@@ -134,7 +134,7 @@ const BannerPage = () => {
           </form>
         </CardContent>
       </Card>
-      <div className="fixed top-4 right-4 space-y-2">
+      <div className="fixed bottom-4 right-4 space-y-2">
         {toasts.map((toast) => (
           <Toast
             key={toast.id}

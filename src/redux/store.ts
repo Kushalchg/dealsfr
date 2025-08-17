@@ -1,8 +1,8 @@
-import bannerReducer from "./features/userData/bannerSlice";
-import layoutReducer from "./features/userData/layoutSlice"
-import discountReducer from "./features/userData/discountSlice"
-import userReducer from "./features/userData/userSlice";
 import { configureStore } from "@reduxjs/toolkit";
+import bannerReducer from "./features/banner/bannerSlice";
+import discountReducer from "./features/discount/discountSlice";
+import layoutReducer from "./features/layout/layoutSlice";
+import userReducer from "./features/user/userSlice";
 
 export const makeStore = () => {
   return configureStore({

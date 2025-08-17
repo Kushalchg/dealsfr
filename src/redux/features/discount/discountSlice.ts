@@ -1,11 +1,18 @@
+import { createDiscount, getDiscount } from "@/redux/actions/discount";
+import {
+  CreateDiscountResponse,
+  DiscountItem,
+} from "@/redux/features/discount/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DiscountItem } from "@/model/discount";
-import { getDiscount } from "@/redux/actions/discount";
 
 interface DiscountState {
   discountData: DiscountItem[] | null;
   discountLoading: boolean;
   discountError: string | null;
+
+  //create discount
+  createDiscountData: CreateDiscountResponse | null;
+  createDiscountLoading: boolean;
 }
 
 // Initial state
@@ -13,6 +20,9 @@ const initialState: DiscountState = {
   discountData: null,
   discountLoading: false,
   discountError: null,
+
+  createDiscountData: null,
+  createDiscountLoading: false,
 };
 
 const discountSlice = createSlice({
@@ -42,6 +52,24 @@ const discountSlice = createSlice({
           state.discountData = null;
           state.discountLoading = false;
 
+          state.discountError = action.payload || "Failed to fetch discounts";
+        }
+      )
+      //reducers for creating new disocunts
+      .addCase(createDiscount.pending, (state) => {
+        state.createDiscountLoading = true;
+        state.discountError = null;
+      })
+      .addCase(createDiscount.fulfilled, (state, action: any) => {
+        state.createDiscountLoading = false;
+        state.createDiscountData = action.payload;
+        state.discountError = null;
+      })
+      .addCase(
+        createDiscount.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.createDiscountData = null;
+          state.createDiscountLoading = false;
           state.discountError = action.payload || "Failed to fetch discounts";
         }
       );

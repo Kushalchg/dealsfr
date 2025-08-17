@@ -1,10 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { loginUser, registerUser, logoutUser } from "../../actions/user_api/user";
-import { getUser } from "../../actions/user_api/getUserData";
-import { UserState } from "../../../model/userState";
-import { GetUserData } from "../../../model/userData";
 import { MeApiResponse } from "../../../model/meApiResponse";
-
+import { GetUserData } from "../../../model/userData";
+import { UserState } from "../../../model/userState";
+import { getUser } from "../../actions/user_api/getUserData";
+import {
+  loginUser,
+  logoutUser,
+  registerUser,
+} from "../../actions/user_api/user";
 
 const initialState: UserState = {
   user: null,
@@ -20,12 +23,12 @@ const userSlice = createSlice({
   name: "userData",
   initialState,
   reducers: {
-    "resetUserState": (state) => {
+    resetUserState: (state) => {
       state.user = null;
       state.stores = [];
       state.loading = false;
       state.error = null;
-    }
+    },
   },
   extraReducers(builder) {
     builder
@@ -41,7 +44,6 @@ const userSlice = createSlice({
           state.accessToken = action.payload.access;
           state.refreshToken = action.payload.refresh;
           state.isAuthenticated = true;
-
         }
       )
       .addCase(loginUser.rejected, (state, action) => {
@@ -54,10 +56,13 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<GetUserData>) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
+      .addCase(
+        registerUser.fulfilled,
+        (state, action: PayloadAction<GetUserData>) => {
+          state.loading = false;
+          state.user = action.payload;
+        }
+      )
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Registration failed";
@@ -83,24 +88,24 @@ const userSlice = createSlice({
 
       // meResponse
       .addCase(getUser.pending, (state) => {
-        state.loading = true
-        state.error = null
+        state.loading = true;
+        state.error = null;
       })
       .addCase(
         getUser.fulfilled,
         (state, action: PayloadAction<MeApiResponse>) => {
-          state.loading = false
-          const { store, ...userData } = action.payload
-          state.user = userData
-          state.stores = Array.isArray(store) ? store : []
-          state.isAuthenticated = true
+          state.loading = false;
+          const { store, ...userData } = action.payload;
+          state.user = userData;
+          state.stores = Array.isArray(store) ? store : [];
+          state.isAuthenticated = true;
         }
       )
       .addCase(getUser.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload || "Failed to fetch user data"
-        state.isAuthenticated = false
-      })
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch user data";
+        state.isAuthenticated = false;
+      });
   },
 });
 

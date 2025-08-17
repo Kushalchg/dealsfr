@@ -1,6 +1,5 @@
-
 import api from "@/lib/interceptor";
-import { LayoutItem } from "@/model/layoutPreview";
+import { LayoutCreateRequest, LayoutItem } from "@/redux/features/layout/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 
@@ -19,17 +18,17 @@ export const getLayout = createAsyncThunk<
   }
 });
 
-// export const createLayout = createAsyncThunk<
-//   AxiosResponse<LayoutItem>,
-//   LayoutFormData,
-//   { rejectValue: string }
-// >("userData/discount/get", async (discountData, thunkAPI) => {
-//   try {
-//     const response = await api.post("/api/discounts/", discountData);
-//     return response.data;
-//   } catch (error: any) {
-//     return thunkAPI.rejectWithValue(
-//       error.response?.data?.message || error.message || "Registration failed"
-//     );
-//   }
-// });
+export const createLayout = createAsyncThunk<
+  AxiosResponse<LayoutItem>,
+  LayoutCreateRequest,
+  { rejectValue: string }
+>("userData/discount/get", async (discountData, thunkAPI) => {
+  try {
+    const response = await api.post("/api/discounts/", discountData);
+    return response;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || error.message || "Registration failed"
+    );
+  }
+});

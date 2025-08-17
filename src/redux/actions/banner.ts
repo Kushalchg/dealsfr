@@ -1,5 +1,5 @@
 import api from "@/lib/interceptor";
-import { BannerItem } from "@/model/banner";
+import { BannerItem } from "@/redux/features/banner/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
 

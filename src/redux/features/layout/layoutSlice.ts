@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { LayoutItem } from "@/model/layoutPreview";
 import { getLayout } from "@/redux/actions/layout";
+import { LayoutItem } from "@/redux/features/layout/types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface LayoutState {
   layoutData: LayoutItem[] | null;

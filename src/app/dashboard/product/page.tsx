@@ -1,9 +1,15 @@
 "use client"
+import { getSubCategory } from "@/redux/actions/category";
+import { useAppDispatch } from "@/redux/hooks";
 import React, { useEffect, useMemo, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 
-
 export default function ProductsPage(): JSX.Element {
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    dispatch(getSubCategory())
+  }, [])
 
   interface Product {
     id: string;
@@ -164,7 +170,6 @@ export default function ProductsPage(): JSX.Element {
     if (editingId === id) resetForm();
   }
 
-  // --- UI ---
   return (
     <div className="min-h-screen" style={{ background: "#111827" }}>
       <div className="mx-auto max-w-6xl p-6 text-slate-100">
@@ -256,7 +261,7 @@ export default function ProductsPage(): JSX.Element {
                     <input
                       type="number"
                       inputMode="decimal"
-                      step="0.01"
+                      step="1"
                       className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-slate-500"
                       value={form.price}
                       onChange={(e) =>

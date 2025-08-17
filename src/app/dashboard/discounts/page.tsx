@@ -1,11 +1,22 @@
 "use client"
-import React from "react"
+import React, { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useDispatch } from "react-redux"
+import { getBanner } from "@/redux/actions/banner"
+import { useAppDispatch, useAppSelector } from "@/redux/hooks"
+import { getDiscount } from "@/redux/actions/discount"
+import { DiscountCard } from "@/app/_components/discount/DiscountCard"
 
 const StoreManager = () => {
+  const dispatch = useAppDispatch()
+  const { discountData, discountLoading } = useAppSelector((s) => s.discount) ?? [];
 
-  // const stores = useSelector((s: RootState) => s.userData.stores) ?? [];
+  useEffect(() => {
+    dispatch(getDiscount())
+  }, [])
+
+  console.log("discount", discountData)
 
   return (
     <div className="p-6">
@@ -15,6 +26,19 @@ const StoreManager = () => {
           <Button>Add Discount</Button>
         </Link>
       </div>
+
+      <div className="w-full my-8">
+        {discountData && !discountLoading ?
+          discountData.results.map((item, index) => {
+            return (
+              <div className="my-8" key={index.toString()} >
+                <DiscountCard {...item} />
+              </div>
+            )
+          }) : null
+        }
+      </div>
+
 
     </div>
   )

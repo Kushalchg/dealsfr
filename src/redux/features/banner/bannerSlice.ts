@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BannerItem } from "@/model/banner";
 import { getBanner } from "@/redux/actions/banner";
+import { BannerItem } from "@/redux/features/banner/types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface BannerState {
   bannerData: BannerItem[] | null;
   bannerLoading: boolean;

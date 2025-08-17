@@ -1,22 +1,28 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect, useRef } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, Eye, EyeOff } from "lucide-react"
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
-import { registerUser } from "@/redux/actions/user_api/user"
-import type { SetUserData } from "@/model/userData"
-import { useToast } from "@/components/ui/toast-manager"
-import { resetUserState } from "@/redux/features/userData/userSlice";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/toast-manager";
+import type { SetUserData } from "@/model/userData";
+import { registerUser } from "@/redux/actions/user_api/user";
+import { resetUserState } from "@/redux/features/user/userSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 
 interface RegisterPageProps {
-  userType: "STORE_ADMIN" | "CUSTOMER"
+  userType: "STORE_ADMIN" | "CUSTOMER";
 }
 
 export default function RegisterPage({ userType }: RegisterPageProps) {
@@ -27,78 +33,80 @@ export default function RegisterPage({ userType }: RegisterPageProps) {
     phone_number: "",
     password: "",
     confirm_password: "",
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const dispatch = useAppDispatch()
-  const router = useRouter()
-  const { addToast } = useToast()
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { addToast } = useToast();
   const errorToastShown = useRef(false);
   const successToastShown = useRef(false);
 
-  const { loading, error, user } = useAppSelector((state) => state.userData)
+  const { loading, error, user } = useAppSelector((state) => state.userData);
 
   useEffect(() => {
     if (error && !errorToastShown.current) {
       addToast({ type: "error", message: error });
       errorToastShown.current = true;
     }
-      if (!error) {
-    errorToastShown.current = false;
-  }
-  }, [error, addToast])
+    if (!error) {
+      errorToastShown.current = false;
+    }
+  }, [error, addToast]);
 
-useEffect(() => {
-  if (user && !successToastShown.current) {
-    addToast({
-      type: "success",
-      message: `Account created successfully! Redirecting to ${
-        userType === "STORE_ADMIN" ? "store" : "customer"
-      } login...`,
-    });
-    successToastShown.current = true;
+  useEffect(() => {
+    if (user && !successToastShown.current) {
+      addToast({
+        type: "success",
+        message: `Account created successfully! Redirecting to ${
+          userType === "STORE_ADMIN" ? "store" : "customer"
+        } login...`,
+      });
+      successToastShown.current = true;
 
-    setTimeout(() => {
-      router.push("/loginUser");
-      dispatch(resetUserState());
-    }, 2000);
-  
-  }
-  if (!user) {
-    successToastShown.current = false;
-  }
-}, [user, addToast, router, userType]);
+      setTimeout(() => {
+        router.push("/loginUser");
+        dispatch(resetUserState());
+      }, 2000);
+    }
+    if (!user) {
+      successToastShown.current = false;
+    }
+  }, [user, addToast, router, userType]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (formData.password !== formData.confirm_password) {
-      addToast({ type: "error", message: "Passwords do not match" })
-      return
+      addToast({ type: "error", message: "Passwords do not match" });
+      return;
     }
 
     // Enforce required fields based on user type
     if (userType === "STORE_ADMIN" && !formData.email) {
-      addToast({ type: "error", message: "Email is required for store admin" })
-      return
+      addToast({ type: "error", message: "Email is required for store admin" });
+      return;
     }
 
     if (userType === "CUSTOMER" && !formData.phone_number) {
-      addToast({ type: "error", message: "Phone number is required for customer" })
-      return
+      addToast({
+        type: "error",
+        message: "Phone number is required for customer",
+      });
+      return;
     }
-    const {phone_number, ...payload} = formData;
-    dispatch(registerUser({ ...payload }))
-  }
+    const { phone_number, ...payload } = formData;
+    dispatch(registerUser({ ...payload }));
+  };
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
@@ -122,7 +130,9 @@ useEffect(() => {
         <Card className="bg-gray-900 border-none">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center text-white">
-              {userType === "STORE_ADMIN" ? "Create Store Account" : "Create Customer Account"}
+              {userType === "STORE_ADMIN"
+                ? "Create Store Account"
+                : "Create Customer Account"}
             </CardTitle>
             <CardDescription className="text-center text-gray-400">
               {userType === "STORE_ADMIN"
@@ -134,7 +144,9 @@ useEffect(() => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="first_name" className="text-gray-300">First Name</Label>
+                <Label htmlFor="first_name" className="text-gray-300">
+                  First Name
+                </Label>
                 <Input
                   id="first_name"
                   name="first_name"
@@ -148,7 +160,9 @@ useEffect(() => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="last_name" className="text-gray-300">Last Name</Label>
+                <Label htmlFor="last_name" className="text-gray-300">
+                  Last Name
+                </Label>
                 <Input
                   id="last_name"
                   name="last_name"
@@ -164,7 +178,9 @@ useEffect(() => {
               {/* Conditionally show only one field */}
               {userType === "STORE_ADMIN" && (
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-300">Email</Label>
+                  <Label htmlFor="email" className="text-gray-300">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     name="email"
@@ -180,7 +196,9 @@ useEffect(() => {
 
               {userType === "CUSTOMER" && (
                 <div className="space-y-2">
-                  <Label htmlFor="phone_number" className="text-gray-300">Phone Number</Label>
+                  <Label htmlFor="phone_number" className="text-gray-300">
+                    Phone Number
+                  </Label>
                   <Input
                     id="phone_number"
                     name="phone_number"
@@ -196,7 +214,9 @@ useEffect(() => {
 
               {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-300">Password</Label>
+                <Label htmlFor="password" className="text-gray-300">
+                  Password
+                </Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -212,7 +232,9 @@ useEffect(() => {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -221,7 +243,9 @@ useEffect(() => {
 
               {/* Confirm Password */}
               <div className="space-y-2">
-                <Label htmlFor="confirm_password" className="text-gray-300">Confirm Password</Label>
+                <Label htmlFor="confirm_password" className="text-gray-300">
+                  Confirm Password
+                </Label>
                 <div className="relative">
                   <Input
                     id="confirm_password"
@@ -237,9 +261,17 @@ useEffect(() => {
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
-                    aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                    aria-label={
+                      showConfirmPassword
+                        ? "Hide confirm password"
+                        : "Show confirm password"
+                    }
                   >
-                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showConfirmPassword ? (
+                      <EyeOff size={16} />
+                    ) : (
+                      <Eye size={16} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -275,5 +307,5 @@ useEffect(() => {
         </Card>
       </div>
     </div>
-  )
+  );
 }

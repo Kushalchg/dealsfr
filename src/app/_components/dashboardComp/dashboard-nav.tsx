@@ -1,11 +1,9 @@
 "use client";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Layers, Menu } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,12 +19,10 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { clearTokens } from "@/lib/auth";
 import { RootState } from "@/redux/store";
@@ -40,25 +36,11 @@ import {
   Percent,
   Settings,
   Store,
-  Users,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
-interface DashboardNavProps {
-  user: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    profile_image: string;
-    store: {
-      name: string;
-      logo: string;
-    };
-  };
-  children: React.ReactNode;
-}
 
 const navigationItems = [
   {
@@ -83,7 +65,7 @@ const navigationItems = [
   },
   {
     title: "Banner",
-    icon: Percent,
+    icon: Layers,
     href: "/dashboard/banner",
   },
   {
@@ -123,7 +105,7 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  const userInitials = "kushal";
+  const userInitials = "Avatar";
 
   return (
     <SidebarProvider>
@@ -212,6 +194,7 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
 
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Fixed Header */}
+        {/**/}
         <header className="fixed top-0 left-0 right-0 z-50 bg-gray-800 border-none px-3 md:px-6 py-3 md:py-4 shadow-lg flex items-center justify-between">
           <div className="flex items-center space-x-2 md:space-x-4">
             {/* Mobile menu button (hamburger) - only on mobile */}

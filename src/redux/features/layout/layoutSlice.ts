@@ -1,4 +1,4 @@
-import { getLayout } from "@/redux/actions/layout";
+import { getLayout } from "@/redux/features/layout/layout";
 import { LayoutItem } from "@/redux/features/layout/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 

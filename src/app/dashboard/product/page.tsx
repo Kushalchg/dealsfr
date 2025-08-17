@@ -1,15 +1,15 @@
-"use client"
-import { getSubCategory } from "@/redux/actions/category";
+"use client";
+import { getSubCategory } from "@/redux/features/category/category";
 import { useAppDispatch } from "@/redux/hooks";
 import React, { useEffect, useMemo, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 
 export default function ProductsPage(): JSX.Element {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getSubCategory())
-  }, [])
+    dispatch(getSubCategory());
+  }, []);
 
   interface Product {
     id: string;
@@ -33,7 +33,9 @@ export default function ProductsPage(): JSX.Element {
   // --- Utils ---
   function uid() {
     return (
-      Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8)
+      Date.now().toString(36) +
+      "-" +
+      Math.random().toString(36).slice(2, 8)
     ).toUpperCase();
   }
 
@@ -94,10 +96,14 @@ export default function ProductsPage(): JSX.Element {
 
     switch (sort) {
       case "productName_asc":
-        items = items.sort((a, b) => a.productName.localeCompare(b.productName));
+        items = items.sort((a, b) =>
+          a.productName.localeCompare(b.productName)
+        );
         break;
       case "productName_desc":
-        items = items.sort((a, b) => b.productName.localeCompare(a.productName));
+        items = items.sort((a, b) =>
+          b.productName.localeCompare(a.productName)
+        );
         break;
       case "price_asc":
         items = items.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
@@ -174,10 +180,13 @@ export default function ProductsPage(): JSX.Element {
     <div className="min-h-screen" style={{ background: "#111827" }}>
       <div className="mx-auto max-w-6xl p-6 text-slate-100">
         <header className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Products</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            Products
+          </h1>
           <button
             onClick={() => {
-              if (!confirm("Clear ALL products? This cannot be undone.")) return;
+              if (!confirm("Clear ALL products? This cannot be undone."))
+                return;
               setProducts([]);
             }}
             className="rounded-2xl border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 active:scale-[.99]"
@@ -203,12 +212,15 @@ export default function ProductsPage(): JSX.Element {
               </div>
               <form onSubmit={handleSubmit} className="p-4 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium">Main Category</label>
+                  <label className="block text-sm font-medium">
+                    Main Category
+                  </label>
                   <select
                     className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-500"
                     value={form.mainCategory}
                     onChange={(e) => {
-                      const mc = e.target.value as (typeof MAIN_CATEGORIES)[number];
+                      const mc = e.target
+                        .value as (typeof MAIN_CATEGORIES)[number];
                       setForm((f) => ({
                         ...f,
                         mainCategory: mc,
@@ -225,7 +237,9 @@ export default function ProductsPage(): JSX.Element {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium">Sub Category</label>
+                  <label className="block text-sm font-medium">
+                    Sub Category
+                  </label>
                   <select
                     className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-500"
                     value={form.subCategory}
@@ -233,18 +247,20 @@ export default function ProductsPage(): JSX.Element {
                       setForm((f) => ({ ...f, subCategory: e.target.value }))
                     }
                   >
-                    {SUB_CATEGORIES[form.mainCategory as keyof typeof SUB_CATEGORIES].map(
-                      (sc) => (
-                        <option key={sc} value={sc}>
-                          {sc}
-                        </option>
-                      )
-                    )}
+                    {SUB_CATEGORIES[
+                      form.mainCategory as keyof typeof SUB_CATEGORIES
+                    ].map((sc) => (
+                      <option key={sc} value={sc}>
+                        {sc}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium">Product Name</label>
+                  <label className="block text-sm font-medium">
+                    Product Name
+                  </label>
                   <input
                     className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-slate-500"
                     value={form.productName}
@@ -265,24 +281,33 @@ export default function ProductsPage(): JSX.Element {
                       className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-slate-500"
                       value={form.price}
                       onChange={(e) =>
-                        setForm((f) => ({ ...f, price: Number(e.target.value) }))
+                        setForm((f) => ({
+                          ...f,
+                          price: Number(e.target.value),
+                        }))
                       }
                       placeholder="e.g., 49.99"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium">Image URL</label>
+                    <label className="block text-sm font-medium">
+                      Image URL
+                    </label>
                     <input
                       className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-slate-500"
                       value={form.image}
-                      onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, image: e.target.value }))
+                      }
                       placeholder="https://..."
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium">Description</label>
+                  <label className="block text-sm font-medium">
+                    Description
+                  </label>
                   <textarea
                     rows={3}
                     className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-slate-500"
@@ -359,16 +384,22 @@ export default function ProductsPage(): JSX.Element {
                       />
                     ) : null}
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold leading-tight truncate">{p.productName}</h3>
+                      <h3 className="font-semibold leading-tight truncate">
+                        {p.productName}
+                      </h3>
                       <p className="text-sm text-slate-400 truncate">
                         {p.mainCategory} • {p.subCategory}
                       </p>
                       {p.description && (
-                        <p className="mt-2 text-sm text-slate-300 line-clamp-3">{p.description}</p>
+                        <p className="mt-2 text-sm text-slate-300 line-clamp-3">
+                          {p.description}
+                        </p>
                       )}
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold">{p.price.toFixed(2)}</div>
+                      <div className="text-lg font-bold">
+                        {p.price.toFixed(2)}
+                      </div>
                       <div className="mt-3 flex items-center gap-2">
                         <button
                           onClick={() => handleEdit(p)}
@@ -398,7 +429,10 @@ export default function ProductsPage(): JSX.Element {
         </div>
 
         <footer className="mt-12 text-center text-xs text-slate-500">
-          <p>Data is stored in your browser (localStorage). Refreshing or navigating away will keep it intact.</p>
+          <p>
+            Data is stored in your browser (localStorage). Refreshing or
+            navigating away will keep it intact.
+          </p>
         </footer>
       </div>
     </div>

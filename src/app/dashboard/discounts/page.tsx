@@ -1,22 +1,23 @@
-"use client"
-import React, { useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { useDispatch } from "react-redux"
-import { getBanner } from "@/redux/actions/banner"
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
-import { getDiscount } from "@/redux/actions/discount"
-import { DiscountCard } from "@/app/_components/discount/DiscountCard"
+"use client";
+import { DiscountCard } from "@/app/_components/discount/DiscountCard";
+import { Button } from "@/components/ui/button";
+import { getBanner } from "@/redux/features/banner/banner";
+import { getDiscount } from "@/redux/features/discount/discount";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import Link from "next/link";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const StoreManager = () => {
-  const dispatch = useAppDispatch()
-  const { discountData, discountLoading } = useAppSelector((s) => s.discount) ?? [];
+  const dispatch = useAppDispatch();
+  const { discountData, discountLoading } =
+    useAppSelector((s) => s.discount) ?? [];
 
   useEffect(() => {
-    dispatch(getDiscount())
-  }, [])
+    dispatch(getDiscount());
+  }, []);
 
-  console.log("discount", discountData)
+  console.log("discount", discountData);
 
   return (
     <div className="p-6">
@@ -28,20 +29,18 @@ const StoreManager = () => {
       </div>
 
       <div className="w-full my-8">
-        {discountData && !discountLoading ?
-          discountData.results.map((item, index) => {
-            return (
-              <div className="my-8" key={index.toString()} >
-                <DiscountCard {...item} />
-              </div>
-            )
-          }) : null
-        }
+        {discountData && !discountLoading
+          ? discountData.results.map((item, index) => {
+              return (
+                <div className="my-8" key={index.toString()}>
+                  <DiscountCard {...item} />
+                </div>
+              );
+            })
+          : null}
       </div>
-
-
     </div>
-  )
-}
+  );
+};
 
-export default StoreManager
+export default StoreManager;

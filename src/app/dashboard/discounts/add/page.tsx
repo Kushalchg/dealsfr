@@ -1,11 +1,6 @@
-"use client"
-import { getBanner } from "@/redux/actions/banner";
-import { createDiscount } from "@/redux/actions/discount";
-import { getLayout } from "@/redux/actions/layout";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+"use client";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -22,9 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Toast } from "@/components/ui/toast";
+import { getBanner } from "@/redux/features/banner/banner";
+import { createDiscount } from "@/redux/features/discount/discount";
+import { getLayout } from "@/redux/features/layout/layout";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 // Define form data type
 export interface DiscountFormData {
@@ -40,9 +40,11 @@ export interface DiscountFormData {
 
 export default function AddDiscountForm() {
   const dispatch = useAppDispatch();
-  const { layoutData } = useAppSelector(state => state.layout);
-  const { bannerData } = useAppSelector(state => state.banner);
-  const { createDiscountData, discountError } = useAppSelector(s => s.discount)
+  const { layoutData } = useAppSelector((state) => state.layout);
+  const { bannerData } = useAppSelector((state) => state.banner);
+  const { createDiscountData, discountError } = useAppSelector(
+    (s) => s.discount
+  );
 
   useEffect(() => {
     dispatch(getBanner());
@@ -71,15 +73,14 @@ export default function AddDiscountForm() {
     if (createDiscountData) {
       if (createDiscountData.status === 201) {
         // Toast({ message: "Successfully created a discount", onClose: () => { } })
-        console.log("Successfylly creaed a dicount")
+        console.log("Successfylly creaed a dicount");
       }
     }
 
     if (createDiscountData) {
       // Toast({ message: "Error while creating hte discount data.", onClose: () => { } })
     }
-
-  }, [createDiscountData, discountError])
+  }, [createDiscountData, discountError]);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -90,7 +91,10 @@ export default function AddDiscountForm() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 {/* Title */}
                 <FormField
                   control={form.control}
@@ -116,7 +120,10 @@ export default function AddDiscountForm() {
                   name="description"
                   rules={{
                     required: "Description is required",
-                    maxLength: { value: 500, message: "Description is too long" },
+                    maxLength: {
+                      value: 500,
+                      message: "Description is too long",
+                    },
                   }}
                   render={({ field }) => (
                     <FormItem>
@@ -145,7 +152,11 @@ export default function AddDiscountForm() {
                       <FormItem className="w-full">
                         <FormLabel>Start Date</FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" className="w-full" {...field} />
+                          <Input
+                            type="datetime-local"
+                            className="w-full"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -161,7 +172,11 @@ export default function AddDiscountForm() {
                       <FormItem className="w-full  ">
                         <FormLabel>End Date</FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" className="w-full justify-between color-white" {...field} />
+                          <Input
+                            type="datetime-local"
+                            className="w-full justify-between color-white"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -179,7 +194,10 @@ export default function AddDiscountForm() {
                     render={({ field }) => (
                       <FormItem className="w-full">
                         <FormLabel>Discount Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select discount type" />
@@ -233,18 +251,25 @@ export default function AddDiscountForm() {
                     render={({ field }) => (
                       <FormItem className="w-full">
                         <FormLabel>Banner</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select a banner" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {bannerData && bannerData.map((banner) => (
-                              <SelectItem key={banner.id} value={banner.id.toString()}>
-                                {banner.banner_name}
-                              </SelectItem>
-                            ))}
+                            {bannerData &&
+                              bannerData.map((banner) => (
+                                <SelectItem
+                                  key={banner.id}
+                                  value={banner.id.toString()}
+                                >
+                                  {banner.banner_name}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -260,18 +285,25 @@ export default function AddDiscountForm() {
                     render={({ field }) => (
                       <FormItem className="w-full">
                         <FormLabel>Layout</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select a layout" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {layoutData && layoutData.map((layout) => (
-                              <SelectItem key={layout.id} value={layout.id!.toString()}>
-                                {layout.layout_array}
-                              </SelectItem>
-                            ))}
+                            {layoutData &&
+                              layoutData.map((layout) => (
+                                <SelectItem
+                                  key={layout.id}
+                                  value={layout.id!.toString()}
+                                >
+                                  {layout.layout_array}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />

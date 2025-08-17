@@ -1,4 +1,7 @@
-import { createDiscount, getDiscount } from "@/redux/actions/discount";
+import {
+  createDiscount,
+  getDiscount,
+} from "@/redux/features/discount/discount";
 import {
   CreateDiscountResponse,
   DiscountItem,

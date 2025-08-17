@@ -1,4 +1,7 @@
-import { getMainCategory, getSubCategory } from "@/redux/actions/category";
+import {
+  getMainCategory,
+  getSubCategory,
+} from "@/redux/features/category/category";
 import {
   MainCategoryItem,
   SubCategoryItem,

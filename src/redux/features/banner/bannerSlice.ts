@@ -1,4 +1,4 @@
-import { getBanner } from "@/redux/actions/banner";
+import { getBanner } from "@/redux/features/banner/banner";
 import { BannerItem } from "@/redux/features/banner/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface BannerState {

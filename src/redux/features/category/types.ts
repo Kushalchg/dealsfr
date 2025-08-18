@@ -6,5 +6,6 @@ export interface MainCategoryItem {
 export interface SubCategoryItem {
   id: number;
   name: string,
+  main_category: string,
   created_by: 0,
 }

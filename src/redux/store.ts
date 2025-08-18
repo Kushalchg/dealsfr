@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import bannerReducer from "./features/banner/bannerSlice";
-import discountReducer from "./features/discount/discountSlice";
-import layoutReducer from "./features/layout/layoutSlice";
-import userReducer from "./features/user/userSlice";
+import bannerReducer from "@/redux/features/banner/bannerSlice";
+import discountReducer from "@/redux/features/discount/discountSlice";
+import layoutReducer from "@/redux/features/layout/layoutSlice";
+import userReducer from "@/redux/features/user/userSlice";
+import categoryReducer from "@/redux/features/category/categorySlice";
+import productReducer from '@/redux/features/product/productSlice'
 
 export const makeStore = () => {
   return configureStore({
@@ -11,6 +13,8 @@ export const makeStore = () => {
       banner: bannerReducer,
       discount: discountReducer,
       layout: layoutReducer,
+      category: categoryReducer,
+      product: productReducer,
     },
   });
 };

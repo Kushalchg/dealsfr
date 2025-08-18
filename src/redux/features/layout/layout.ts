@@ -1,5 +1,5 @@
 import api from "@/lib/interceptor";
-import { LayoutCreateRequest, LayoutItem } from "@/redux/features/layout/types";
+import { LayoutItem } from "@/redux/features/layout/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 
@@ -20,7 +20,7 @@ export const getLayout = createAsyncThunk<
 
 export const createLayout = createAsyncThunk<
   AxiosResponse<LayoutItem>,
-  LayoutCreateRequest,
+  void,
   { rejectValue: string }
 >("userData/discount/get", async (discountData, thunkAPI) => {
   try {

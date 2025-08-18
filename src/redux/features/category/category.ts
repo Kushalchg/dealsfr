@@ -8,7 +8,7 @@ import axios, { AxiosResponse } from "axios";
 
 // Get Main Category
 export const getMainCategory = createAsyncThunk<
-  AxiosResponse<MainCategoryItem[]>,
+  MainCategoryItem[],
   void,
   { rejectValue: string }
 >("category/mainCategory/get", async (_, thunkAPI) => {
@@ -20,15 +20,15 @@ export const getMainCategory = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to fetch main categories"
+      error.message ||
+      "Failed to fetch main categories"
     );
   }
 });
 
 // Create Main Category
 export const createMainCategory = createAsyncThunk<
-  AxiosResponse<MainCategoryItem>,
+  MainCategoryItem[],
   FormData,
   { rejectValue: string }
 >("category/mainCategory/create", async (categoryData, thunkAPI) => {
@@ -40,8 +40,8 @@ export const createMainCategory = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to create main category"
+      error.message ||
+      "Failed to create main category"
     );
   }
 });
@@ -64,8 +64,8 @@ export const updateMainCategory = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to update main category"
+      error.message ||
+      "Failed to update main category"
     );
   }
 });
@@ -84,8 +84,8 @@ export const deleteMainCategory = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to delete main category"
+      error.message ||
+      "Failed to delete main category"
     );
   }
 });
@@ -96,7 +96,7 @@ export const deleteMainCategory = createAsyncThunk<
 
 // Get Sub Category
 export const getSubCategory = createAsyncThunk<
-  AxiosResponse<SubCategoryItem[]>,
+  SubCategoryItem[],
   void,
   { rejectValue: string }
 >("category/subCategory/get", async (_, thunkAPI) => {
@@ -108,8 +108,8 @@ export const getSubCategory = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to fetch sub categories"
+      error.message ||
+      "Failed to fetch sub categories"
     );
   }
 });
@@ -128,8 +128,8 @@ export const createSubCategory = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to create sub category"
+      error.message ||
+      "Failed to create sub category"
     );
   }
 });
@@ -148,8 +148,8 @@ export const updateSubCategory = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to update sub category"
+      error.message ||
+      "Failed to update sub category"
     );
   }
 });
@@ -168,8 +168,8 @@ export const deleteSubCategory = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to delete sub category"
+      error.message ||
+      "Failed to delete sub category"
     );
   }
 });

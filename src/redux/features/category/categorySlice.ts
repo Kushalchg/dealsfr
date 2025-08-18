@@ -41,7 +41,7 @@ const categorySlice = createSlice({
         state.categoryLoading = true;
         state.categoryError = null;
       })
-      .addCase(getMainCategory.fulfilled, (state, action: any) => {
+      .addCase(getMainCategory.fulfilled, (state, action) => {
         state.categoryLoading = false;
         state.mainCategoryData = action.payload;
         state.categoryError = null;
@@ -60,7 +60,7 @@ const categorySlice = createSlice({
         state.categoryLoading = true;
         state.categoryError = null;
       })
-      .addCase(getSubCategory.fulfilled, (state, action: any) => {
+      .addCase(getSubCategory.fulfilled, (state, action) => {
         state.categoryLoading = false;
         state.subCategoryData = action.payload;
         state.categoryError = null;

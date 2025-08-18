@@ -1,14 +1,15 @@
-import { DiscountFormData } from "@/app/dashboard/discounts/add/page";
 import api from "@/lib/interceptor";
 import {
-  CreateDiscountResponse,
+  CreateDiscountPayload,
   DiscountItem,
+  GetDiscountResponse,
+  UpdateDiscountPayload,
 } from "@/redux/features/discount/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 
 export const getDiscount = createAsyncThunk<
-  AxiosResponse<DiscountItem[]>,
+  GetDiscountResponse[],
   void,
   { rejectValue: string }
 >("userData/discount/get", async (_, thunkAPI) => {
@@ -18,15 +19,15 @@ export const getDiscount = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to get discounts."
+      error.message ||
+      "Failed to get discounts."
     );
   }
 });
 
 export const createDiscount = createAsyncThunk<
-  AxiosResponse<CreateDiscountResponse>,
-  DiscountFormData,
+  AxiosResponse<DiscountItem>,
+  CreateDiscountPayload,
   { rejectValue: string }
 >("userData/discount/create", async (discountData, thunkAPI) => {
   try {
@@ -38,15 +39,15 @@ export const createDiscount = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to create discount."
+      error.message ||
+      "Failed to create discount."
     );
   }
 });
 
 export const updateDiscount = createAsyncThunk<
-  AxiosResponse<CreateDiscountResponse>,
-  DiscountFormData,
+  AxiosResponse<DiscountItem>,
+  UpdateDiscountPayload,
   { rejectValue: string }
 >("userData/discount/update", async (discountData, thunkAPI) => {
   try {
@@ -57,15 +58,15 @@ export const updateDiscount = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to update discount."
+      error.message ||
+      "Failed to update discount."
     );
   }
 });
 
 export const deleteDiscount = createAsyncThunk<
-  AxiosResponse<CreateDiscountResponse>,
-  DiscountFormData,
+  AxiosResponse<{ message: string }>,
+  number,
   { rejectValue: string }
 >("userData/discount/delete", async (id, thunkAPI) => {
   try {
@@ -74,8 +75,8 @@ export const deleteDiscount = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to delete discount."
+      error.message ||
+      "Failed to delete discount."
     );
   }
 });

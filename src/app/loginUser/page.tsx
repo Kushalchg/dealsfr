@@ -1,84 +1,90 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Eye, EyeOff, Store, User } from "lucide-react"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
-import { loginUser } from "@/redux/actions/user_api/user"
-import { getUser } from "@/redux/actions/user_api/getUserData"
-import { UserLoginRequest } from "../../model/userData"
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getUser } from "@/redux/features/user/getUserData";
+import { loginUser } from "@/redux/features/user/user";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { Eye, EyeOff, Loader2, Store, User } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { UserLoginRequest } from "../../model/userData";
 
 export default function LoginPage() {
-  const [loginType, setLoginType] = useState<"store" | "customer">("store")
+  const [loginType, setLoginType] = useState<"store" | "customer">("store");
   const [formData, setFormData] = useState<UserLoginRequest>({
     email: "",
     phone_number: "",
     password: "",
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [isAuthenticating, setIsAuthenticating] = useState(false)
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  const router = useRouter()
-  const dispatch = useAppDispatch()
-  const { loading, error, isAuthenticated, user } = useAppSelector((state) => state.userData)
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { loading, error, isAuthenticated, user } = useAppSelector(
+    (state) => state.userData
+  );
 
   // Clear local error state when redux error changes
-  const [localError, setLocalError] = useState<string | null>(null)
+  const [localError, setLocalError] = useState<string | null>(null);
   useEffect(() => {
-    setLocalError(error)
-  }, [error])
+    setLocalError(error);
+  }, [error]);
 
   // Handle complete authentication flow
   useEffect(() => {
     if (isAuthenticated && user && !loading) {
       // User is fully authenticated and data is loaded, redirect to dashboard
-      router.push("/dashboard")
+      router.push("/dashboard");
     }
-  }, [isAuthenticated, user, loading, router])
+  }, [isAuthenticated, user, loading, router]);
 
   // Handle authentication process
   useEffect(() => {
     if (isAuthenticated && !user && !loading) {
       // Login successful but user data not loaded yet, fetch user data
-      dispatch(getUser())
+      dispatch(getUser());
     }
-  }, [isAuthenticated, user, loading, dispatch])
+  }, [isAuthenticated, user, loading, dispatch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsAuthenticating(true)
-    setLocalError(null)
+    e.preventDefault();
+    setIsAuthenticating(true);
+    setLocalError(null);
 
     // Prepare login payload according to user type
     const payload = {
       password: formData.password,
-      ...(loginType === "store"
-        ? { email: formData.email, phone_number: "" }
-        : { phone_number: formData.phone_number, email: "" }),
-    }
+      email: formData.email,
+    };
 
     try {
-      await dispatch(loginUser(payload)).unwrap()
+      await dispatch(loginUser(payload)).unwrap();
     } catch (error) {
-      setIsAuthenticating(false)
+      setIsAuthenticating(false);
     }
-  }
+  };
 
   // Show loading state during authentication
   if (isAuthenticating || (isAuthenticated && !user) || loading) {
@@ -107,13 +113,14 @@ export default function LoginPage() {
                 <Loader2 className="h-12 w-12 animate-spin text-emerald-400" />
                 <div className="text-center">
                   <h2 className="text-xl font-semibold text-white mb-2">
-                    {isAuthenticated && !user ? "Loading your dashboard..." : "Signing you in..."}
+                    {isAuthenticated && !user
+                      ? "Loading your dashboard..."
+                      : "Signing you in..."}
                   </h2>
                   <p className="text-gray-400">
-                    {isAuthenticated && !user 
+                    {isAuthenticated && !user
                       ? "Please wait while we load your account information"
-                      : "Please wait while we verify your credentials"
-                    }
+                      : "Please wait while we verify your credentials"}
                   </p>
                 </div>
               </div>
@@ -121,7 +128,7 @@ export default function LoginPage() {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -145,7 +152,9 @@ export default function LoginPage() {
 
         <Card className="bg-gray-900 border-none">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-white">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center text-white">
+              Welcome Back
+            </CardTitle>
             <CardDescription className="text-center text-gray-400">
               {loginType === "store"
                 ? "Sign in to access your own store dashboard"
@@ -156,14 +165,18 @@ export default function LoginPage() {
           <CardContent>
             {localError && (
               <Alert className="mb-4 bg-red-900 border-red-700">
-                <AlertDescription className="text-red-200">{localError}</AlertDescription>
+                <AlertDescription className="text-red-200">
+                  {localError}
+                </AlertDescription>
               </Alert>
             )}
 
             {/* Tabs for Store / Customer */}
             <Tabs
               value={loginType}
-              onValueChange={(value) => setLoginType(value as "store" | "customer")}
+              onValueChange={(value) =>
+                setLoginType(value as "store" | "customer")
+              }
               className="mb-6"
             >
               <TabsList className="grid w-full grid-cols-2 bg-gray-800 rounded-full">
@@ -238,7 +251,9 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -246,7 +261,10 @@ export default function LoginPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <Link href="/forgot-password" className="text-sm text-emerald-400 hover:text-emerald-300">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-emerald-400 hover:text-emerald-300"
+                >
                   Forgot password?
                 </Link>
               </div>
@@ -270,7 +288,14 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-gray-400">
                 {"Don't have an account?"}{" "}
-                <Link href={loginType === "store" ?"/register/registerStoreAdmin" : "/register/registerCustomer"} className="text-emerald-400 hover:text-emerald-300 font-medium">
+                <Link
+                  href={
+                    loginType === "store"
+                      ? "/register/registerStoreAdmin"
+                      : "/register/registerCustomer"
+                  }
+                  className="text-emerald-400 hover:text-emerald-300 font-medium"
+                >
                   Create account
                 </Link>
               </p>
@@ -279,5 +304,5 @@ export default function LoginPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

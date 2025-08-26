@@ -1,6 +1,11 @@
-import api from "../../../lib/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { SetUserData, GetUserData, UserLoginResponse, UserLoginRequest } from "../../../model/userData";
+import api from "../../../lib/axios";
+import {
+  GetUserData,
+  SetUserData,
+  UserLoginRequest,
+  UserLoginResponse,
+} from "../../../model/userData";
 
 export const registerUser = createAsyncThunk<
   GetUserData,
@@ -44,31 +49,33 @@ export const loginUser = createAsyncThunk<
   }
 });
 
+export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
+  "userData/logoutUser",
+  async (_, thunkAPI) => {
+    try {
+      const refreshToken = localStorage.getItem("refresh_token");
 
-export const logoutUser = createAsyncThunk<
-  void,
-  void,
-  { rejectValue: string }
->("userData/logoutUser", async (_, thunkAPI) => {
-  try {
-    const refreshToken = localStorage.getItem("refresh_token");
+      if (!refreshToken) {
+        throw new Error("Login Error!");
+      }
 
-    if (!refreshToken) {
-      throw new Error("Login Error!");
+      await api.post(
+        "/api/accounts/logout/",
+        { refresh: refreshToken },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      // Clear localStorage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+      }
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message || "Logout failed"
+      );
     }
-
-    await api.post("/api/accounts/logout/", { refresh: refreshToken }, {
-      headers: { "Content-Type": "application/json" },
-    });
-
-    // Clear localStorage
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-    }
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Logout failed"
-    );
   }
-});
+);

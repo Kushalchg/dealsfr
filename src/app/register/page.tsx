@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast-manager";
 import type { SetUserData } from "@/model/userData";
-import { registerUser } from "@/redux/actions/user_api/user";
+import { registerUser } from "@/redux/features/user/user";
 import { resetUserState } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Eye, EyeOff, Loader2 } from "lucide-react";

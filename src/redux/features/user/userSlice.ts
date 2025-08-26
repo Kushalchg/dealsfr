@@ -2,12 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MeApiResponse } from "../../../model/meApiResponse";
 import { GetUserData } from "../../../model/userData";
 import { UserState } from "../../../model/userState";
-import { getUser } from "../../actions/user_api/getUserData";
-import {
-  loginUser,
-  logoutUser,
-  registerUser,
-} from "../../actions/user_api/user";
+import { getUser } from "./getUserData";
+import { loginUser, logoutUser, registerUser } from "./user";
 
 const initialState: UserState = {
   user: null,

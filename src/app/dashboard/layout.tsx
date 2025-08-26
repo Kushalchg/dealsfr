@@ -1,7 +1,7 @@
 "use client";
 import { DashboardNav } from "@/app/_components/dashboardComp/dashboard-nav";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getUser } from "@/redux/actions/user_api/getUserData";
+import { getUser } from "@/redux/features/user/getUserData";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -17,8 +17,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     dispatch(getUser());
-  }, [])
-
+  }, []);
 
   // Show loading skeleton while fetching user data
   if (loading && !user) {

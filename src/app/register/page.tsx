@@ -11,9 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast-manager";
-import type { SetUserData } from "@/model/userData";
 import { registerUser } from "@/redux/features/user/user";
-import { resetUserState } from "@/redux/features/user/userSlice";
+import { resetAllUserState } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -26,7 +25,7 @@ interface RegisterPageProps {
 }
 
 export default function RegisterPage({ userType }: RegisterPageProps) {
-  const [formData, setFormData] = useState<SetUserData>({
+  const [formData, setFormData] = useState<any>({
     first_name: "",
     last_name: "",
     email: "",
@@ -43,37 +42,36 @@ export default function RegisterPage({ userType }: RegisterPageProps) {
   const errorToastShown = useRef(false);
   const successToastShown = useRef(false);
 
-  const { loading, error, user } = useAppSelector((state) => state.userData);
+  const { userStateLoading, userRegisterError, userRegisterData } = useAppSelector((state) => state.userData);
 
   useEffect(() => {
-    if (error && !errorToastShown.current) {
-      addToast({ type: "error", message: error });
+    if (userRegisterError && !errorToastShown.current) {
+      addToast({ type: "error", message: userRegisterError });
       errorToastShown.current = true;
     }
-    if (!error) {
+    if (!userRegisterError) {
       errorToastShown.current = false;
     }
-  }, [error, addToast]);
+  }, [userRegisterError, addToast]);
 
   useEffect(() => {
-    if (user && !successToastShown.current) {
+    if (userRegisterData && !successToastShown.current) {
       addToast({
         type: "success",
-        message: `Account created successfully! Redirecting to ${
-          userType === "STORE_ADMIN" ? "store" : "customer"
-        } login...`,
+        message: `Account created successfully! Redirecting to ${userType === "STORE_ADMIN" ? "store" : "customer"
+          } login...`,
       });
       successToastShown.current = true;
 
       setTimeout(() => {
         router.push("/loginUser");
-        dispatch(resetUserState());
+        dispatch(resetAllUserState());
       }, 2000);
     }
-    if (!user) {
+    if (!userRegisterData) {
       successToastShown.current = false;
     }
-  }, [user, addToast, router, userType]);
+  }, [userRegisterData, addToast, router, userType]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -278,10 +276,10 @@ export default function RegisterPage({ userType }: RegisterPageProps) {
 
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={userStateLoading}
                 className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-md transition-colors btn-glow"
               >
-                {loading ? (
+                {userStateLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating Account...

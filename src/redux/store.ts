@@ -5,6 +5,7 @@ import layoutReducer from "@/redux/features/layout/layoutSlice";
 import userReducer from "@/redux/features/user/userSlice";
 import categoryReducer from "@/redux/features/category/categorySlice";
 import productReducer from '@/redux/features/product/productSlice'
+import storeReducer from '@/redux/features/store/storeSlice'
 
 export const makeStore = () => {
   return configureStore({
@@ -15,6 +16,7 @@ export const makeStore = () => {
       layout: layoutReducer,
       category: categoryReducer,
       product: productReducer,
+      store: storeReducer,
     },
   });
 };

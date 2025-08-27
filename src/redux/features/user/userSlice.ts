@@ -1,109 +1,137 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MeApiResponse } from "../../../model/meApiResponse";
-import { GetUserData } from "../../../model/userData";
-import { UserState } from "../../../model/userState";
-import { getUser } from "./getUserData";
 import { loginUser, logoutUser, registerUser } from "./user";
+import { getUser } from "./user";
+import { GetUserResponse, UserLoginResponse } from "./types";
+import { AxiosResponse } from "axios";
 
-const initialState: UserState = {
-  user: null,
-  stores: [],
-  accessToken: null,
-  refreshToken: null,
+interface UserSliceInitialState {
+  userStateLoading: boolean;
+
+  userLoginData: AxiosResponse<UserLoginResponse> | null;
+  userLoginError: string | null;
+  isAuthenticated: boolean;
+
+  userRegisterData: AxiosResponse<{ message: string }> | null;
+  userRegisterError: string | null;
+
+  userLogoutError: string | null;
+
+  getUserData: GetUserResponse | null;
+  getUserError: string | null;
+}
+
+const initialState: UserSliceInitialState = {
+  userStateLoading: false,
+
+  userLoginData: null,
+  userLoginError: null,
   isAuthenticated: false,
-  loading: false,
-  error: null,
+
+  userRegisterData: null,
+  userRegisterError: null,
+
+  userLogoutError: null,
+
+  getUserData: null,
+  getUserError: null,
 };
 
 const userSlice = createSlice({
   name: "userData",
   initialState,
   reducers: {
-    resetUserState: (state) => {
-      state.user = null;
-      state.stores = [];
-      state.loading = false;
-      state.error = null;
+    resetAllUserState: () => initialState,
+    resetRegisterState: (state) => {
+      state.userRegisterData = null;
+      state.userRegisterError = null;
+    },
+    resetLoginState: (state) => {
+      state.userLoginData = null;
+      state.userLoginError = null;
+      state.isAuthenticated = false;
+    },
+    resetLogoutState: (state) => {
+      state.userLogoutError = null;
+    },
+    resetGetUserInfoState: (state) => {
+      state.getUserData = null;
+      state.getUserError = null;
     },
   },
   extraReducers(builder) {
     builder
+      // Register
+      .addCase(registerUser.pending, (state) => {
+        state.userStateLoading = true;
+        state.userRegisterError = null;
+      })
+      .addCase(registerUser.fulfilled,
+        (state, action: PayloadAction<AxiosResponse<{ message: string }>>) => {
+          state.userStateLoading = false;
+          state.userRegisterData = action.payload;
+        }
+      )
+      .addCase(registerUser.rejected, (state, action) => {
+        state.userStateLoading = false;
+        state.userRegisterError = (action.payload as string) || "Registration failed";
+      })
+
       // Login
       .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.userStateLoading = true;
+        state.userLoginError = null;
       })
-      .addCase(
-        loginUser.fulfilled,
-        (state, action: PayloadAction<{ access: string; refresh: string }>) => {
-          state.loading = false;
-          state.accessToken = action.payload.access;
-          state.refreshToken = action.payload.refresh;
+      .addCase(loginUser.fulfilled,
+        (state, action: PayloadAction<AxiosResponse<UserLoginResponse>>) => {
+          state.userStateLoading = false;
+          state.userLoginData = action.payload;
           state.isAuthenticated = true;
         }
       )
       .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Login failed";
-      })
-
-      // Register
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        registerUser.fulfilled,
-        (state, action: PayloadAction<GetUserData>) => {
-          state.loading = false;
-          state.user = action.payload;
-        }
-      )
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Registration failed";
+        state.userStateLoading = false;
+        state.userLoginError = (action.payload as string) || "Login failed";
       })
 
       // Logout
       .addCase(logoutUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.userStateLoading = true;
+        state.userLogoutError = null;
       })
       .addCase(logoutUser.fulfilled, (state) => {
-        state.loading = false;
-        state.user = null;
-        state.accessToken = null;
-        state.refreshToken = null;
-        state.isAuthenticated = false;
-        state.stores = [];
+        state.userStateLoading = false;
+        state.userLoginData = null;
+        state.userRegisterData = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Logout failed";
+        state.userStateLoading = false;
+        state.userLogoutError = (action.payload as string) || "Logout failed";
       })
 
-      // meResponse
+      // Get User
       .addCase(getUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.userStateLoading = true;
+        state.getUserError = null;
       })
-      .addCase(
-        getUser.fulfilled,
-        (state, action: PayloadAction<MeApiResponse>) => {
-          state.loading = false;
-          const { store, ...userData } = action.payload;
-          state.user = userData;
-          state.stores = Array.isArray(store) ? store : [];
-          state.isAuthenticated = true;
+      .addCase(getUser.fulfilled,
+        (state, action: PayloadAction<GetUserResponse>) => {
+          state.userStateLoading = false;
+          state.getUserData = action.payload;
         }
       )
       .addCase(getUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Failed to fetch user data";
-        state.isAuthenticated = false;
+        state.userStateLoading = false;
+        state.getUserError = (action.payload as string) || "Failed to fetch user data";
       });
   },
 });
 
-export const { resetUserState } = userSlice.actions;
+export const {
+  resetAllUserState,
+  resetRegisterState,
+  resetLoginState,
+  resetLogoutState,
+  resetGetUserInfoState,
+} = userSlice.actions;
+
 export default userSlice.reducer;

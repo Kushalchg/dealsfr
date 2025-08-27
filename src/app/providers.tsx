@@ -5,14 +5,6 @@ import { AppStore, makeStore } from "@/redux/store";
 import { useRef } from "react";
 import { Provider } from "react-redux";
 
-// export function Providers({ children }: { children: React.ReactNode }) {
-//   return (
-//     <Provider store={store}>
-//       <ToastProvider>{children}</ToastProvider>
-//     </Provider>
-//   );
-// }
-
 export default function StoreProvider({
   children,
 }: {

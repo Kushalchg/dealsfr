@@ -73,7 +73,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-16 md:py-20 lg:py-32 overflow-hidden">
+      <section className="relative py-16 md:py-20 lg:py-32 overflow-hidden ">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-teal-500/10" />
         <div className="container mx-auto px-4 lg:px-6 relative">
           <div className="max-w-5xl mx-auto text-center">
@@ -81,9 +81,9 @@ export default function LandingPage() {
               🎯 Connecting Local Communities
             </Badge>
 
-            <h1 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 leading-tight px-2">
+            <h1 className="text-3xl font-geist-sans font-bold md:text-5xl lg:text-6xl xl:text-7xl   mb-4 md:mb-6 leading-tight px-2">
               Discover{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 animate-pulse">
+              <span className="text-transparent font-geist-sans bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 animate-pulse">
                 Local Deals
               </span>
               , Effortlessly.
@@ -95,25 +95,25 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mb-8 md:mb-12 px-4">
               <Link
-              href={'/register/registerCustomer'}>
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg shadow-lg hover:shadow-emerald-500/25 transform hover:scale-105 transition-all duration-300 cursor-pointer"
-              >
-                <User className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-                Join as Customer
-              </Button>
+                href={'/register/registerCustomer'}>
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg shadow-lg hover:shadow-emerald-500/25 transform hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
+                  <User className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                  Join as Customer
+                </Button>
               </Link>
               <Link
-              href={'/register/registerStore'}>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-2 border-gray-700 text-gray-300 hover:bg-gradient-to-r hover:from-emerald-500/20 hover:to-teal-500/20 hover:border-emerald-400 hover:text-emerald-400 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg bg-transparent transform hover:scale-105 transition-all duration-300 cursor-pointer"
-              >
-                <Building2 className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-                Register Store
-              </Button>
+                href={'/register/registerStore'}>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-gray-700 text-gray-300 hover:bg-gradient-to-r hover:from-emerald-500/20 hover:to-teal-500/20 hover:border-emerald-400 hover:text-emerald-400 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg bg-transparent transform hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
+                  <Building2 className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                  Register Store
+                </Button>
               </Link>
             </div>
 
@@ -165,7 +165,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section id="features" className="py-20 bg-gray-800/30">
+      <section id="features" className="py-20 bg-gray-800/30  ">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
@@ -611,7 +611,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-16 md:py-20 bg-gray-800/30">
+      <section id="pricing" className="py-16 md:py-20 bg-gray-800/30 ">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">

@@ -1,15 +1,14 @@
 "use client";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { SetStoreData } from "@/model/store";
 import FileUploadField from "@/app/_components/fileUpload";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast-manager";
 import api from "@/lib/axios";
+import { RootState } from "@/redux/store";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
@@ -21,7 +20,7 @@ export default function StoreRegistrationPage() {
   const { addToast } = useToast();
 
   // Initialize form state with SetStoreData model
-  const [form, setForm] = useState<SetStoreData>({
+  const [form, setForm] = useState<any>({
     name: store?.name || "",
     store_type: store?.store_type || "DEPT",
     city: store?.city || "",
@@ -72,7 +71,7 @@ export default function StoreRegistrationPage() {
     }
 
     const target = e.target;
-    const { name, value } = target as { name: keyof SetStoreData; value: string };
+    const { name, value } = target as { name:any; value: string };
 
     // Handle file inputs
     if (

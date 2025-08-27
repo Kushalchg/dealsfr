@@ -1,23 +1,21 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { AxiosResponse } from "axios";
+import authApi from "@/lib/interceptor";
 import api from "../../../lib/axios";
-import {
-  GetUserData,
-  SetUserData,
-  UserLoginRequest,
-  UserLoginResponse,
-} from "../../../model/userData";
+import { GetUserResponse, UserLoginPayload, UserLoginResponse, UserRegisterPayload } from "./types";
 
 export const registerUser = createAsyncThunk<
-  GetUserData,
-  SetUserData,
+  AxiosResponse<{ message: string }>,
+  UserRegisterPayload,
   { rejectValue: string }
->("userData/registerUser", async (userData, thunkAPI) => {
+>("user/registerUser", async (userData, thunkAPI) => {
   try {
+
     const response = await api.post("/api/accounts/register/", userData, {
       headers: { "Content-Type": "application/json" },
     });
 
-    return response.data;
+    return response;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || error.message || "Registration failed"
@@ -26,12 +24,12 @@ export const registerUser = createAsyncThunk<
 });
 
 export const loginUser = createAsyncThunk<
-  UserLoginResponse,
-  UserLoginRequest,
+  AxiosResponse<UserLoginResponse>,
+  UserLoginPayload,
   { rejectValue: string }
->("userData/loginUser", async (loginData, thunkAPI) => {
+>("user/loginUser", async (loginData, thunkAPI) => {
   try {
-    const response = await api.post("/api/accounts/login/", loginData, {
+    const response = await api.post<UserLoginResponse>("/api/accounts/login/", loginData, {
       headers: { "Content-Type": "application/json" },
     });
 
@@ -41,7 +39,7 @@ export const loginUser = createAsyncThunk<
       localStorage.setItem("refresh_token", response.data.data.refresh);
     }
 
-    return response.data;
+    return response;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || error.message || "Login failed"
@@ -49,8 +47,9 @@ export const loginUser = createAsyncThunk<
   }
 });
 
+
 export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
-  "userData/logoutUser",
+  "user/logoutUser",
   async (_, thunkAPI) => {
     try {
       const refreshToken = localStorage.getItem("refresh_token");
@@ -79,3 +78,25 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
     }
   }
 );
+
+export const getUser = createAsyncThunk<
+  GetUserResponse,
+  void,
+  { rejectValue: string }>(
+    "user/getUser",
+    async (_, thunkAPI) => {
+      try {
+        const response = await authApi.get("/api/me/", {
+          headers: { "Content-Type": "application/json" },
+        });
+
+        return response.data;
+      } catch (error: any) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data?.message ||
+          error.message ||
+          "Error while getting user detial"
+        );
+      }
+    }
+  );

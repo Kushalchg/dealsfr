@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toast } from "@/components/ui/toast";
 import { createBanner, getBanner } from "@/redux/features/banner/banner";
-import { getUser } from "@/redux/features/user/getUserData";
+import { getUser } from "@/redux/features/user/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { getURL } from "next/dist/shared/lib/utils";

@@ -77,7 +77,7 @@ const navigationItems = [
 
 export function DashboardNav({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user, loading, error } = useSelector(
+  const { user, userStateLoading: loading, error } = useSelector(
     (state: RootState) => state.userData
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

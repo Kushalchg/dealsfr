@@ -1,3 +1,4 @@
+import { brockmann } from '@/app/fonts';
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
@@ -7,7 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      
+      fontFamily: {
+        brockmann: ["var(--font-brockmann)"], // uses your local font
+      },
     },
   },
   plugins: [],

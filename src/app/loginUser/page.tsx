@@ -12,7 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getUser } from "@/redux/features/user/getUserData";
+
+import { getUser } from "@/redux/features/user/user";
 import { loginUser } from "@/redux/features/user/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Eye, EyeOff, Loader2, Store, User } from "lucide-react";
@@ -20,11 +21,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { UserLoginRequest } from "../../model/userData";
 
 export default function LoginPage() {
   const [loginType, setLoginType] = useState<"store" | "customer">("store");
-  const [formData, setFormData] = useState<UserLoginRequest>({
+  const [formData, setFormData] = useState<any>({
     email: "",
     phone_number: "",
     password: "",
@@ -34,31 +34,31 @@ export default function LoginPage() {
 
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { loading, error, isAuthenticated, user } = useAppSelector(
+  const { userStateLoading, isAuthenticated, userLoginError, userLoginData } = useAppSelector(
     (state) => state.userData
   );
 
   // Clear local error state when redux error changes
   const [localError, setLocalError] = useState<string | null>(null);
   useEffect(() => {
-    setLocalError(error);
-  }, [error]);
+    setLocalError(userLoginError);
+  }, [userLoginError]);
 
   // Handle complete authentication flow
   useEffect(() => {
-    if (isAuthenticated && user && !loading) {
-      // User is fully authenticated and data is loaded, redirect to dashboard
+    if (userLoginData?.status === 200) {
+
       router.push("/dashboard");
     }
-  }, [isAuthenticated, user, loading, router]);
+  }, [isAuthenticated, userLoginData]);
 
   // Handle authentication process
   useEffect(() => {
-    if (isAuthenticated && !user && !loading) {
+    if (isAuthenticated && !userLoginData && !userStateLoading) {
       // Login successful but user data not loaded yet, fetch user data
       dispatch(getUser());
     }
-  }, [isAuthenticated, user, loading, dispatch]);
+  }, [isAuthenticated, userLoginData, userStateLoading, dispatch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -78,16 +78,11 @@ export default function LoginPage() {
       password: formData.password,
       email: formData.email,
     };
-
-    try {
-      await dispatch(loginUser(payload)).unwrap();
-    } catch (error) {
-      setIsAuthenticating(false);
-    }
+    dispatch(loginUser(payload));
   };
 
   // Show loading state during authentication
-  if (isAuthenticating || (isAuthenticated && !user) || loading) {
+  if (isAuthenticating || (isAuthenticated && !userLoginData) || userStateLoading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
         <div className="w-full max-w-md text-center">
@@ -113,12 +108,12 @@ export default function LoginPage() {
                 <Loader2 className="h-12 w-12 animate-spin text-emerald-400" />
                 <div className="text-center">
                   <h2 className="text-xl font-semibold text-white mb-2">
-                    {isAuthenticated && !user
+                    {isAuthenticated && !userLoginData
                       ? "Loading your dashboard..."
                       : "Signing you in..."}
                   </h2>
                   <p className="text-gray-400">
-                    {isAuthenticated && !user
+                    {isAuthenticated && !userLoginData
                       ? "Please wait while we load your account information"
                       : "Please wait while we verify your credentials"}
                   </p>

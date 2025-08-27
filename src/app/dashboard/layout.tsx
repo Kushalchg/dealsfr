@@ -1,7 +1,8 @@
 "use client";
+
 import { DashboardNav } from "@/app/_components/dashboardComp/dashboard-nav";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getUser } from "@/redux/features/user/getUserData";
+import { getUser } from "@/redux/features/user/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -13,14 +14,16 @@ export default function DashboardLayout({
 }) {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { user, loading, error } = useAppSelector((state) => state.userData);
+  const { getUserData, userStateLoading, getUserError } = useAppSelector(
+    (state) => state.userData
+  );
 
   useEffect(() => {
     dispatch(getUser());
   }, []);
 
   // Show loading skeleton while fetching user data
-  if (loading && !user) {
+  if (userStateLoading && !getUserData) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="space-y-4 w-full max-w-md">
@@ -33,14 +36,14 @@ export default function DashboardLayout({
   }
 
   // Show error state
-  if (error && !user) {
+  if (getUserError && !getUserData) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-white mb-2">
             Authentication Error
           </h2>
-          <p className="text-gray-400 mb-4">{error}</p>
+          <p className="text-gray-400 mb-4">{getUserError}</p>
           <button
             onClick={() => router.push("/loginUser")}
             className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
@@ -53,8 +56,8 @@ export default function DashboardLayout({
   }
 
   // Don't render anything if still loading or no user
-  if (!user) {
-    return null;
+  if (!getUserData) {
+    return null
   }
 
   return <DashboardNav>{children}</DashboardNav>;

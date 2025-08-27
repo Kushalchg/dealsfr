@@ -1,9 +1,6 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Layers, Menu } from "lucide-react";
-import Link from "next/link";
-import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,16 +28,19 @@ import {
   Bell,
   HelpCircle,
   Home,
+  Layers,
   LogOut,
+  Menu,
   Package,
   Percent,
   Settings,
   Store,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-
 
 const navigationItems = [
   {
@@ -77,9 +77,12 @@ const navigationItems = [
 
 export function DashboardNav({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user, userStateLoading: loading, error } = useSelector(
-    (state: RootState) => state.userData
-  );
+  const {
+    getUserData,
+    userLoginData,
+    userStateLoading: loading,
+    userLoginError,
+  } = useSelector((state: RootState) => state.userData);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -101,7 +104,7 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
   }
 
   // Don't render if no user - let layout handle this
-  if (!user) {
+  if (!getUserData) {
     return null;
   }
 
@@ -144,8 +147,8 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
               >
                 <Avatar className="h-7 w-7 md:h-9 md:w-9 flex-shrink-0">
                   <AvatarImage
-                    src={user.profile_image || "/placeholder.svg"}
-                    alt={`${user.first_name} ${user.last_name}`}
+                    src={getUserData.profile_image || "/placeholder.svg"}
+                    alt={`${getUserData.first_name} ${getUserData.last_name}`}
                   />
                   <AvatarFallback className="bg-emerald-600 text-white text-xs md:text-sm font-semibold">
                     {userInitials}
@@ -153,10 +156,10 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
                 </Avatar>
                 <div className="flex-1 text-left min-w-0">
                   <div className="text-xs md:text-sm font-semibold truncate text-white">
-                    {user.first_name} {user.last_name}
+                    {getUserData.first_name} {getUserData.last_name}
                   </div>
                   <div className="text-xs text-gray-400 truncate">
-                    {user.email}
+                    {getUserData.email}
                   </div>
                 </div>
               </Button>
@@ -282,8 +285,8 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
                   >
                     <Avatar className="h-9 w-9">
                       <AvatarImage
-                        src={user.profile_image || "/placeholder.svg"}
-                        alt={`${user.first_name} ${user.last_name}`}
+                        src={getUserData.profile_image || "/placeholder.svg"}
+                        alt={`${getUserData.first_name} ${getUserData.last_name}`}
                       />
                       <AvatarFallback className="bg-emerald-600 text-white text-sm font-semibold">
                         {userInitials}
@@ -291,10 +294,10 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
                     </Avatar>
                     <div className="flex-1 min-w-0 text-left">
                       <div className="text-white font-semibold truncate">
-                        {user.first_name} {user.last_name}
+                        {getUserData.first_name} {getUserData.last_name}
                       </div>
                       <div className="text-xs text-gray-400 truncate">
-                        {user.email}
+                        {getUserData.email}
                       </div>
                     </div>
                   </Button>

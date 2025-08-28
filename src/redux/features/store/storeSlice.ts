@@ -1,19 +1,30 @@
-import { StoreItem } from "./types";
+import { GetStoreDetailResponse, StoreItem } from "./types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getStore } from "./store";
+import { getStoreDetail, getStoreList } from "./store";
 
 interface StoreState {
-  storeData: StoreItem[] | null;
-  storeLoading: boolean;
-  storeError: string | null;
+  storeStateLoading: boolean;
+
+  //getting the list of store (probably useful for customer)
+  storeListData: StoreItem[] | null;
+  storeListError: string | null;
+
+  //getting the detail of specific store (for store admin) 
+  storeDetailData: GetStoreDetailResponse | null;
+  storeDetailError: string | null;
 
 }
 
 // Initial state
 const initialState: StoreState = {
-  storeData: null,
-  storeLoading: false,
-  storeError: null,
+  storeStateLoading: false,
+
+  storeListData: null,
+  storeListError: null,
+
+
+  storeDetailData: null,
+  storeDetailError: null,
 
 };
 
@@ -23,29 +34,48 @@ const storeSlice = createSlice({
   initialState,
   reducers: {
     clearStoreState(state) {
-      state.storeError = null;
-      state.storeData = null;
-      state.storeLoading = false;
+      state.storeListError = null;
+      state.storeListData = null;
+      state.storeStateLoading = false;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getStore.pending, (state) => {
-        state.storeLoading = true;
-        state.storeError = null;
+      //to get the list of store this is only applicable for customer side
+      .addCase(getStoreList.pending, (state) => {
+        state.storeStateLoading = true;
+        state.storeListError = null;
       })
-      .addCase(getStore.fulfilled, (state, action) => {
-        state.storeLoading = false;
-        state.storeData = action.payload.results;
-        state.storeError = null;
+      .addCase(getStoreList.fulfilled, (state, action) => {
+        state.storeStateLoading = false;
+        state.storeListData = action.payload.results;
+        state.storeListError = null;
       })
       .addCase(
-        getStore.rejected,
+        getStoreList.rejected,
         (state, action: PayloadAction<string | undefined>) => {
-          state.storeData = null;
-          state.storeLoading = false;
+          state.storeListData = null;
+          state.storeStateLoading = false;
 
-          state.storeError = action.payload || "Failed to fetch store";
+          state.storeListError = action.payload || "Failed to fetch store";
+        }
+      )
+      //for getting the detail of the store by store admin
+      .addCase(getStoreDetail.pending, (state) => {
+        state.storeStateLoading = true;
+        state.storeDetailError = null;
+      })
+      .addCase(getStoreDetail.fulfilled, (state, action: PayloadAction<GetStoreDetailResponse>) => {
+        state.storeStateLoading = false;
+        state.storeDetailData = action.payload;
+        state.storeDetailError = null;
+      })
+      .addCase(
+        getStoreDetail.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.storeDetailData = null;
+          state.storeStateLoading = false;
+          state.storeDetailError = action.payload || "Failed to fetch store";
         }
       )
 

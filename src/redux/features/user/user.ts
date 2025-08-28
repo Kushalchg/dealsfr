@@ -5,7 +5,7 @@ import api from "../../../lib/axios";
 import { GetUserResponse, UserLoginPayload, UserLoginResponse, UserRegisterPayload } from "./types";
 
 export const registerUser = createAsyncThunk<
-  AxiosResponse<{ message: string }>,
+  { message: string },
   UserRegisterPayload,
   { rejectValue: string }
 >("user/registerUser", async (userData, thunkAPI) => {
@@ -15,7 +15,7 @@ export const registerUser = createAsyncThunk<
       headers: { "Content-Type": "application/json" },
     });
 
-    return response;
+    return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || error.message || "Registration failed"
@@ -24,7 +24,7 @@ export const registerUser = createAsyncThunk<
 });
 
 export const loginUser = createAsyncThunk<
-  AxiosResponse<UserLoginResponse>,
+  UserLoginResponse,
   UserLoginPayload,
   { rejectValue: string }
 >("user/loginUser", async (loginData, thunkAPI) => {
@@ -39,7 +39,7 @@ export const loginUser = createAsyncThunk<
       localStorage.setItem("refresh_token", response.data.data.refresh);
     }
 
-    return response;
+    return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || error.message || "Login failed"

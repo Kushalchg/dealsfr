@@ -7,11 +7,11 @@ import { AxiosResponse } from "axios";
 interface UserSliceInitialState {
   userStateLoading: boolean;
 
-  userLoginData: AxiosResponse<UserLoginResponse> | null;
+  userLoginData: UserLoginResponse | null;
   userLoginError: string | null;
   isAuthenticated: boolean;
 
-  userRegisterData: AxiosResponse<{ message: string }> | null;
+  userRegisterData: { message: string } | null;
   userRegisterError: string | null;
 
   userLogoutError: string | null;
@@ -66,7 +66,7 @@ const userSlice = createSlice({
         state.userRegisterError = null;
       })
       .addCase(registerUser.fulfilled,
-        (state, action: PayloadAction<AxiosResponse<{ message: string }>>) => {
+        (state, action: PayloadAction<{ message: string }>) => {
           state.userStateLoading = false;
           state.userRegisterData = action.payload;
         }
@@ -82,7 +82,7 @@ const userSlice = createSlice({
         state.userLoginError = null;
       })
       .addCase(loginUser.fulfilled,
-        (state, action: PayloadAction<AxiosResponse<UserLoginResponse>>) => {
+        (state, action: PayloadAction<UserLoginResponse>) => {
           state.userStateLoading = false;
           state.userLoginData = action.payload;
           state.isAuthenticated = true;

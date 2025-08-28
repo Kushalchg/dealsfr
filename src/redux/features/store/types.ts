@@ -14,10 +14,54 @@ export interface StoreItem {
   owner: number;
 }
 
-export interface GetStoreResponse {
+export interface GetStoreListResponse {
   count: number;
   next: string;
   previous: string;
   results: StoreItem[]
+}
+
+//to get the store details by providing specific store key
+interface SocialMedia {
+  platform: string;
+  url: string;
+  alt_text: string;
+}
+
+interface Branch {
+  id: number;
+  name: string;
+  city: string;
+  district: string;
+  address: string;
+  location_link: string;
+  latitude: string;
+  longitude: string;
+  distance_km: number;
+}
+
+export interface GetStoreDetailResponse {
+  id: number;
+  name: string;
+  description: string;
+  business_registration_number: string;
+  website: string;
+  phone: string;
+  email: string;
+  store_type: "DEPT" | string;
+  logo: string;
+  cover_image: string;
+  city: string;
+  district: string;
+  address: string;
+  location_link: string;
+  latitude: string;
+  longitude: string;
+  welcome_message: string;
+  slogan: string;
+  followers_count: number;
+  social_medias: SocialMedia[];
+  branches: Branch[];
+  owner: number;
 }
 

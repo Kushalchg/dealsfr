@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { getUser } from "@/redux/features/user/user";
 import { loginUser } from "@/redux/features/user/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -44,13 +43,14 @@ export default function LoginPage() {
     setLocalError(userLoginError);
   }, [userLoginError]);
 
-  // Handle complete authentication flow
+  // Handle complete authentication flow and get the storeDetail api
   useEffect(() => {
-    if (userLoginData?.status === 200) {
-
+    if (userLoginData != null) {
       router.push("/dashboard");
     }
   }, [isAuthenticated, userLoginData]);
+
+
 
   // Handle authentication process
   useEffect(() => {

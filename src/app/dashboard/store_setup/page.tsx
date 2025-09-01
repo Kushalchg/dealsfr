@@ -3,7 +3,8 @@ import FileUploadField from "@/app/_components/fileUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast-manager";
-import api from "@/lib/axios";
+import api from "@/lib/interceptor";
+import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -13,39 +14,39 @@ import { useSelector } from "react-redux";
 const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
 export default function StoreRegistrationPage() {
-  const user = useSelector((state: RootState) => state.userData.user);
-  const store = useSelector((state: RootState) => state.userData.stores[0]);
+  const { userData } = useAppSelector((state) => state.userData);
+  const { storeDetailData } = useAppSelector((state) => state.store);
 
   // Access the toast function
   const { addToast } = useToast();
 
   // Initialize form state with SetStoreData model
   const [form, setForm] = useState<any>({
-    name: store?.name || "",
-    store_type: store?.store_type || "DEPT",
-    city: store?.city || "",
-    district: store?.district || "",
-    location_link: store?.location_link || "",
-    address: store?.address || "",
-    phone: store?.phone || "",
-    email: store?.email || "",
+    name: storeDetailData?.name || "",
+    store_type: storeDetailData?.store_type || "DEPT",
+    city: storeDetailData?.city || "",
+    district: storeDetailData?.district || "",
+    location_link: storeDetailData?.location_link || "",
+    address: storeDetailData?.address || "",
+    phone: storeDetailData?.phone || "",
+    email: storeDetailData?.email || "",
     business_registration_number:
-      store?.business_registration_number || "",
-    documents: store?.documents || null,
-    cover_image: store?.cover_image || null,
-    bio: store?.bio || null,
-    logo: store?.logo || null,
+      storeDetailData?.business_registration_number || "",
+    documents: null,
+    cover_image: storeDetailData?.cover_image || null,
+    slogan: storeDetailData?.slogan || null,
+    logo: storeDetailData?.logo || null,
   });
 
   // Previews for image/pdf files
   const [logoPreview, setLogoPreview] = useState<string | null>(
-    store?.logo || null
+    storeDetailData?.logo || null
   );
   const [coverPreview, setCoverPreview] = useState<string | null>(
-    store?.cover_image || null
+    storeDetailData?.cover_image || null
   );
   const [documentPreview, setDocumentPreview] = useState<string | null>(
-    store?.documents || null
+    null
   );
   const [success, setSuccess] = useState(false);
 
@@ -58,7 +59,7 @@ export default function StoreRegistrationPage() {
   ) => {
     if (!e) {
       // Reset file fields if user clicks "remove"
-      setForm((prev) => ({
+      setForm((prev: any) => ({
         ...prev,
         logo: null,
         cover_image: null,
@@ -71,7 +72,7 @@ export default function StoreRegistrationPage() {
     }
 
     const target = e.target;
-    const { name, value } = target as { name:any; value: string };
+    const { name, value } = target as { name: any; value: string };
 
     // Handle file inputs
     if (
@@ -84,20 +85,20 @@ export default function StoreRegistrationPage() {
       reader.onloadend = () => {
         const result = reader.result as string;
         if (name === "logo") {
-          setForm((prev) => ({ ...prev, logo: file }));
+          setForm((prev: any) => ({ ...prev, logo: file }));
           setLogoPreview(result);
         } else if (name === "cover_image") {
-          setForm((prev) => ({ ...prev, cover_image: file }));
+          setForm((prev: any) => ({ ...prev, cover_image: file }));
           setCoverPreview(result);
         } else if (name === "documents") {
-          setForm((prev) => ({ ...prev, documents: file }));
+          setForm((prev: any) => ({ ...prev, documents: file }));
           setDocumentPreview(result);
         }
       };
       reader.readAsDataURL(file);
     } else {
       // Handle text/select/textarea inputs
-      setForm((prev) => ({ ...prev, [name]: value }));
+      setForm((prev: any) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -145,7 +146,7 @@ export default function StoreRegistrationPage() {
     );
     if (form.location_link)
       payload.append("location_link", form.location_link);
-    if (form.bio) payload.append("bio", form.bio);
+    if (form.slogan) payload.append("slogan", form.slogan);
     if (form.logo instanceof File) payload.append("logo", form.logo);
     if (form.documents instanceof File)
       payload.append("documents", form.documents);
@@ -175,21 +176,21 @@ export default function StoreRegistrationPage() {
     <div className="flex justify-center w-full">
       <div className="w-full max-w-5xl px-4">
         <Link
-          href="/dashboard/storeMgmt"
+          href="/dashboard"
           className="inline-flex items-center space-x-2 text-gray-400 hover:text-white mb-6 mt-8"
         >
           <ArrowLeft size={20} />
           <span className="text-lg font-medium">
-            Back to Store Management
+            Back to Dashboard
           </span>
         </Link>
         <h1 className="text-3xl font-bold text-white mb-6 mt-8 text-center">
-          {store ? "Update Your Store" : "Register Your Store"}
+          {storeDetailData ? "Update Your Store" : "Register Your Store"}
         </h1>
 
         {success ? (
           <div className="text-green-400 font-semibold text-center py-8">
-            Store {store ? "updated" : "registered"} successfully!
+            Store {storeDetailData ? "updated" : "registered"} successfully!
           </div>
         ) : (
           <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6 max-w-5xl mx-auto p-4">
@@ -378,12 +379,12 @@ export default function StoreRegistrationPage() {
                 )}
               </div>
 
-              {/* Bio */}
+              {/* Slogan */}
               <div className="md:col-span-2">
-                <label className="block mb-1 text-gray-300">Bio</label>
+                <label className="block mb-1 text-gray-300">Slogan</label>
                 <textarea
-                  name="bio"
-                  value={form.bio || ""}
+                  name="slogan"
+                  value={form.slogan || ""}
                   onChange={handleChange}
                   rows={3}
                   placeholder="Tell us about your store..."

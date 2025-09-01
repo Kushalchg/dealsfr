@@ -1,11 +1,11 @@
 import api from "@/lib/axios"
-import { UserLoginResponse } from "@/model/userData"
+import Cookies from "js-cookie"
 
 // ------------------
 // Token Utils
 // ------------------
 
-export const getStoredTokens = (): UserLoginResponse | null => {
+export const getStoredTokens = (): any | null => {
   if (typeof window === "undefined") return null
 
   const access = localStorage.getItem("access_token")
@@ -14,7 +14,7 @@ export const getStoredTokens = (): UserLoginResponse | null => {
   return access && refresh ? { access, refresh } : null
 }
 
-export const storeTokens = (tokens: UserLoginResponse) => {
+export const storeTokens = (tokens: any) => {
   if (typeof window === "undefined") return
 
   localStorage.setItem("access_token", tokens.access)
@@ -26,6 +26,8 @@ export const clearTokens = () => {
 
   localStorage.removeItem("access_token")
   localStorage.removeItem("refresh_token")
+  Cookies.remove('access_token')
+  Cookies.remove('refresh_token')
 }
 
 // ------------------

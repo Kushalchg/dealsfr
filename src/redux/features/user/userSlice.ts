@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { loginUser, logoutUser, registerUser } from "./user";
 import { getUser } from "./user";
 import { GetUserResponse, UserLoginResponse } from "./types";
-import { AxiosResponse } from "axios";
 
 interface UserSliceInitialState {
   userStateLoading: boolean;
@@ -16,8 +15,8 @@ interface UserSliceInitialState {
 
   userLogoutError: string | null;
 
-  getUserData: GetUserResponse | null;
-  getUserError: string | null;
+  userData: GetUserResponse | null;
+  userError: string | null;
 }
 
 const initialState: UserSliceInitialState = {
@@ -32,8 +31,8 @@ const initialState: UserSliceInitialState = {
 
   userLogoutError: null,
 
-  getUserData: null,
-  getUserError: null,
+  userData: null,
+  userError: null,
 };
 
 const userSlice = createSlice({
@@ -54,8 +53,8 @@ const userSlice = createSlice({
       state.userLogoutError = null;
     },
     resetGetUserInfoState: (state) => {
-      state.getUserData = null;
-      state.getUserError = null;
+      state.userData = null;
+      state.userError = null;
     },
   },
   extraReducers(builder) {
@@ -111,17 +110,17 @@ const userSlice = createSlice({
       // Get User
       .addCase(getUser.pending, (state) => {
         state.userStateLoading = true;
-        state.getUserError = null;
+        state.userError = null;
       })
       .addCase(getUser.fulfilled,
         (state, action: PayloadAction<GetUserResponse>) => {
           state.userStateLoading = false;
-          state.getUserData = action.payload;
+          state.userData = action.payload;
         }
       )
       .addCase(getUser.rejected, (state, action) => {
         state.userStateLoading = false;
-        state.getUserError = (action.payload as string) || "Failed to fetch user data";
+        state.userError = (action.payload as string) || "Failed to fetch user data";
       });
   },
 });

@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUser } from "@/redux/features/user/user";
 import { loginUser } from "@/redux/features/user/user";
+import { resetLoginState } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Eye, EyeOff, Loader2, Store, User } from "lucide-react";
 import Image from "next/image";
@@ -21,9 +22,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+interface LoginFormType {
+  email: string;
+  phone_number: string;
+  password: string;
+}
+
+
 export default function LoginPage() {
   const [loginType, setLoginType] = useState<"store" | "customer">("store");
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<LoginFormType>({
     email: "",
     phone_number: "",
     password: "",
@@ -39,6 +47,7 @@ export default function LoginPage() {
 
   // Clear local error state when redux error changes
   const [localError, setLocalError] = useState<string | null>(null);
+
   useEffect(() => {
     setLocalError(userLoginError);
   }, [userLoginError]);
@@ -47,8 +56,18 @@ export default function LoginPage() {
   useEffect(() => {
     if (userLoginData != null) {
       router.push("/dashboard");
+      setIsAuthenticating(false);
     }
-  }, [isAuthenticated, userLoginData]);
+    if (userLoginError) {
+      router.push("/loginUser");
+      setIsAuthenticating(false);
+    }
+
+
+    return () => {
+      dispatch(resetLoginState())
+    }
+  }, [isAuthenticated, userLoginData, userLoginError]);
 
 
 
@@ -80,6 +99,7 @@ export default function LoginPage() {
     };
     dispatch(loginUser(payload));
   };
+
 
   // Show loading state during authentication
   if (isAuthenticating || (isAuthenticated && !userLoginData) || userStateLoading) {

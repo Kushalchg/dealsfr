@@ -26,10 +26,6 @@ export interface UserLoginResponse {
   data: {
     access: string;
     refresh: string;
-    is_store_owner: boolean;
-    is_super_admin: boolean;
-    assignments: Assignments[];
-    managed_stores: number[];
   };
 }
 
@@ -41,4 +37,8 @@ export interface GetUserResponse {
   phone_number?: string;
   profile_image: string;
   user_type: "STORE_ADMIN" | "CUSTOMER";
+  is_store_owner: boolean;
+  is_super_admin: boolean;
+  assignments: Assignments[];
+  managed_stores: number[];
 }

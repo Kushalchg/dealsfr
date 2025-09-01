@@ -1,4 +1,3 @@
-import { brockmann } from '@/app/fonts';
 import type { Config } from 'tailwindcss';
 
 const config: Config = {

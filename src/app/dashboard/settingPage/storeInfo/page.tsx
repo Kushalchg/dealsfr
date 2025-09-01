@@ -13,8 +13,8 @@ import FileUploadField from "@/app/_components/fileUpload"
 const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
 export default function StoreRegistrationPage() {
-  const user = useSelector((state: RootState) => state.userData.user);
-  const store = useSelector((state: RootState) => state.userData.stores[0]);
+  const user = useSelector((state: RootState) => state.userData.userData);
+  const store = useSelector((state: RootState) => state.store.storeDetailData);
   const [form, setForm] = useState({
     name: store?.name || "",
     store_type: store?.store_type || "",
@@ -25,9 +25,9 @@ export default function StoreRegistrationPage() {
     phone: store?.phone || "",
     email: store?.email || "",
     business_registration_number: store?.business_registration_number || "",
-    documents: store?.documents || "",
+    documents: "",
     cover_image: store?.cover_image || "",
-    bio: store?.bio || "",
+    bio: "",
     logo: store?.logo || "",
     ownerName: user ? `${user.first_name} ${user.last_name}` : "",
   });
@@ -88,7 +88,7 @@ export default function StoreRegistrationPage() {
   return (
     <div className="flex justify-center w-full">
       <div className="w-full max-w-3xl px-4">
-      <Link
+        <Link
           href="/dashboard/settingPage"
           className="inline-flex items-center space-x-2 text-gray-400 hover:text-white mb-6 mt-8"
         >
@@ -103,7 +103,7 @@ export default function StoreRegistrationPage() {
             Store {store ? "updated" : "registered"} successfully!
           </div>
         ) : (
-            <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl mx-auto p-4">
+          <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl mx-auto p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-1 text-gray-300">Store Name</label>
@@ -116,7 +116,7 @@ export default function StoreRegistrationPage() {
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
-      
+
               <div>
                 <label className="block mb-1 text-gray-300">Store Type</label>
                 <select
@@ -134,7 +134,7 @@ export default function StoreRegistrationPage() {
                   ))}
                 </select>
               </div>
-      
+
               <div>
                 <label className="block mb-1 text-gray-300">City</label>
                 <Input
@@ -145,7 +145,7 @@ export default function StoreRegistrationPage() {
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
-      
+
               <div>
                 <label className="block mb-1 text-gray-300">District</label>
                 <Input
@@ -156,7 +156,7 @@ export default function StoreRegistrationPage() {
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
-      
+
               <div className="md:col-span-2">
                 <label className="block mb-1 text-gray-300">Location Link (Google Maps)</label>
                 <Input
@@ -167,7 +167,7 @@ export default function StoreRegistrationPage() {
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
-      
+
               <div>
                 <label className="block mb-1 text-gray-300">Address</label>
                 <Input
@@ -178,7 +178,7 @@ export default function StoreRegistrationPage() {
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
-      
+
               <div>
                 <label className="block mb-1 text-gray-300">Phone</label>
                 <Input
@@ -189,7 +189,7 @@ export default function StoreRegistrationPage() {
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
-      
+
               <div>
                 <label className="block mb-1 text-gray-300">Email</label>
                 <Input
@@ -201,7 +201,7 @@ export default function StoreRegistrationPage() {
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
-      
+
               <div className="md:col-span-2">
                 <label className="block mb-1 text-gray-300">Business Registration Number</label>
                 <Input
@@ -212,28 +212,28 @@ export default function StoreRegistrationPage() {
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
-      
+
               <FileUploadField
                 label="Documents (PDF/Image)"
                 name="documents"
                 accept="application/pdf,image/*"
                 onChange={handleChange}
               />
-      
+
               <FileUploadField
                 label="Store Logo"
                 name="logo"
                 accept="image/*"
                 onChange={handleChange}
               />
-      
+
               <FileUploadField
                 label="Cover Image"
                 name="cover_image"
                 accept="image/*"
                 onChange={handleChange}
               />
-      
+
               <div className="md:col-span-2">
                 <label className="block mb-1 text-gray-300">Bio</label>
                 <textarea
@@ -246,7 +246,7 @@ export default function StoreRegistrationPage() {
                 />
               </div>
             </div>
-      
+
             <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold mt-6">
               Submit
             </Button>

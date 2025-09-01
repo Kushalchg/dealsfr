@@ -1,103 +1,193 @@
-"use client"
+"use client";
 
-import React, { useEffect } from "react"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
-import Link from "next/link"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { MapPin, Phone } from "lucide-react"
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
-import { getStoreList } from "@/redux/features/store/store"
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { getStoreList } from "@/redux/features/store/store";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import {
+  Building,
+  Edit,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+  PlusCircle,
+  Trash2,
+} from "lucide-react";
+import Link from "next/link";
+import React, { useEffect } from "react";
 
 const StoreManager = () => {
-  const dispatch = useAppDispatch()
-  useEffect(() => {
-    dispatch(getStoreList())
-  }, [])
+  const dispatch = useAppDispatch();
 
-  const { storeListData } = useAppSelector((s) => s.store)
+  useEffect(() => {
+    // dispatch(getStoreList())
+  }, []);
+
+  const { storeDetailData } = useAppSelector((s) => s.store);
 
   const storeTypeLabels: Record<string, string> = {
     DEPT: "Department Store",
     SUPER: "Supermarket",
     LOCAL: "Local Store",
     ONLINE: "Online Store",
-  }
+  };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold text-white">Store Manager</h1>
-        <Link href="/dashboard/storeMgmt/registerStore">
-          <Button>Register Store</Button>
+        <h1 className="text-2xl font-semibold text-foreground">
+          Store Manager
+        </h1>
+        <Link href="/dashboard/create_branch">
+          <Button>Add Branch</Button>
         </Link>
       </div>
 
-      {storeListData && storeListData.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {storeListData.map((store) => (
-            <Card
-              key={store.id}
-              className="w-full bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors flex flex-col h-full"
-            >
-              <CardHeader className="items-center text-center pb-0">
-                <Avatar className="h-16 w-16 mb-3">
+      {storeDetailData && (
+        <Card className="w-full transition-colors">
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
                   <AvatarImage
-                    src={store.logo || undefined}
-                    alt={store.name}
+                    src={storeDetailData.logo || undefined}
+                    alt={storeDetailData.name}
                     className="object-cover"
-                    onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+                    onError={(e) =>
+                      ((e.target as HTMLImageElement).style.display = "none")
+                    }
                   />
-                  <AvatarFallback className="bg-emerald-600 text-white">
-                    {(store?.name ?? "").substring(0, 2).toUpperCase()}
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    {(storeDetailData?.name ?? "")
+                      .substring(0, 2)
+                      .toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-
-                <CardTitle className="text-white text-xl">{store.name}</CardTitle>
-                <CardDescription className="mt-1">
-                  <Badge
-                    variant="secondary"
-                    className="bg-emerald-900 text-emerald-200 text-xs"
-                  >
-                    {storeTypeLabels[store.store_type] || store.store_type}
+                <div>
+                  <CardTitle className="text-card-foreground text-xl mb-2">
+                    {storeDetailData.name}
+                  </CardTitle>
+                  <Badge variant="secondary">
+                    {storeTypeLabels[storeDetailData.store_type] ||
+                      storeDetailData.store_type}
                   </Badge>
-                </CardDescription>
-              </CardHeader>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="icon" className="h-8 w-8">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="destructive" size="icon" className="h-8 w-8">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
 
-              <CardContent className="space-y-2 text-sm text-gray-300 flex-1">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-emerald-400" />
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4 text-primary" />
                   <span>
-                    {store.city}
+                    {storeDetailData.address}, {storeDetailData.city},{" "}
+                    {storeDetailData.district}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-emerald-400" />
-                  <span>{store.phone}</span>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Phone className="h-4 w-4 text-primary" />
+                  <span>{storeDetailData.phone}</span>
                 </div>
-              </CardContent>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Mail className="h-4 w-4 text-primary" />
+                  <span>{storeDetailData.email}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Globe className="h-4 w-4 text-primary" />
+                  <span>{storeDetailData.website}</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-card-foreground mb-2">
+                  Description
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {storeDetailData.description}
+                </p>
+              </div>
+            </div>
 
-              <CardFooter className="pt-4">
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/dashboard/storeMgmt/registerStore">Manage</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-white">No store data available.</p>
+            <Separator className="my-4" />
+
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-sm font-medium text-card-foreground">
+                  Store Branches ({storeDetailData.branches?.length || 0})
+                </h3>
+
+                <Link href="/dashboard/create_branch">
+                  <Button variant="outline" size="sm" className="h-8">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Add Branch
+                  </Button>
+
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {storeDetailData.branches?.map((branch) => (
+                  <Card key={branch.id}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Building className="h-4 w-4 text-primary" />
+                            <span className="font-medium text-card-foreground">
+                              {branch.name}
+                            </span>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {branch.address}, {branch.city}
+                          </div>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-destructive hover:text-destructive/90"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default StoreManager
+export default StoreManager;

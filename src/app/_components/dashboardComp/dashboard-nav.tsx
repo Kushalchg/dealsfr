@@ -78,10 +78,8 @@ const navigationItems = [
 export function DashboardNav({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const {
-    getUserData,
-    userLoginData,
+    userData,
     userStateLoading: loading,
-    userLoginError,
   } = useSelector((state: RootState) => state.userData);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -104,7 +102,7 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
   }
 
   // Don't render if no user - let layout handle this
-  if (!getUserData) {
+  if (!userData) {
     return null;
   }
 
@@ -147,8 +145,8 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
               >
                 <Avatar className="h-7 w-7 md:h-9 md:w-9 flex-shrink-0">
                   <AvatarImage
-                    src={getUserData.profile_image || "/placeholder.svg"}
-                    alt={`${getUserData.first_name} ${getUserData.last_name}`}
+                    src={userData.profile_image || "/placeholder.svg"}
+                    alt={`${userData.first_name} ${userData.last_name}`}
                   />
                   <AvatarFallback className="bg-emerald-600 text-white text-xs md:text-sm font-semibold">
                     {userInitials}
@@ -156,10 +154,10 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
                 </Avatar>
                 <div className="flex-1 text-left min-w-0">
                   <div className="text-xs md:text-sm font-semibold truncate text-white">
-                    {getUserData.first_name} {getUserData.last_name}
+                    {userData.first_name} {userData.last_name}
                   </div>
                   <div className="text-xs text-gray-400 truncate">
-                    {getUserData.email}
+                    {userData.email}
                   </div>
                 </div>
               </Button>
@@ -211,17 +209,18 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
             {/* Logo */}
             <div className="flex flex-col items-start space-y-1">
               <div className="relative h-6 w-24 md:h-8 md:w-32">
-                <Image
-                  src="/images/TheDealsFr.png"
-                  alt="TheDealsFr"
-                  fill
-                  className="object-contain"
-                  priority
-                />
+                <Link
+                  href={'/dashboard'}
+                >
+                  <Image
+                    src="/images/TheDealsFr.png"
+                    alt="TheDealsFr"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </Link>
               </div>
-              <span className="text-xs text-emerald-400 font-semibold tracking-wide px-2 md:px-4 hidden sm:block">
-                The Deals For Real
-              </span>
             </div>
           </div>
           {/* Notification Bell and user dropdown (unchanged) */}
@@ -285,8 +284,8 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
                   >
                     <Avatar className="h-9 w-9">
                       <AvatarImage
-                        src={getUserData.profile_image || "/placeholder.svg"}
-                        alt={`${getUserData.first_name} ${getUserData.last_name}`}
+                        src={userData.profile_image || "/placeholder.svg"}
+                        alt={`${userData.first_name} ${userData.last_name}`}
                       />
                       <AvatarFallback className="bg-emerald-600 text-white text-sm font-semibold">
                         {userInitials}
@@ -294,10 +293,10 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
                     </Avatar>
                     <div className="flex-1 min-w-0 text-left">
                       <div className="text-white font-semibold truncate">
-                        {getUserData.first_name} {getUserData.last_name}
+                        {userData.first_name} {userData.last_name}
                       </div>
                       <div className="text-xs text-gray-400 truncate">
-                        {getUserData.email}
+                        {userData.email}
                       </div>
                     </div>
                   </Button>

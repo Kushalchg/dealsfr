@@ -73,7 +73,7 @@ const BannerPage = () => {
 
   useEffect(() => {
     console.log("first");
-    dispatch(getBanner());
+    dispatch(getBanner(1));
     // addToast("Please provide both a name and an image.", "error");
   }, []);
 

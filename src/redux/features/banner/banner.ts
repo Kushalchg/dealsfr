@@ -4,12 +4,12 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
 
 export const getBanner = createAsyncThunk<
-  AxiosResponse<BannerItem[]>,
-  void,
+  BannerItem[],
+  number,
   { rejectValue: string }
->("userData/banner/get", async (_, thunkAPI) => {
+>("userData/banner/get", async (store_id, thunkAPI) => {
   try {
-    const response = await api.get("/api/banners/", {
+    const response = await api.get(`/api/stores/${store_id}/banners/`, {
       headers: { "Content-Type": "application/json" },
     });
     return response.data;

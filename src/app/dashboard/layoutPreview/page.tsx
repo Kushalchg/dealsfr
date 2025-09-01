@@ -24,7 +24,7 @@ interface LayoutResponse extends LayoutCreatePayload {
 }
 
 export default function StoreLayoutCreatePayload() {
-  const storeId = useAppSelector((state) => state.userData.stores[0]?.id);
+  const storeId = useAppSelector((state) => state.store?.storeDetailData?.id);
   const [layouts, setLayouts] = useState<LayoutResponse[]>([]);
   const [selectedLayoutId, setSelectedLayoutId] = useState<number | undefined>(
     undefined

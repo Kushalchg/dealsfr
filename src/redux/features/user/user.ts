@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { AxiosResponse } from "axios";
 import authApi from "@/lib/interceptor";
 import api from "../../../lib/axios";
+import Cookies from 'js-cookie'
 import { GetUserResponse, UserLoginPayload, UserLoginResponse, UserRegisterPayload } from "./types";
 
 export const registerUser = createAsyncThunk<
@@ -37,6 +37,15 @@ export const loginUser = createAsyncThunk<
     if (typeof window !== "undefined") {
       localStorage.setItem("access_token", response.data.data.access);
       localStorage.setItem("refresh_token", response.data.data.refresh);
+      // Make sure cookies are accessible to the server
+      Cookies.set('access_token', response.data.data.access, {
+        path: '/',
+        sameSite: 'lax'
+      });
+      Cookies.set('refresh_token', response.data.data.refresh, {
+        path: '/',
+        sameSite: 'lax'
+      });
     }
 
     return response.data;

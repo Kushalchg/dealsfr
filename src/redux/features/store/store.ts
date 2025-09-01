@@ -1,6 +1,6 @@
 import api from "@/lib/interceptor";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { GetStoreDetailResponse, GetStoreListResponse } from "./types";
+import { BranchItem, GetStoreDetailResponse, GetStoreListResponse } from "./types";
 
 export const getStoreList = createAsyncThunk<
   GetStoreListResponse,
@@ -8,7 +8,7 @@ export const getStoreList = createAsyncThunk<
   { rejectValue: string }
 >("storeList/get", async (_, thunkAPI) => {
   try {
-    const response = await api.get(`/api/stores`);
+    const response = await api.get(`/api/stores/`);
     return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
@@ -29,6 +29,21 @@ export const getStoreDetail = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || error.message || "Failed to get the store details"
+    );
+  }
+});
+
+export const getBranches = createAsyncThunk<
+  BranchItem[],
+  number,
+  { rejectValue: string }
+>("storeDetail/get/branches", async (id, thunkAPI) => {
+  try {
+    const response = await api.get(`/api/stores/${id}/branches/`);
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || error.message || "Failed to get the store branches"
     );
   }
 });

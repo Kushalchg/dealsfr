@@ -65,3 +65,16 @@ export interface GetStoreDetailResponse {
   owner: number;
 }
 
+//for store branches
+
+export interface BranchItem {
+  id: number;
+  name: string;
+  city: string;
+  district: string;
+  address: string;
+  location_link: string;
+  latitude: string;
+  longitude: string;
+  distance_km: number;
+}

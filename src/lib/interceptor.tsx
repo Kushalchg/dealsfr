@@ -7,6 +7,7 @@ import {
   setAccessToken,
   setRefreshToken,
 } from "./cookies";
+import { clearTokens } from "./auth";
 
 // API BASE URL AND REFRESH ENDPOINT
 const apiBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -151,6 +152,7 @@ api.interceptors.response.use(
 const handleClearWeb = () => {
   removeAccessToken();
   removeRefreshToken();
+  clearTokens()
   location.reload();
 };
 

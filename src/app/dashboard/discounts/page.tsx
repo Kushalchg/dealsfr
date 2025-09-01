@@ -17,7 +17,7 @@ const StoreManager = () => {
     dispatch(getDiscount());
     dispatch(getSubCategory());
     dispatch(getMainCategory());
-    dispatch(getBanner());
+    dispatch(getBanner(1));
     dispatch(getLayout());
   }, []);
 

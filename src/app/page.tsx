@@ -105,7 +105,7 @@ export default function LandingPage() {
                 </Button>
               </Link>
               <Link
-                href={'/register/registerStore'}>
+                href={'/register/registerStoreAdmin'}>
                 <Button
                   size="lg"
                   variant="outline"

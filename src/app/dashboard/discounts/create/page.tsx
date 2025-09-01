@@ -47,7 +47,7 @@ export default function AddDiscountForm() {
   );
 
   useEffect(() => {
-    dispatch(getBanner());
+    dispatch(getBanner(1));
     dispatch(getLayout());
   }, [dispatch]);
 

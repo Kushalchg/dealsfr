@@ -1,7 +1,7 @@
 "use client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getBranches, getStoreDetail } from "@/redux/features/store/store";
+import { getBranchesList, getStoreDetail } from "@/redux/features/store/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useEffect } from "react";
 import {
@@ -17,7 +17,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (userData && userData.managed_stores.length > 0) {
       dispatch(getStoreDetail(userData.managed_stores[0]))
-      dispatch(getBranches(userData.managed_stores[0]))
+      dispatch(getBranchesList(userData.managed_stores[0]))
     }
   }, [])
 

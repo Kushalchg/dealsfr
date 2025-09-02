@@ -17,7 +17,7 @@ interface ToastProps {
   message: string | { message: string }
   type?: "success" | "error" | "loading" | "warning" | "info" | "delete"
   duration?: number
-  onClose: (id: string) => void
+  onClose?: (id: string) => void
 }
 
 const typeStyles: Record<string, { bg: string; text: string; icon: React.ReactElement }> = {
@@ -58,15 +58,8 @@ export const Toast = ({
   message,
   type = "success",
   duration = 3000,
-  onClose,
+  onClose = () => { },
 }: ToastProps) => {
-
-  useEffect(() => {
-    if (type !== "loading") {
-      const timer = setTimeout(() => onClose(id), duration)
-      return () => clearTimeout(timer)
-    }
-  }, [id, duration, onClose, type])
 
   const { bg, text, icon } = typeStyles[type] ?? typeStyles.success
 

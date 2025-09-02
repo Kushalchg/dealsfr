@@ -18,12 +18,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Toast } from "@/components/ui/toast";
+import { createStoreBranch, getStoreDetail } from "@/redux/features/store/store";
+import { clearBranchDetailsState, clearCreateBranchState } from "@/redux/features/store/storeSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 const branchFormSchema = z.object({
+  id: z.number(),
   name: z.string().min(2, {
     message: "Branch name must be at least 2 characters.",
   }),
@@ -49,26 +56,54 @@ const branchFormSchema = z.object({
 
 type BranchFormValues = z.infer<typeof branchFormSchema>;
 
-const defaultValues: Partial<BranchFormValues> = {
-  name: "",
-  city: "",
-  district: "",
-  address: "",
-  location_link: "",
-  latitude: "",
-  longitude: "",
-};
 
 export default function CreateBranchPage() {
+  const router = useRouter()
+  const dispatch = useAppDispatch()
+  const params = useSearchParams()
+  const action = params.get("action")
+  const { userData } = useAppSelector((s) => s.userData)
+  const { createBranchError, creteBranchData, branchDetailsData } = useAppSelector((s) => s.store)
+
+  const defaultValues: Partial<BranchFormValues> = {
+    id: branchDetailsData?.id || 0,
+    name: branchDetailsData?.name || "",
+    city: branchDetailsData?.city || "",
+    district: branchDetailsData?.district || "",
+    address: branchDetailsData?.address || "",
+    location_link: branchDetailsData?.location_link || "",
+    latitude: branchDetailsData?.latitude || "",
+    longitude: branchDetailsData?.longitude || "",
+  };
+
   const form = useForm<BranchFormValues>({
     resolver: zodResolver(branchFormSchema),
     defaultValues,
   });
 
   function onSubmit(data: BranchFormValues) {
-    // TODO: Implement the API call to create branch
-    console.log(data);
+    if (userData && data.id != 0 && action === 'edit') {
+      dispatch(createStoreBranch({ payload: data, id: userData?.managed_stores[0], action: 'edit', branch_id: data?.id }))
+    }
+    if (userData && data.id == 0) {
+      dispatch(createStoreBranch({ payload: data, id: userData?.managed_stores[0], action: 'create', branch_id: 0 }))
+    }
   }
+
+
+  useEffect(() => {
+    if (creteBranchData && userData) {
+      Toast({ message: "successfully Created the branch" })
+      dispatch(getStoreDetail(userData?.managed_stores[0]))
+      router.replace('/dashboard/storeMgmt')
+    }
+
+    return () => {
+      dispatch(clearCreateBranchState())
+      dispatch(clearBranchDetailsState())
+    }
+
+  }, [creteBranchData])
 
   return (
     <div className="p-6 space-y-6">

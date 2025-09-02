@@ -6,13 +6,12 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { getStoreList } from "@/redux/features/store/store";
+import api from "@/lib/interceptor";
+import { getBranchDetails, getStoreDetail } from "@/redux/features/store/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   Building,
@@ -25,16 +24,31 @@ import {
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 const StoreManager = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter()
+  const { storeDetailData, branchDetailsData } = useAppSelector((s) => s.store);
+
+  const handleBranchEdit = (b_id: number, s_id: number) => {
+    dispatch(getBranchDetails({ store_id: s_id, branch_id: b_id }))
+    console.log("id", b_id)
+  }
+
+  const handleBranchDelete = async (b_id: number, s_id: number) => {
+    await api.delete(`/api/stores/${s_id}/branches/${b_id}/`)
+    console.log("Successfully deleted")
+    dispatch(getStoreDetail(s_id))
+  }
 
   useEffect(() => {
-    // dispatch(getStoreList())
-  }, []);
+    if (branchDetailsData) {
+      router.push('/dashboard/create_branch/?action=edit')
+    }
+  }, [branchDetailsData])
 
-  const { storeDetailData } = useAppSelector((s) => s.store);
 
   const storeTypeLabels: Record<string, string> = {
     DEPT: "Department Store",
@@ -47,11 +61,8 @@ const StoreManager = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold text-foreground">
-          Store Manager
+          Store Management
         </h1>
-        <Link href="/dashboard/create_branch">
-          <Button>Add Branch</Button>
-        </Link>
       </div>
 
       {storeDetailData && (
@@ -85,11 +96,11 @@ const StoreManager = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="icon" className="h-8 w-8">
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button variant="destructive" size="icon" className="h-8 w-8">
-                  <Trash2 className="h-4 w-4" />
+                <Button variant={'outline'} className="flex flex-row">
+                  <Edit />
+                  <span>
+                    Edit
+                  </span>
                 </Button>
               </div>
             </div>
@@ -141,14 +152,14 @@ const StoreManager = () => {
                     <PlusCircle className="h-4 w-4 mr-2" />
                     Add Branch
                   </Button>
-
                 </Link>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/*List of branches*/}
+              <div className="grid grid-cols gap-4">
                 {storeDetailData.branches?.map((branch) => (
                   <Card key={branch.id}>
-                    <CardContent className="p-4">
+                    <CardContent className="px-4,py-2">
                       <div className="flex items-start justify-between">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
@@ -163,18 +174,18 @@ const StoreManager = () => {
                         </div>
                         <div className="flex gap-1">
                           <Button
+                            onClick={() => handleBranchEdit(branch.id, storeDetailData.id)}
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6"
                           >
-                            <Edit className="h-3 w-3" />
+                            <Edit />
                           </Button>
                           <Button
-                            variant="ghost"
+                            onClick={() => handleBranchDelete(branch.id, storeDetailData.id)}
+                            variant="destructive"
                             size="icon"
-                            className="h-6 w-6 text-destructive hover:text-destructive/90"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 />
                           </Button>
                         </div>
                       </div>

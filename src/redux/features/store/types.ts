@@ -78,3 +78,13 @@ export interface BranchItem {
   longitude: string;
   distance_km: number;
 }
+
+export interface CreateStoreBranchPayload {
+  name: string;
+  city: string;
+  district: string;
+  address: string;
+  location_link: string;
+  latitude: string;
+  longitude: string;
+}

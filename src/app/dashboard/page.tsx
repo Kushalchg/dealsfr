@@ -55,18 +55,18 @@ export default function DashboardPage() {
         <Link
           href={'/dashboard/create_branch'}
         >
-          <h3 className="cursor-pointer flex justify-between items-center pr-10 mb-5 flex-row px-5 py-3 bg-primary/30 rounded-md text-white">
+          <h3 className="cursor-pointer flex justify-between items-center pr-10 mb-5 flex-row px-5 py-3 bg-primary/30 rounded-md text-foreground ">
             You need to setup at least one store branch to publish Discounts.
             <ChevronRight />
           </h3>
         </Link>
       )}
 
-      {userData?.assignments?.length <= 0 && (
+      {!storeDetailData && (
         <Link
           href={'/dashboard/store_setup'}
         >
-          <h3 className="cursor-pointer flex justify-between items-center pr-10 mb-5 flex-row px-5 py-3 bg-primary/30 rounded-md text-white">
+          <h3 className="cursor-pointer flex justify-between items-center pr-10 mb-5 flex-row px-5 py-3 bg-primary/30 rounded-md text-foreground ">
             Complete your store registration process.
             <ChevronRight />
           </h3>
@@ -74,10 +74,10 @@ export default function DashboardPage() {
       )}
 
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-bold text-foreground ">
           Welcome back, {userData && userData.first_name}!
         </h1>
-        <p className="text-gray-400">
+        <p className="text-muted-foreground">
           Here&apos;s what&apos;s happening with your store today.
         </p>
       </div>

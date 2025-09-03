@@ -1,5 +1,4 @@
 "use client";
-import FileUploadField from "@/app/_components/fileUpload";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,8 +9,23 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createStore, getStoreDetail, updateStore } from "@/redux/features/store/store";
-import { clearStoreCreateState, clearStoreUpdateState } from "@/redux/features/store/storeSlice";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  createStore,
+  getStoreDetail,
+  updateStore,
+} from "@/redux/features/store/store";
+import {
+  clearStoreCreateState,
+  clearStoreUpdateState,
+} from "@/redux/features/store/storeSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
@@ -21,7 +35,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { id } from "zod/v4/locales";
 
 const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
@@ -56,27 +69,35 @@ const storeFormSchema = z.object({
 type StoreFormValues = z.infer<typeof storeFormSchema>;
 
 export default function StoreRegistrationPage() {
-  const router = useRouter()
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const params = useSearchParams();
   const store_id = params.get("id");
   const { userData } = useAppSelector((state) => state.userData);
-  const { storeDetailData, storeCreateData, storeCreateError, storeUpdateData, storeUpdateError } = useAppSelector((state) => state.store);
+  const {
+    storeDetailData,
+    storeCreateData,
+    storeCreateError,
+    storeUpdateData,
+    storeUpdateError,
+  } = useAppSelector((state) => state.store);
 
-
-  const defaultValues: Partial<StoreFormValues> = useMemo(() => ({
-    name: storeDetailData?.name || "",
-    store_type: storeDetailData?.store_type as "DEPT" || "DEPT",
-    city: storeDetailData?.city || "",
-    district: storeDetailData?.district || "",
-    location_link: storeDetailData?.location_link || "",
-    address: storeDetailData?.address || "",
-    phone: storeDetailData?.phone || "",
-    email: storeDetailData?.email || "",
-    business_registration_number:
-      storeDetailData?.business_registration_number || "",
-    slogan: storeDetailData?.slogan || "",
-  }), [storeDetailData]);
+  const defaultValues: Partial<StoreFormValues> = useMemo(
+    () => ({
+      name: storeDetailData?.name || "",
+      store_type: (storeDetailData?.store_type as "DEPT") || "DEPT",
+      city: storeDetailData?.city || "",
+      district: storeDetailData?.district || "",
+      location_link: storeDetailData?.location_link || "",
+      address: storeDetailData?.address || "",
+      phone: storeDetailData?.phone || "",
+      email: storeDetailData?.email || "",
+      business_registration_number:
+        storeDetailData?.business_registration_number || "",
+      slogan: storeDetailData?.slogan || "",
+    }),
+    [storeDetailData]
+  );
 
   const form = useForm<StoreFormValues>({
     resolver: zodResolver(storeFormSchema),
@@ -87,19 +108,24 @@ export default function StoreRegistrationPage() {
     if (storeDetailData) {
       form.reset({
         name: storeDetailData?.name || "",
-        store_type: (storeDetailData?.store_type as "DEPT" | "SUPER" | "LOCAL" | "ONLINE") || "DEPT",
+        store_type:
+          (storeDetailData?.store_type as
+            | "DEPT"
+            | "SUPER"
+            | "LOCAL"
+            | "ONLINE") || "DEPT",
         city: storeDetailData?.city || "",
         district: storeDetailData?.district || "",
         location_link: storeDetailData?.location_link || "",
         address: storeDetailData?.address || "",
         phone: storeDetailData?.phone || "",
         email: storeDetailData?.email || "",
-        business_registration_number: storeDetailData?.business_registration_number || "",
+        business_registration_number:
+          storeDetailData?.business_registration_number || "",
         slogan: storeDetailData?.slogan || "",
       });
     }
   }, [storeDetailData, form]);
-
 
   const [logoPreview, setLogoPreview] = React.useState<string | null>(
     storeDetailData?.logo || null
@@ -147,48 +173,45 @@ export default function StoreRegistrationPage() {
       }
     });
 
-    console.log({ payload })
+    console.log({ payload });
     //update the store if the user has one update(that is the limit) otherwise create
     if (userData && userData?.managed_stores.length > 0) {
       dispatch(updateStore({ payload, id: userData?.managed_stores[0] }));
     } else {
       dispatch(createStore(payload));
     }
-
   }
-
-
 
   //reacting to the store update status
   useEffect(() => {
     if (storeUpdateData) {
       toast.success("Successfully updated the store detail", {
         richColors: true,
-      })
-      router.back()
+      });
+      router.back();
     }
     if (storeCreateData) {
       toast.success("Successfully created the store.", {
         richColors: true,
-      })
-      router.back()
+      });
+      router.back();
     }
 
     if (storeCreateError) {
       toast.error(storeCreateError, {
         richColors: true,
-      })
+      });
     }
 
     if (storeUpdateError) {
       toast.error(storeUpdateError, {
         richColors: true,
-      })
+      });
     }
     return () => {
-      dispatch(clearStoreUpdateState())
-      dispatch(clearStoreCreateState())
-    }
+      dispatch(clearStoreUpdateState());
+      dispatch(clearStoreCreateState());
+    };
   }, [storeDetailData, storeCreateData, storeCreateError, storeUpdateError]);
 
   return (
@@ -196,17 +219,17 @@ export default function StoreRegistrationPage() {
       <div className="w-full max-w-5xl px-4">
         <Link
           href="/dashboard"
-          className="inline-flex items-center space-x-2 text-gray-400 hover:text-white mb-6 mt-8"
+          className="inline-flex items-center space-x-2 text-muted-foreground hover:text-foreground mb-6 mt-8"
         >
           <ArrowLeft size={20} />
           <span className="text-lg font-medium">Back to Dashboard</span>
         </Link>
-        <h1 className="text-3xl font-bold text-white mb-6 mt-8 text-center">
+        <h1 className="text-3xl font-bold text-foreground mb-6 mt-8 text-center">
           {storeDetailData ? "Update Your Store" : "Register Your Store"}
         </h1>
 
         {success ? (
-          <div className="text-green-400 font-semibold text-center py-8">
+          <div className="text-green-600 dark:text-green-400 font-semibold text-center py-8">
             Store {storeDetailData ? "updated" : "registered"} successfully!
           </div>
         ) : (
@@ -221,15 +244,14 @@ export default function StoreRegistrationPage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-300">
+                      <FormLabel className="text-foreground">
                         Store Name
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="e.g. My Awesome Store"
-                          className="bg-gray-800 border-gray-700 text-white"
-                          {...field}
-                        />
+
+                          className="bg-background text-foreground border-input"
+                          placeholder="e.g. My Awesome Store" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -241,22 +263,26 @@ export default function StoreRegistrationPage() {
                   name="store_type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-300">
+                      <FormLabel className="text-foreground">
                         Store Type
                       </FormLabel>
-                      <FormControl>
-                        <select
-                          className="bg-gray-800 border-gray-700 text-white p-2 rounded w-full"
-                          {...field}
-                        >
-                          <option value="">Select Type</option>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select store type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
                           {storeTypes.map((type) => (
-                            <option key={type} value={type}>
+                            <SelectItem key={type} value={type}>
                               {type}
-                            </option>
+                            </SelectItem>
                           ))}
-                        </select>
-                      </FormControl>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -267,13 +293,12 @@ export default function StoreRegistrationPage() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-300">City</FormLabel>
+                      <FormLabel className="text-foreground">City</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter city"
-                          className="bg-gray-800 border-gray-700 text-white"
-                          {...field}
-                        />
+
+                          className="bg-background text-foreground border-input"
+                          placeholder="Enter city" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -285,13 +310,14 @@ export default function StoreRegistrationPage() {
                   name="district"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-300">District</FormLabel>
+                      <FormLabel className="text-foreground">
+                        District
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter district"
-                          className="bg-gray-800 border-gray-700 text-white"
-                          {...field}
-                        />
+
+                          className="bg-background text-foreground border-input"
+                          placeholder="Enter district" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -303,13 +329,13 @@ export default function StoreRegistrationPage() {
                   name="location_link"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel className="text-gray-300">
+                      <FormLabel className="text-foreground">
                         Location Link (Google Maps)
                       </FormLabel>
                       <FormControl>
                         <Input
+                          className="bg-background text-foreground border-input"
                           placeholder="https://maps.google.com/..."
-                          className="bg-gray-800 border-gray-700 text-white"
                           {...field}
                           value={field.value || ""}
                         />
@@ -324,13 +350,12 @@ export default function StoreRegistrationPage() {
                   name="address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-300">Address</FormLabel>
+                      <FormLabel className="text-foreground">Address</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter address"
-                          className="bg-gray-800 border-gray-700 text-white"
-                          {...field}
-                        />
+
+                          className="bg-background text-foreground border-input"
+                          placeholder="Enter address" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -342,13 +367,12 @@ export default function StoreRegistrationPage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-300">Phone</FormLabel>
+                      <FormLabel className="text-foreground">Phone</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter phone number"
-                          className="bg-gray-800 border-gray-700 text-white"
-                          {...field}
-                        />
+
+                          className="bg-background text-foreground border-input"
+                          placeholder="Enter phone number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -360,12 +384,12 @@ export default function StoreRegistrationPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-300">Email</FormLabel>
+                      <FormLabel className="text-foreground">Email</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
+                          className="bg-background text-foreground border-input"
                           placeholder="Enter email"
-                          className="bg-gray-800 border-gray-700 text-white"
                           {...field}
                         />
                       </FormControl>
@@ -379,13 +403,13 @@ export default function StoreRegistrationPage() {
                   name="business_registration_number"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel className="text-gray-300">
+                      <FormLabel className="text-foreground">
                         Business Registration Number
                       </FormLabel>
                       <FormControl>
                         <Input
+                          className="bg-background text-foreground border-input"
                           placeholder="Enter registration number"
-                          className="bg-gray-800 border-gray-700 text-white"
                           {...field}
                         />
                       </FormControl>
@@ -394,53 +418,85 @@ export default function StoreRegistrationPage() {
                   )}
                 />
 
-                <div>
-                  <FileUploadField
-                    label="Store Logo"
-                    name="logo"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(e, "logo")}
-                  />
-                  {logoPreview && (
-                    <div className="mt-2">
-                      <img
-                        src={logoPreview}
-                        alt="Logo preview"
-                        className="h-20 w-auto object-contain rounded"
-                      />
-                    </div>
+                <FormField
+                  control={form.control}
+                  name="logo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-foreground">
+                        Store Logo
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          className="bg-background text-foreground border-input"
+                          accept="image/*"
+                          onChange={(e) => {
+                            handleFileChange(e, "logo");
+                            const file = e.target.files?.[0] ?? null;
+                            field.onChange(file);
+                          }}
+                        />
+                      </FormControl>
+                      {logoPreview && (
+                        <div className="mt-2">
+                          <img
+                            src={logoPreview}
+                            alt="Logo preview"
+                            className="h-20 w-auto object-contain rounded"
+                          />
+                        </div>
+                      )}
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
+                />
 
-                <div>
-                  <FileUploadField
-                    label="Cover Image"
-                    name="cover_image"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(e, "cover_image")}
-                  />
-                  {coverPreview && (
-                    <div className="mt-2">
-                      <img
-                        src={coverPreview}
-                        alt="Cover preview"
-                        className="h-20 w-auto object-contain rounded"
-                      />
-                    </div>
+                <FormField
+                  control={form.control}
+                  name="cover_image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-foreground">
+                        Cover Image
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          className="bg-background text-foreground border-input"
+                          accept="image/*"
+                          onChange={(e) => {
+                            handleFileChange(e, "cover_image");
+                            const file = e.target.files?.[0] ?? null;
+                            field.onChange(file);
+                          }}
+                        />
+                      </FormControl>
+                      {coverPreview && (
+                        <div className="mt-2">
+                          <img
+                            src={coverPreview}
+                            alt="Cover preview"
+                            className="h-20 w-auto object-contain rounded"
+                          />
+                        </div>
+                      )}
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
+                />
 
                 <FormField
                   control={form.control}
                   name="slogan"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel className="text-gray-300">Slogan</FormLabel>
+                      <FormLabel className="text-foreground">Slogan</FormLabel>
                       <FormControl>
-                        <textarea
+                        <Textarea
                           rows={3}
+                          className="bg-background text-foreground border-input"
                           placeholder="Tell us about your store..."
-                          className="bg-gray-800 border-gray-700 text-white w-full rounded p-2"
                           {...field}
                           value={field.value || ""}
                         />
@@ -451,10 +507,7 @@ export default function StoreRegistrationPage() {
                 />
               </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold mt-6"
-              >
+              <Button type="submit" className="w-full mt-6">
                 {userData && userData?.managed_stores?.length > 0
                   ? "Update"
                   : "Submit"}

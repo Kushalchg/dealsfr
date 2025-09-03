@@ -19,11 +19,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Toast } from "@/components/ui/toast";
-import { createStoreBranch, getStoreDetail } from "@/redux/features/store/store";
-import { clearBranchDetailsState, clearCreateBranchState } from "@/redux/features/store/storeSlice";
+import {
+  createStoreBranch,
+  getStoreDetail,
+} from "@/redux/features/store/store";
+import {
+  clearBranchDetailsState,
+  clearCreateBranchState,
+} from "@/redux/features/store/storeSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -57,14 +62,14 @@ const branchFormSchema = z.object({
 
 type BranchFormValues = z.infer<typeof branchFormSchema>;
 
-
 export default function CreateBranchPage() {
-  const router = useRouter()
-  const dispatch = useAppDispatch()
-  const params = useSearchParams()
-  const action = params.get("action")
-  const { userData } = useAppSelector((s) => s.userData)
-  const { createBranchError, creteBranchData, branchDetailsData } = useAppSelector((s) => s.store)
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const params = useSearchParams();
+  const action = params.get("action");
+  const { userData } = useAppSelector((s) => s.userData);
+  const { createBranchError, creteBranchData, branchDetailsData } =
+    useAppSelector((s) => s.store);
 
   const defaultValues: Partial<BranchFormValues> = {
     id: branchDetailsData?.id || 0,
@@ -85,43 +90,54 @@ export default function CreateBranchPage() {
   function onSubmit(data: BranchFormValues) {
     try {
       if (parseInt(data.longitude) > 180 || parseInt(data.longitude) < -180) {
-        throw new Error("Logitude must be between -180 to 180.")
+        throw new Error("Logitude must be between -180 to 180.");
       }
 
       if (parseInt(data.latitude) > 90 || parseInt(data.latitude) < -90) {
-        throw new Error("Latitude must be between -90 to 90.")
+        throw new Error("Latitude must be between -90 to 90.");
       }
 
-      if (userData && data.id != 0 && action === 'edit') {
-        dispatch(createStoreBranch({ payload: data, id: userData?.managed_stores[0], action: 'edit', branch_id: data?.id }))
+      if (userData && data.id != 0 && action === "edit") {
+        dispatch(
+          createStoreBranch({
+            payload: data,
+            id: userData?.managed_stores[0],
+            action: "edit",
+            branch_id: data?.id,
+          })
+        );
       }
       if (userData && data.id == 0) {
-        dispatch(createStoreBranch({ payload: data, id: userData?.managed_stores[0], action: 'create', branch_id: 0 }))
+        dispatch(
+          createStoreBranch({
+            payload: data,
+            id: userData?.managed_stores[0],
+            action: "create",
+            branch_id: 0,
+          })
+        );
       }
-
     } catch (err: any) {
       toast.error(`${err}`, {
         dismissible: true,
         closeButton: true,
         richColors: true,
-      })
+      });
     }
   }
 
-
   useEffect(() => {
     if (creteBranchData && userData) {
-      Toast({ message: "successfully Created the branch" })
-      dispatch(getStoreDetail(userData?.managed_stores[0]))
-      router.replace('/dashboard/storeMgmt')
+      Toast({ message: "successfully Created the branch" });
+      dispatch(getStoreDetail(userData?.managed_stores[0]));
+      router.replace("/dashboard/storeMgmt");
     }
 
     return () => {
-      dispatch(clearCreateBranchState())
-      dispatch(clearBranchDetailsState())
-    }
-
-  }, [creteBranchData])
+      dispatch(clearCreateBranchState());
+      dispatch(clearBranchDetailsState());
+    };
+  }, [creteBranchData]);
 
   return (
     <div className="p-6 space-y-6">

@@ -77,10 +77,9 @@ const navigationItems = [
 
 export function DashboardNav({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const {
-    userData,
-    userStateLoading: loading,
-  } = useSelector((state: RootState) => state.userData);
+  const { userData, userStateLoading: loading } = useSelector(
+    (state: RootState) => state.userData
+  );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -91,11 +90,11 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
   // Show loading state while user data is being fetched
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="space-y-4 w-full max-w-md">
-          <div className="h-12 w-full bg-gray-800 animate-pulse rounded"></div>
-          <div className="h-8 w-3/4 bg-gray-800 animate-pulse rounded"></div>
-          <div className="h-8 w-1/2 bg-gray-800 animate-pulse rounded"></div>
+          <div className="h-12 w-full bg-muted animate-pulse rounded"></div>
+          <div className="h-8 w-3/4 bg-muted animate-pulse rounded"></div>
+          <div className="h-8 w-1/2 bg-muted animate-pulse rounded"></div>
         </div>
       </div>
     );
@@ -110,10 +109,10 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar className="mt-2 bg-gray-900 pt-20">
-        <SidebarContent className="px-2 md:px-3 py-4 bg-gray-900 border-r-2 border-white">
+      <Sidebar className="mt-2 bg-background pt-20">
+        <SidebarContent className="px-2 md:px-3 py-4 bg-background border-r">
           <SidebarGroup>
-            <SidebarGroupLabel className="text-emerald-400 text-xs uppercase tracking-wider font-semibold mb-3 px-2 md:px-3"></SidebarGroupLabel>
+            <SidebarGroupLabel className="text-primary text-xs uppercase tracking-wider font-semibold mb-3 px-2 md:px-3"></SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
                 {navigationItems.map((item) => (
@@ -121,9 +120,9 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
                     <SidebarMenuButton asChild>
                       <Link
                         href={item.href}
-                        className="flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 group border-none hover:border-gray-700"
+                        className="flex items-center space-x-2 md:space-x-3 px-2 md:px-3 py-2 md:py-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-all duration-200 group"
                       >
-                        <item.icon className="h-4 w-4 md:h-5 md:w-5 text-emerald-400 transition-colors flex-shrink-0" />
+                        <item.icon className="h-4 w-4 md:h-5 md:w-5 text-primary transition-colors flex-shrink-0" />
                         <span className="font-medium text-sm md:text-base truncate">
                           {item.title}
                         </span>
@@ -136,54 +135,51 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="border-r-2 border-white p-2 md:p-4 bg-gray-900">
+        <SidebarFooter className="border-r p-2 md:p-4 bg-background">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="w-full h-[40px] md:h-[50px] cursor-pointer justify-start space-x-2 md:space-x-3 text-gray-300 hover:text-white hover:bg-gray-700 p-2 md:p-3 rounded-lg transition-all duration-200"
+                className="w-full h-[40px] md:h-[50px] cursor-pointer justify-start space-x-2 md:space-x-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground p-2 md:p-3 rounded-lg transition-all duration-200"
               >
                 <Avatar className="h-7 w-7 md:h-9 md:w-9 flex-shrink-0">
                   <AvatarImage
                     src={userData.profile_image || "/placeholder.svg"}
                     alt={`${userData.first_name} ${userData.last_name}`}
                   />
-                  <AvatarFallback className="bg-emerald-600 text-white text-xs md:text-sm font-semibold">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs md:text-sm font-semibold">
                     {userInitials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 text-left min-w-0">
-                  <div className="text-xs md:text-sm font-semibold truncate text-white">
+                  <div className="text-xs md:text-sm font-semibold truncate text-foreground">
                     {userData.first_name} {userData.last_name}
                   </div>
-                  <div className="text-xs text-gray-400 truncate">
+                  <div className="text-xs text-muted-foreground truncate">
                     {userData.email}
                   </div>
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-48 md:w-56 bg-gray-800 border-gray-600"
-            >
-              <DropdownMenuLabel className="text-gray-200 font-semibold text-sm md:text-base">
+            <DropdownMenuContent align="end" className="w-48 md:w-56">
+              <DropdownMenuLabel className="text-foreground font-semibold text-sm md:text-base">
                 My Account
               </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-gray-600" />
+              <DropdownMenuSeparator />
               <Link href="/dashboard/settingPage">
-                <DropdownMenuItem className="text-gray-300 hover:bg-gray-700 hover:text-white focus:bg-gray-700 focus:text-white text-sm">
+                <DropdownMenuItem className="text-muted-foreground text-sm">
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </DropdownMenuItem>
               </Link>
-              <DropdownMenuItem className="text-gray-300 hover:bg-gray-700 hover:text-white focus:bg-gray-700 focus:text-white text-sm">
+              <DropdownMenuItem className="text-muted-foreground text-sm">
                 <HelpCircle className="mr-2 h-4 w-4" />
                 Support
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-gray-600" />
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleLogout}
-                className="text-red-400 hover:bg-red-900 hover:text-red-300 focus:bg-red-900 focus:text-red-300 text-sm"
+                className="text-destructive focus:bg-destructive/10 text-sm"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
@@ -196,11 +192,11 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Fixed Header */}
         {/**/}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-gray-800 border-none px-3 md:px-6 py-3 md:py-4 shadow-lg flex items-center justify-between">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b px-3 md:px-6 py-3 md:py-4 shadow-lg flex items-center justify-between">
           <div className="flex items-center space-x-2 md:space-x-4">
             {/* Mobile menu button (hamburger) - only on mobile */}
             <button
-              className="md:hidden text-gray-300 hover:text-white p-2 rounded-md focus:outline-none"
+              className="md:hidden text-muted-foreground hover:text-foreground p-2 rounded-md focus:outline-none"
               aria-label="Open menu"
               onClick={() => setMobileMenuOpen(true)}
             >
@@ -209,9 +205,7 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
             {/* Logo */}
             <div className="flex flex-col items-start space-y-1">
               <div className="relative h-6 w-24 md:h-8 md:w-32">
-                <Link
-                  href={'/dashboard'}
-                >
+                <Link href={"/dashboard"}>
                   <Image
                     src="/images/TheDealsFr.png"
                     alt="TheDealsFr"
@@ -228,21 +222,21 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
             <Button
               variant="ghost"
               size="icon"
-              className="text-white bg-gray-700 relative h-8 w-8 md:h-10 md:w-10"
+              className="relative h-8 w-8 bg-accent md:h-10 md:w-10"
             >
-              <Bell className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="absolute -top-1 -right-1 h-2.5 w-2.5 md:h-3 md:w-3 bg-emerald-500 rounded-full"></span>
+              <Bell className="h-4 w-4 md:h-5 md:w-5 text-foreground" />
+              <span className="absolute -top-1 -right-1 h-2.5 w-2.5 md:h-3 md:w-3 bg-primary rounded-full"></span>
             </Button>
           </div>
         </header>
 
         {/* Mobile full-screen menu overlay */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-95 flex flex-col">
-            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-700">
-              <span className="text-lg font-bold text-white">Menu</span>
+          <div className="fixed inset-0 z-50 bg-background/95 flex flex-col">
+            <div className="flex items-center justify-between px-4 py-4 border-b">
+              <span className="text-lg font-bold text-foreground">Menu</span>
               <button
-                className="text-gray-400 hover:text-white p-2 rounded-md"
+                className="text-muted-foreground hover:text-foreground p-2 rounded-md"
                 aria-label="Close menu"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -267,62 +261,59 @@ export function DashboardNav({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center space-x-3 px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-lg"
+                  className="flex items-center space-x-3 px-3 py-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-all duration-200 text-lg"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <item.icon className="h-5 w-5 text-emerald-400" />
+                  <item.icon className="h-5 w-5 text-primary" />
                   <span className="font-medium">{item.title}</span>
                 </Link>
               ))}
             </nav>
-            <div className="border-t border-gray-700 p-4 flex items-center space-x-3">
+            <div className="border-t p-4 flex items-center space-x-3">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="w-full h-[40px] cursor-pointer justify-start space-x-2 text-gray-300 hover:text-white hover:bg-gray-700 p-2 rounded-lg transition-all duration-200"
+                    className="w-full h-[40px] cursor-pointer justify-start space-x-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground p-2 rounded-lg transition-all duration-200"
                   >
                     <Avatar className="h-9 w-9">
                       <AvatarImage
                         src={userData.profile_image || "/placeholder.svg"}
                         alt={`${userData.first_name} ${userData.last_name}`}
                       />
-                      <AvatarFallback className="bg-emerald-600 text-white text-sm font-semibold">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
                         {userInitials}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0 text-left">
-                      <div className="text-white font-semibold truncate">
+                      <div className="text-foreground font-semibold truncate">
                         {userData.first_name} {userData.last_name}
                       </div>
-                      <div className="text-xs text-gray-400 truncate">
+                      <div className="text-xs text-muted-foreground truncate">
                         {userData.email}
                       </div>
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-56 bg-gray-800 border-gray-600"
-                >
-                  <DropdownMenuLabel className="text-gray-200 font-semibold">
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="text-foreground font-semibold">
                     My Account
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-gray-600" />
+                  <DropdownMenuSeparator />
                   <Link href="/dashboard/settingPage">
-                    <DropdownMenuItem className="text-gray-300 hover:bg-gray-700 hover:text-white focus:bg-gray-700 focus:text-white">
+                    <DropdownMenuItem className="text-muted-foreground">
                       <Settings className="mr-2 h-4 w-4" />
                       Settings
                     </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuItem className="text-gray-300 hover:bg-gray-700 hover:text-white focus:bg-gray-700 focus:text-white">
+                  <DropdownMenuItem className="text-muted-foreground">
                     <HelpCircle className="mr-2 h-4 w-4" />
                     Support
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-gray-600" />
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogout}
-                    className="text-red-400 hover:bg-red-900 hover:text-red-300 focus:bg-red-900 focus:text-red-300"
+                    className="text-destructive focus:bg-destructive/10"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out

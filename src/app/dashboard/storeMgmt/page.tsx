@@ -10,10 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import api from "@/lib/interceptor";
 import { getBranchDetails, getStoreDetail } from "@/redux/features/store/store";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { DialogClose } from "@radix-ui/react-dialog";
 import {
   Building,
   Edit,
@@ -22,19 +24,21 @@ import {
   Mail,
   MapPin,
   Phone,
+  Plus,
   PlusCircle,
   Store,
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const StoreManager = () => {
   const dispatch = useAppDispatch();
   const router = useRouter()
   const { storeDetailData, branchDetailsData } = useAppSelector((s) => s.store);
+  const [socialModal, setSocialModal] = useState<boolean>(false)
 
   const handleStoreDetailEdit = (id: number) => {
     router.push(`/dashboard/store_setup/`)
@@ -47,6 +51,11 @@ const StoreManager = () => {
       router.push('/dashboard/create_branch/?action=edit')
     }
   }, [branchDetailsData])
+
+  const handleAddSocial = () => {
+    console.log("closed modal")
+    setSocialModal(false)
+  }
 
   const storeTypeLabels: Record<string, string> = {
     DEPT: "Department Store",
@@ -163,8 +172,29 @@ const StoreManager = () => {
               </div>
             </div>
 
+            <Dialog onOpenChange={(value) => setSocialModal(value)} open={socialModal}>
+              <DialogTrigger onClick={() => setSocialModal(true)} className=" border p-2 rounded-lg border-dashed">
+                <Plus />
+              </DialogTrigger>
+              <DialogContent className="text-foreground">
+                <DialogHeader>
+                  <DialogTitle>Are you absolutely sure?</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete your account
+                    and remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Close
+                    </Button>
+                  </DialogClose>
+                  <Button type="submit" onClick={() => handleAddSocial()} >Confirm</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <Separator className="my-4" />
-
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-sm font-medium text-card-foreground">
@@ -182,7 +212,9 @@ const StoreManager = () => {
               {/*List of branches*/}
               <div className="grid grid-cols gap-4">
                 {storeDetailData.branches?.map((branch) => (
-                  <BranchCard branch={branch} />
+                  <div key={branch.id.toString()}>
+                    <BranchCard branch={branch} />
+                  </div>
                 ))}
               </div>
             </div>

@@ -37,7 +37,7 @@ const BranchCard = ({ branch }: BranchCardTypes) => {
   }, [branchDetailsData])
 
   return (
-    <Card key={branch.id}>
+    <Card >
       <CardContent className="px-4,py-2">
         <div className="flex items-start justify-between">
           <div className="space-y-1">

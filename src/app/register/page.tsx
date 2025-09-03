@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/toast-manager";
 import { registerUser } from "@/redux/features/user/user";
 import { resetAllUserState } from "@/redux/features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -19,6 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface RegisterPageProps {
   userType: "STORE_ADMIN" | "CUSTOMER";
@@ -38,40 +38,30 @@ export default function RegisterPage({ userType }: RegisterPageProps) {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { addToast } = useToast();
-  const errorToastShown = useRef(false);
-  const successToastShown = useRef(false);
 
   const { userStateLoading, userRegisterError, userRegisterData } = useAppSelector((state) => state.userData);
 
   useEffect(() => {
-    if (userRegisterError && !errorToastShown.current) {
-      addToast({ type: "error", message: userRegisterError });
-      errorToastShown.current = true;
+    if (userRegisterError) {
+      toast.error(`${userRegisterError}`, {
+        richColors: true
+      })
     }
-    if (!userRegisterError) {
-      errorToastShown.current = false;
-    }
-  }, [userRegisterError, addToast]);
+  }, [userRegisterError]);
 
   useEffect(() => {
-    if (userRegisterData && !successToastShown.current) {
-      addToast({
-        type: "success",
-        message: `Account created successfully! Redirecting to ${userType === "STORE_ADMIN" ? "store" : "customer"
-          } login...`,
-      });
-      successToastShown.current = true;
+    if (userRegisterData) {
+      toast.success(`Account created successfully! Redirecting to ${userType === "STORE_ADMIN" ? "store" : "customer"
+        } login...`, {
+        richColors: true
+      })
 
       setTimeout(() => {
         router.push("/loginUser");
         dispatch(resetAllUserState());
       }, 2000);
     }
-    if (!userRegisterData) {
-      successToastShown.current = false;
-    }
-  }, [userRegisterData, addToast, router, userType]);
+  }, [userRegisterData, router, userType]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -85,21 +75,26 @@ export default function RegisterPage({ userType }: RegisterPageProps) {
     e.preventDefault();
 
     if (formData.password !== formData.confirm_password) {
-      addToast({ type: "error", message: "Passwords do not match" });
+
+      toast.error(`Passwords do not match`, {
+        richColors: true
+      })
       return;
     }
 
     // Enforce required fields based on user type
     if (userType === "STORE_ADMIN" && !formData.email) {
-      addToast({ type: "error", message: "Email is required for store admin" });
+      toast.error(`Email is required for store admin`, {
+        richColors: true
+      })
       return;
     }
 
     if (userType === "CUSTOMER" && !formData.phone_number) {
-      addToast({
-        type: "error",
-        message: "Phone number is required for customer",
-      });
+
+      toast.error(`Phone number is required for customer`, {
+        richColors: true
+      })
       return;
     }
     const { phone_number, ...payload } = formData;

@@ -1,6 +1,55 @@
 import api from "@/lib/interceptor";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BranchItem, CreateStoreBranchPayload, GetStoreDetailResponse, GetStoreListResponse } from "./types";
+import { BranchItem, CreateStoreBranchPayload, GetStoreDetailResponse, GetStoreListResponse, StoreItem } from "./types";
+
+// =============================================
+// STORE
+// =============================================
+
+export const createStore = createAsyncThunk<
+  GetStoreDetailResponse,
+  FormData,
+  { rejectValue: string }
+>("storeDetail/create", async (formData, thunkAPI) => {
+  try {
+    const response = await api.post(`/api/stores/`, formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+      }
+    );
+    return response.data
+  } catch (error: any) {
+    console.log(error)
+    return thunkAPI.rejectWithValue(
+      error.response?.data.message || error.message || "Failed to create the store"
+    );
+  }
+});
+
+export const updateStore = createAsyncThunk<
+  GetStoreDetailResponse,
+  { payload: FormData, id: number },
+  { rejectValue: string }
+>("storeDetail/update", async ({ payload, id }, thunkAPI) => {
+  try {
+    const response = await api.patch(`/api/stores/${id}/`, payload,
+      {
+
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || error.message || "Failed to create the store"
+    );
+  }
+});
+
 
 export const getStoreList = createAsyncThunk<
   GetStoreListResponse,
@@ -32,6 +81,11 @@ export const getStoreDetail = createAsyncThunk<
     );
   }
 });
+
+
+//************************************************
+// BRANCH
+//************************************************
 
 export const getBranchesList = createAsyncThunk<
   BranchItem[],

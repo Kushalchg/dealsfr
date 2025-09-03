@@ -1,5 +1,6 @@
 "use client";
 
+import BranchCard from "@/app/_components/storeComp/BranchCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,39 +17,36 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   Building,
   Edit,
+  Files,
   Globe,
   Mail,
   MapPin,
   Phone,
   PlusCircle,
+  Store,
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
+import { toast } from "sonner";
 
 const StoreManager = () => {
   const dispatch = useAppDispatch();
   const router = useRouter()
   const { storeDetailData, branchDetailsData } = useAppSelector((s) => s.store);
 
-  const handleBranchEdit = (b_id: number, s_id: number) => {
-    dispatch(getBranchDetails({ store_id: s_id, branch_id: b_id }))
-    console.log("id", b_id)
+  const handleStoreDetailEdit = (id: number) => {
+    router.push(`/dashboard/store_setup/`)
+    console.log({ id })
   }
 
-  const handleBranchDelete = async (b_id: number, s_id: number) => {
-    await api.delete(`/api/stores/${s_id}/branches/${b_id}/`)
-    console.log("Successfully deleted")
-    dispatch(getStoreDetail(s_id))
-  }
 
   useEffect(() => {
     if (branchDetailsData) {
       router.push('/dashboard/create_branch/?action=edit')
     }
   }, [branchDetailsData])
-
 
   const storeTypeLabels: Record<string, string> = {
     DEPT: "Department Store",
@@ -64,11 +62,27 @@ const StoreManager = () => {
           Store Management
         </h1>
       </div>
+      {!storeDetailData && (
+        <Card className="justify-center p-20 border-0 gap-4">
+          <CardContent className="flex flex-col items-center text-card-foreground mx-auto gap-4 text-xl  mb-2">
+            <CardTitle>
+              No Store data found!!
+            </CardTitle>
+            <Link href="/dashboard/store_setup" className="" >
+              <Button variant="outline" size="lg" >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                Register Your Store
+              </Button>
+            </Link>
+          </CardContent>
+        </Card >
+      )}
+
 
       {storeDetailData && (
         <Card className="w-full transition-colors">
           <CardHeader>
-            <div className="flex justify-between items-start">
+            <div className="flex justify-between items-start flex-wrap gap-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage
@@ -94,12 +108,22 @@ const StoreManager = () => {
                       storeDetailData.store_type}
                   </Badge>
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <Button variant={'outline'} className="flex flex-row">
+              </div >
+              <div className="flex gap-5 flex-wrap">
+                <Button
+                  onClick={() => handleStoreDetailEdit(storeDetailData.id)}
+                  variant={'outline'} className="flex flex-row">
+                  <Files />
+                  <span>
+                    Documents
+                  </span>
+                </Button>
+                <Button
+                  onClick={() => handleStoreDetailEdit(storeDetailData.id)}
+                  variant={'outline'} className="flex flex-row">
                   <Edit />
                   <span>
-                    Edit
+                    Details
                   </span>
                 </Button>
               </div>
@@ -158,39 +182,7 @@ const StoreManager = () => {
               {/*List of branches*/}
               <div className="grid grid-cols gap-4">
                 {storeDetailData.branches?.map((branch) => (
-                  <Card key={branch.id}>
-                    <CardContent className="px-4,py-2">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Building className="h-4 w-4 text-primary" />
-                            <span className="font-medium text-card-foreground">
-                              {branch.name}
-                            </span>
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {branch.address}, {branch.city}
-                          </div>
-                        </div>
-                        <div className="flex gap-1">
-                          <Button
-                            onClick={() => handleBranchEdit(branch.id, storeDetailData.id)}
-                            variant="ghost"
-                            size="icon"
-                          >
-                            <Edit />
-                          </Button>
-                          <Button
-                            onClick={() => handleBranchDelete(branch.id, storeDetailData.id)}
-                            variant="destructive"
-                            size="icon"
-                          >
-                            <Trash2 />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <BranchCard branch={branch} />
                 ))}
               </div>
             </div>

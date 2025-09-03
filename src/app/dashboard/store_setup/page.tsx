@@ -1,29 +1,72 @@
 "use client";
 import FileUploadField from "@/app/_components/fileUpload";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/toast-manager";
-import api from "@/lib/interceptor";
-import { useAppSelector } from "@/redux/hooks";
-import { RootState } from "@/redux/store";
+import { createStore, getStoreDetail, updateStore } from "@/redux/features/store/store";
+import { clearStoreCreateState, clearStoreUpdateState } from "@/redux/features/store/storeSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
+import { id } from "zod/v4/locales";
 
 const storeTypes = ["DEPT", "SUPER", "LOCAL", "ONLINE"];
 
+const storeFormSchema = z.object({
+  name: z
+    .string()
+    .min(2, { message: "Store name must be at least 2 characters." }),
+  store_type: z.enum(["DEPT", "SUPER", "LOCAL", "ONLINE"], {
+    required_error: "Please select a store type.",
+  }),
+  city: z
+    .string()
+    .min(2, { message: "City name must be at least 2 characters." }),
+  district: z
+    .string()
+    .min(2, { message: "District name must be at least 2 characters." }),
+  location_link: z.string().url().optional().or(z.literal("")),
+  address: z
+    .string()
+    .min(5, { message: "Address must be at least 5 characters." }),
+  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  business_registration_number: z
+    .string()
+    .min(1, { message: "Business registration number is required." }),
+  slogan: z.string().optional(),
+  logo: z.any().optional(),
+  cover_image: z.any().optional(),
+  documents: z.any().optional(),
+});
+
+type StoreFormValues = z.infer<typeof storeFormSchema>;
+
 export default function StoreRegistrationPage() {
+  const router = useRouter()
+  const dispatch = useAppDispatch();
+  const params = useSearchParams();
+  const store_id = params.get("id");
   const { userData } = useAppSelector((state) => state.userData);
-  const { storeDetailData } = useAppSelector((state) => state.store);
+  const { storeDetailData, storeCreateData, storeCreateError, storeUpdateData, storeUpdateError } = useAppSelector((state) => state.store);
 
-  // Access the toast function
-  const { addToast } = useToast();
 
-  // Initialize form state with SetStoreData model
-  const [form, setForm] = useState<any>({
+  const defaultValues: Partial<StoreFormValues> = useMemo(() => ({
     name: storeDetailData?.name || "",
-    store_type: storeDetailData?.store_type || "DEPT",
+    store_type: storeDetailData?.store_type as "DEPT" || "DEPT",
     city: storeDetailData?.city || "",
     district: storeDetailData?.district || "",
     location_link: storeDetailData?.location_link || "",
@@ -32,145 +75,121 @@ export default function StoreRegistrationPage() {
     email: storeDetailData?.email || "",
     business_registration_number:
       storeDetailData?.business_registration_number || "",
-    documents: null,
-    cover_image: storeDetailData?.cover_image || null,
-    slogan: storeDetailData?.slogan || null,
-    logo: storeDetailData?.logo || null,
+    slogan: storeDetailData?.slogan || "",
+  }), [storeDetailData]);
+
+  const form = useForm<StoreFormValues>({
+    resolver: zodResolver(storeFormSchema),
+    defaultValues,
   });
 
-  // Previews for image/pdf files
-  const [logoPreview, setLogoPreview] = useState<string | null>(
+  useEffect(() => {
+    if (storeDetailData) {
+      form.reset({
+        name: storeDetailData?.name || "",
+        store_type: (storeDetailData?.store_type as "DEPT" | "SUPER" | "LOCAL" | "ONLINE") || "DEPT",
+        city: storeDetailData?.city || "",
+        district: storeDetailData?.district || "",
+        location_link: storeDetailData?.location_link || "",
+        address: storeDetailData?.address || "",
+        phone: storeDetailData?.phone || "",
+        email: storeDetailData?.email || "",
+        business_registration_number: storeDetailData?.business_registration_number || "",
+        slogan: storeDetailData?.slogan || "",
+      });
+    }
+  }, [storeDetailData, form]);
+
+
+  const [logoPreview, setLogoPreview] = React.useState<string | null>(
     storeDetailData?.logo || null
   );
-  const [coverPreview, setCoverPreview] = useState<string | null>(
+  const [coverPreview, setCoverPreview] = React.useState<string | null>(
     storeDetailData?.cover_image || null
   );
-  const [documentPreview, setDocumentPreview] = useState<string | null>(
-    null
-  );
+
   const [success, setSuccess] = useState(false);
 
-  const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-      | null
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement> | null,
+    fieldName: string
   ) => {
-    if (!e) {
-      // Reset file fields if user clicks "remove"
-      setForm((prev: any) => ({
-        ...prev,
-        logo: null,
-        cover_image: null,
-        documents: null,
-      }));
-      setLogoPreview(null);
-      setCoverPreview(null);
-      setDocumentPreview(null);
+    if (!e?.target?.files) {
+      if (fieldName === "logo") setLogoPreview(null);
+      if (fieldName === "cover_image") setCoverPreview(null);
       return;
     }
 
-    const target = e.target;
-    const { name, value } = target as { name: any; value: string };
-
-    // Handle file inputs
-    if (
-      target instanceof HTMLInputElement &&
-      target.files &&
-      target.files[0]
-    ) {
-      const file = target.files[0];
+    const files = Array.from(e.target.files);
+    if (fieldName === "logo" || fieldName === "cover_image") {
+      const file = files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
-        if (name === "logo") {
-          setForm((prev: any) => ({ ...prev, logo: file }));
-          setLogoPreview(result);
-        } else if (name === "cover_image") {
-          setForm((prev: any) => ({ ...prev, cover_image: file }));
-          setCoverPreview(result);
-        } else if (name === "documents") {
-          setForm((prev: any) => ({ ...prev, documents: file }));
-          setDocumentPreview(result);
-        }
+        form.setValue(fieldName, file);
+        if (fieldName === "logo") setLogoPreview(result);
+        if (fieldName === "cover_image") setCoverPreview(result);
       };
       reader.readAsDataURL(file);
-    } else {
-      // Handle text/select/textarea inputs
-      setForm((prev: any) => ({ ...prev, [name]: value }));
     }
   };
 
-  // Submit handler with a single toast for any missing required fields
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Required fields to validate
-    const requiredValues = [
-      form.name,
-      form.store_type,
-      form.city,
-      form.district,
-      form.address,
-      form.phone,
-      form.email,
-      form.business_registration_number,
-    ];
-
-    // If any required field is empty or blank, show one toast and stop
-    const allFilled = requiredValues.every(
-      (val) => typeof val === "string" && val.trim() !== ""
-    );
-    if (!allFilled) {
-      addToast({
-        type: "error",
-        message:
-          "Please fill in all the fields properly. All fields are required.",
-      });
-      return;
-    }
-
-    // Prepare payload; use FormData if you need to send files
+  async function onSubmit(data: StoreFormValues) {
     const payload = new FormData();
-    payload.append("name", form.name);
-    payload.append("store_type", form.store_type);
-    payload.append("city", form.city);
-    payload.append("district", form.district);
-    payload.append("address", form.address);
-    payload.append("phone", form.phone);
-    payload.append("email", form.email);
-    payload.append(
-      "business_registration_number",
-      form.business_registration_number || ""
-    );
-    if (form.location_link)
-      payload.append("location_link", form.location_link);
-    if (form.slogan) payload.append("slogan", form.slogan);
-    if (form.logo instanceof File) payload.append("logo", form.logo);
-    if (form.documents instanceof File)
-      payload.append("documents", form.documents);
-    if (form.cover_image instanceof File)
-      payload.append("cover_image", form.cover_image);
+    // Append all form fields to FormData
+    Object.entries(data).forEach(([key, value]) => {
+      if (value) {
+        if (value instanceof File) {
+          payload.append(key, value);
+        } else if (typeof value === "string") {
+          payload.append(key, value);
+        }
+      }
+    });
 
-    try {
-      await api.post("/api/stores/", payload, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setSuccess(true);
-    } catch (error) {
-      console.error(error);
-      addToast({
-        type: "error",
-        message: "Failed to submit store. Please try again.",
-      });
+    console.log({ payload })
+    //update the store if the user has one update(that is the limit) otherwise create
+    if (userData && userData?.managed_stores.length > 0) {
+      dispatch(updateStore({ payload, id: userData?.managed_stores[0] }));
+    } else {
+      dispatch(createStore(payload));
     }
-  };
 
-  // Helpers to decide whether document is an image or a PDF
-  const isImage = (dataUrl: string) => dataUrl?.startsWith("data:image/");
-  const isPdf = (dataUrl: string) =>
-    dataUrl.startsWith("data:application/pdf");
+  }
+
+
+
+  //reacting to the store update status
+  useEffect(() => {
+    if (storeUpdateData) {
+      toast.success("Successfully updated the store detail", {
+        richColors: true,
+      })
+      router.back()
+    }
+    if (storeCreateData) {
+      toast.success("Successfully created the store.", {
+        richColors: true,
+      })
+      router.back()
+    }
+
+    if (storeCreateError) {
+      toast.error(storeCreateError, {
+        richColors: true,
+      })
+    }
+
+    if (storeUpdateError) {
+      toast.error(storeUpdateError, {
+        richColors: true,
+      })
+    }
+    return () => {
+      dispatch(clearStoreUpdateState())
+      dispatch(clearStoreCreateState())
+    }
+  }, [storeDetailData, storeCreateData, storeCreateError, storeUpdateError]);
 
   return (
     <div className="flex justify-center w-full">
@@ -180,9 +199,7 @@ export default function StoreRegistrationPage() {
           className="inline-flex items-center space-x-2 text-gray-400 hover:text-white mb-6 mt-8"
         >
           <ArrowLeft size={20} />
-          <span className="text-lg font-medium">
-            Back to Dashboard
-          </span>
+          <span className="text-lg font-medium">Back to Dashboard</span>
         </Link>
         <h1 className="text-3xl font-bold text-white mb-6 mt-8 text-center">
           {storeDetailData ? "Update Your Store" : "Register Your Store"}
@@ -193,213 +210,257 @@ export default function StoreRegistrationPage() {
             Store {storeDetailData ? "updated" : "registered"} successfully!
           </div>
         ) : (
-          <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6 max-w-5xl mx-auto p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Name */}
-              <div>
-                <label className="block mb-1 text-gray-300">Store Name</label>
-                <Input
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6 max-w-5xl mx-auto p-4"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
                   name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="e.g. My Awesome Store"
-                  className="bg-gray-800 border-gray-700 text-white"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">
+                        Store Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. My Awesome Store"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Type */}
-              <div>
-                <label className="block mb-1 text-gray-300">
-                  Store Type
-                </label>
-                <select
+                <FormField
+                  control={form.control}
                   name="store_type"
-                  value={form.store_type}
-                  onChange={handleChange}
-                  className="bg-gray-800 border-gray-700 text-white p-2 rounded w-full"
-                >
-                  <option value="">Select Type</option>
-                  {storeTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">
+                        Store Type
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          className="bg-gray-800 border-gray-700 text-white p-2 rounded w-full"
+                          {...field}
+                        >
+                          <option value="">Select Type</option>
+                          {storeTypes.map((type) => (
+                            <option key={type} value={type}>
+                              {type}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* City */}
-              <div>
-                <label className="block mb-1 text-gray-300">City</label>
-                <Input
+                <FormField
+                  control={form.control}
                   name="city"
-                  value={form.city}
-                  onChange={handleChange}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">City</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter city"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* District */}
-              <div>
-                <label className="block mb-1 text-gray-300">District</label>
-                <Input
+                <FormField
+                  control={form.control}
                   name="district"
-                  value={form.district}
-                  onChange={handleChange}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">District</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter district"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Location link */}
-              <div className="md:col-span-2">
-                <label className="block mb-1 text-gray-300">
-                  Location Link (Google Maps)
-                </label>
-                <Input
+                <FormField
+                  control={form.control}
                   name="location_link"
-                  value={form.location_link || ""}
-                  onChange={handleChange}
-                  placeholder="https://maps.google.com/..."
-                  className="bg-gray-800 border-gray-700 text-white"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel className="text-gray-300">
+                        Location Link (Google Maps)
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://maps.google.com/..."
+                          className="bg-gray-800 border-gray-700 text-white"
+                          {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Address */}
-              <div>
-                <label className="block mb-1 text-gray-300">Address</label>
-                <Input
+                <FormField
+                  control={form.control}
                   name="address"
-                  value={form.address}
-                  onChange={handleChange}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Address</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter address"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Phone */}
-              <div>
-                <label className="block mb-1 text-gray-300">Phone</label>
-                <Input
+                <FormField
+                  control={form.control}
                   name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Phone</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter phone number"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Email */}
-              <div>
-                <label className="block mb-1 text-gray-300">Email</label>
-                <Input
+                <FormField
+                  control={form.control}
                   name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="Enter email"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Business reg number */}
-              <div className="md:col-span-2">
-                <label className="block mb-1 text-gray-300">
-                  Business Registration Number
-                </label>
-                <Input
+                <FormField
+                  control={form.control}
                   name="business_registration_number"
-                  value={form.business_registration_number}
-                  onChange={handleChange}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel className="text-gray-300">
+                        Business Registration Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter registration number"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Documents upload */}
-              <div className="md:col-span-2">
-                <FileUploadField
-                  label="Documents (PDF/Image)"
-                  name="documents"
-                  accept="application/pdf,image/*"
-                  onChange={handleChange}
-                />
-                {documentPreview && (
-                  <div className="mt-2">
-                    {isImage(documentPreview) ? (
+                <div>
+                  <FileUploadField
+                    label="Store Logo"
+                    name="logo"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, "logo")}
+                  />
+                  {logoPreview && (
+                    <div className="mt-2">
                       <img
-                        src={documentPreview}
-                        alt="Document preview"
+                        src={logoPreview}
+                        alt="Logo preview"
                         className="h-20 w-auto object-contain rounded"
                       />
-                    ) : isPdf(documentPreview) ? (
-                      <iframe
-                        src={documentPreview}
-                        title="PDF preview"
-                        className="h-20 w-full border border-gray-600 rounded"
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <FileUploadField
+                    label="Cover Image"
+                    name="cover_image"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, "cover_image")}
+                  />
+                  {coverPreview && (
+                    <div className="mt-2">
+                      <img
+                        src={coverPreview}
+                        alt="Cover preview"
+                        className="h-20 w-auto object-contain rounded"
                       />
-                    ) : (
-                      <p className="text-sm text-gray-400">
-                        {form.documents ? "File selected" : ""}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
+                    </div>
+                  )}
+                </div>
 
-              {/* Logo upload */}
-              <div>
-                <FileUploadField
-                  label="Store Logo"
-                  name="logo"
-                  accept="image/*"
-                  onChange={handleChange}
-                />
-                {logoPreview && (
-                  <div className="mt-2">
-                    <img
-                      src={logoPreview}
-                      alt="Logo preview"
-                      className="h-20 w-auto object-contain rounded"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Cover image (banner) upload */}
-              <div>
-                <FileUploadField
-                  label="Cover Image"
-                  name="cover_image"
-                  accept="image/*"
-                  onChange={handleChange}
-                />
-                {coverPreview && (
-                  <div className="mt-2">
-                    <img
-                      src={coverPreview}
-                      alt="Cover preview"
-                      className="h-20 w-auto object-contain rounded"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Slogan */}
-              <div className="md:col-span-2">
-                <label className="block mb-1 text-gray-300">Slogan</label>
-                <textarea
+                <FormField
+                  control={form.control}
                   name="slogan"
-                  value={form.slogan || ""}
-                  onChange={handleChange}
-                  rows={3}
-                  placeholder="Tell us about your store..."
-                  className="bg-gray-800 border-gray-700 text-white w-full rounded p-2"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel className="text-gray-300">Slogan</FormLabel>
+                      <FormControl>
+                        <textarea
+                          rows={3}
+                          placeholder="Tell us about your store..."
+                          className="bg-gray-800 border-gray-700 text-white w-full rounded p-2"
+                          {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-            </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold mt-6"
-            >
-              Submit
-            </Button>
-          </form>
+              <Button
+                type="submit"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold mt-6"
+              >
+                {userData && userData?.managed_stores?.length > 0
+                  ? "Update"
+                  : "Submit"}
+              </Button>
+            </form>
+          </Form>
         )}
       </div>
     </div>

@@ -14,6 +14,7 @@ export interface StoreItem {
   owner: number;
 }
 
+
 export interface GetStoreListResponse {
   count: number;
   next: string;
@@ -28,7 +29,7 @@ interface SocialMedia {
   alt_text: string;
 }
 
-interface Branch {
+export interface Branch {
   id: number;
   name: string;
   city: string;
@@ -66,7 +67,6 @@ export interface GetStoreDetailResponse {
 }
 
 //for store branches
-
 export interface BranchItem {
   id: number;
   name: string;

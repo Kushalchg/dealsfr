@@ -2,6 +2,7 @@
 
 import { DashboardNav } from "@/app/_components/dashboardComp/dashboard-nav";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getBranchesList, getStoreDetail } from "@/redux/features/store/store";
 import { getUser } from "@/redux/features/user/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,14 @@ export default function DashboardLayout({
   useEffect(() => {
     dispatch(getUser());
   }, []);
+
+  //get the storedetail and branch list on page render 
+  useEffect(() => {
+    if (userData && userData.managed_stores.length > 0) {
+      dispatch(getStoreDetail(userData.managed_stores[0]))
+      dispatch(getBranchesList(userData.managed_stores[0]))
+    }
+  }, [userData])
 
   // Show loading skeleton while fetching user data
   if (userStateLoading && !userData) {

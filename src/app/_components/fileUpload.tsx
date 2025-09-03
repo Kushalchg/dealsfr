@@ -4,6 +4,7 @@ interface FileUploadProps {
   label: string;
   name: string;
   accept: string;
+  multiple?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement> | null) => void;
 }
 
@@ -12,6 +13,7 @@ export default function FileUploadField({
   name,
   accept,
   onChange,
+  multiple = false,
 }: FileUploadProps) {
   const [fileName, setFileName] = useState<string | null>(null);
 
@@ -39,6 +41,7 @@ export default function FileUploadField({
           id={name}
           type="file"
           name={name}
+          multiple={multiple}
           accept={accept}
           onChange={handleChange}
           className="hidden"

@@ -27,6 +27,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
 
 const branchFormSchema = z.object({
@@ -82,11 +83,28 @@ export default function CreateBranchPage() {
   });
 
   function onSubmit(data: BranchFormValues) {
-    if (userData && data.id != 0 && action === 'edit') {
-      dispatch(createStoreBranch({ payload: data, id: userData?.managed_stores[0], action: 'edit', branch_id: data?.id }))
-    }
-    if (userData && data.id == 0) {
-      dispatch(createStoreBranch({ payload: data, id: userData?.managed_stores[0], action: 'create', branch_id: 0 }))
+    try {
+      if (parseInt(data.longitude) > 180 || parseInt(data.longitude) < -180) {
+        throw new Error("Logitude must be between -180 to 180.")
+      }
+
+      if (parseInt(data.latitude) > 90 || parseInt(data.latitude) < -90) {
+        throw new Error("Latitude must be between -90 to 90.")
+      }
+
+      if (userData && data.id != 0 && action === 'edit') {
+        dispatch(createStoreBranch({ payload: data, id: userData?.managed_stores[0], action: 'edit', branch_id: data?.id }))
+      }
+      if (userData && data.id == 0) {
+        dispatch(createStoreBranch({ payload: data, id: userData?.managed_stores[0], action: 'create', branch_id: 0 }))
+      }
+
+    } catch (err: any) {
+      toast.error(`${err}`, {
+        dismissible: true,
+        closeButton: true,
+        richColors: true,
+      })
     }
   }
 

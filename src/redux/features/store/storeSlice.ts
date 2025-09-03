@@ -1,13 +1,26 @@
 import { BranchItem, GetStoreDetailResponse, StoreItem } from "./types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { createStoreBranch, getBranchDetails, getBranchesList, getStoreDetail, getStoreList } from "./store";
+import {
+  createStore, createStoreBranch, getBranchDetails,
+  getBranchesList, getStoreDetail, getStoreList,
+  updateStore
+} from "./store";
 
 interface StoreInitialState {
   storeStateLoading: boolean;
   branchStateLoading: boolean;
 
   //getting the list of store (probably useful for customer)
-  storeListData: StoreItem[] | null; storeListError: string | null;
+  storeListData: StoreItem[] | null;
+  storeListError: string | null;
+
+  //for registering new store(can careate only one store)
+  storeCreateData: GetStoreDetailResponse | null;
+  storeCreateError: string | null;
+
+  //creating store
+  storeUpdateData: GetStoreDetailResponse | null;
+  storeUpdateError: string | null;
 
   //getting the detail of specific store (for store admin) 
   storeDetailData: GetStoreDetailResponse | null;
@@ -33,6 +46,13 @@ const initialState: StoreInitialState = {
   storeListData: null,
   storeListError: null,
 
+  //create store
+  storeCreateData: null,
+  storeCreateError: null,
+
+  //update store
+  storeUpdateData: null,
+  storeUpdateError: null,
 
   //for detail info of specific branch 
   storeDetailData: null,
@@ -57,15 +77,27 @@ const storeSlice = createSlice({
   name: "store",
   initialState,
   reducers: {
-    clearStoreState: () => initialState,
+    clearAllStoreState: () => initialState,
     clearStoreListState: (state) => {
       state.storeListData = null;
       state.storeListError = null;
     },
+
+    clearStoreCreateState: (state) => {
+      state.storeCreateData = null;
+      state.storeCreateError = null;
+    },
+
+    clearStoreUpdateState: (state) => {
+      state.storeUpdateData = null;
+      state.storeUpdateError = null;
+    },
+
     clearStoreDetailState: (state) => {
       state.storeDetailData = null;
       state.storeDetailError = null;
     },
+
     clearCreateBranchState: (state) => {
       state.creteBranchData = null;
       state.createBranchError = null;
@@ -78,6 +110,9 @@ const storeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      //*************************************************************
+      //for store
+      //*************************************************************
       //to get the list of store this is only applicable for customer side
       .addCase(getStoreList.pending, (state) => {
         state.storeStateLoading = true;
@@ -116,7 +151,48 @@ const storeSlice = createSlice({
         }
       )
 
+      //creating store
+      .addCase(createStore.pending, (state) => {
+        state.storeStateLoading = true;
+        state.storeCreateData = null;
+      })
+      .addCase(createStore.fulfilled, (state, action: PayloadAction<GetStoreDetailResponse>) => {
+        state.storeStateLoading = false;
+        state.storeCreateData = action.payload;
+        state.storeDetailData = action.payload;
+        state.storeCreateError = null;
+      })
+      .addCase(
+        createStore.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.storeCreateData = null;
+          state.storeStateLoading = false;
+          state.storeCreateError = action.payload || "Failed to create store";
+        }
+      )
+      //update store detail
+      .addCase(updateStore.pending, (state) => {
+        state.storeStateLoading = true;
+        state.storeUpdateError = null;
+      })
+      .addCase(updateStore.fulfilled, (state, action: PayloadAction<GetStoreDetailResponse>) => {
+        state.storeStateLoading = false;
+        state.storeUpdateData = action.payload;
+        state.storeDetailData = action.payload;
+        state.storeUpdateError = null;
+      })
+      .addCase(
+        updateStore.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.storeUpdateData = null;
+          state.storeStateLoading = false;
+          state.storeUpdateError = action.payload || "Failed to fetch store";
+        }
+      )
+
+      //*************************************************************
       //for branches
+      //*************************************************************
       //get the list of branches of specific store
       .addCase(getBranchesList.pending, (state) => {
         state.branchStateLoading = true;
@@ -176,5 +252,9 @@ const storeSlice = createSlice({
   },
 });
 
-export const { clearStoreState, clearStoreDetailState, clearStoreListState, clearCreateBranchState, clearBranchDetailsState } = storeSlice.actions;
+export const {
+  clearAllStoreState, clearStoreDetailState, clearStoreListState,
+  clearCreateBranchState, clearBranchDetailsState, clearStoreUpdateState,
+  clearStoreCreateState,
+} = storeSlice.actions;
 export default storeSlice.reducer;

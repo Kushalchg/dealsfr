@@ -12,14 +12,14 @@ import Link from "next/link";
 export default function DashboardPage() {
   const dispatch = useAppDispatch()
   const { userData, userStateLoading, userError } = useAppSelector((state) => state.userData);
-  const { branchesData } = useAppSelector((state) => state.store);
+  const { branchesData, storeDetailData } = useAppSelector((state) => state.store);
 
-  useEffect(() => {
-    if (userData && userData.managed_stores.length > 0) {
-      dispatch(getStoreDetail(userData.managed_stores[0]))
-      dispatch(getBranchesList(userData.managed_stores[0]))
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (userData && userData.managed_stores.length > 0) {
+  //     dispatch(getStoreDetail(userData.managed_stores[0]))
+  //     dispatch(getBranchesList(userData.managed_stores[0]))
+  //   }
+  // }, [])
 
 
   if (userStateLoading) {
@@ -51,7 +51,7 @@ export default function DashboardPage() {
   return (
     <div className="p-6 space-y-6 ">
       {/* Welcome Section */}
-      {userData.assignments.length > 0 && branchesData && branchesData?.length < 1 && (
+      {storeDetailData && storeDetailData.branches?.length < 1 && (
         <Link
           href={'/dashboard/create_branch'}
         >

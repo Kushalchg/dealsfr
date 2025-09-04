@@ -29,6 +29,13 @@ export interface SocialMedia {
   alt_text: string;
 }
 
+export interface SocialMediaResp {
+  id: number;
+  platform: string;
+  url: string;
+  alt_text: string;
+}
+
 export interface Branch {
   id: number;
   name: string;

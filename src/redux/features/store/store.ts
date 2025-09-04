@@ -1,6 +1,15 @@
 import api from "@/lib/interceptor";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BranchItem, CreateStoreBranchPayload, DocumentItem, GetStoreDetailResponse, GetStoreListResponse, SocialMedia, StoreItem } from "./types";
+import {
+  BranchItem,
+  CreateStoreBranchPayload,
+  DocumentItem,
+  GetStoreDetailResponse,
+  GetStoreListResponse,
+  SocialMedia,
+  SocialMediaResp,
+  StoreItem,
+} from "./types";
 
 // =============================================
 // STORE
@@ -12,44 +21,41 @@ export const createStore = createAsyncThunk<
   { rejectValue: string }
 >("storeDetail/create", async (formData, thunkAPI) => {
   try {
-    const response = await api.post(`/api/stores/`, formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        },
-      }
-    );
-    return response.data
+    const response = await api.post(`/api/stores/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
   } catch (error: any) {
-    console.log(error)
     return thunkAPI.rejectWithValue(
-      error.response?.data.message || error.message || "Failed to create the store"
+      error.response?.data.message ||
+        error.message ||
+        "Failed to create the store"
     );
   }
 });
 
 export const updateStore = createAsyncThunk<
   GetStoreDetailResponse,
-  { payload: FormData, id: number },
+  { payload: FormData; id: number },
   { rejectValue: string }
 >("storeDetail/update", async ({ payload, id }, thunkAPI) => {
   try {
-    const response = await api.patch(`/api/stores/${id}/`, payload,
-      {
-
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      }
-    );
+    const response = await api.patch(`/api/stores/${id}/`, payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Failed to create the store"
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to create the store"
     );
   }
 });
-
 
 export const getStoreList = createAsyncThunk<
   GetStoreListResponse,
@@ -61,11 +67,12 @@ export const getStoreList = createAsyncThunk<
     return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Failed to get the store list data"
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to get the store list data"
     );
   }
 });
-
 
 export const getStoreDetail = createAsyncThunk<
   GetStoreDetailResponse,
@@ -77,11 +84,12 @@ export const getStoreDetail = createAsyncThunk<
     return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Failed to get the store details"
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to get the store details"
     );
   }
 });
-
 
 //************************************************
 // BRANCH
@@ -97,7 +105,9 @@ export const getBranchesList = createAsyncThunk<
     return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Failed to get the store branches"
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to get the store branches"
     );
   }
 });
@@ -105,85 +115,104 @@ export const getBranchesList = createAsyncThunk<
 export const createStoreBranch = createAsyncThunk<
   BranchItem,
   {
-    payload: CreateStoreBranchPayload,
-    id: number,
-    action: string
-    branch_id: number
+    payload: CreateStoreBranchPayload;
+    id: number;
+    action: string;
+    branch_id: number;
   },
   { rejectValue: string }
->("storeDetail/create/branch", async ({ payload, id, action, branch_id }, thunkAPI) => {
-  try {
-    let response;
-    if (action === 'edit') {
-      response = await api.patch(`/api/stores/${id}/branches/${branch_id}/`, payload);
-    } else {
-      response = await api.post(`/api/stores/${id}/branches/`, payload);
-    }
+>(
+  "storeDetail/create/branch",
+  async ({ payload, id, action, branch_id }, thunkAPI) => {
+    try {
+      let response;
+      if (action === "edit") {
+        response = await api.patch(
+          `/api/stores/${id}/branches/${branch_id}/`,
+          payload
+        );
+      } else {
+        response = await api.post(`/api/stores/${id}/branches/`, payload);
+      }
 
-    return response.data;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Failed to get the store branches"
-    );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to get the store branches"
+      );
+    }
   }
-});
+);
 
 export const getBranchDetails = createAsyncThunk<
   BranchItem,
-  { branch_id: number, store_id: number },
+  { branch_id: number; store_id: number },
   { rejectValue: string }
->("storeDetail/get/branch/Details", async ({ branch_id, store_id }, thunkAPI) => {
-  try {
-    const response = await api.get(`/api/stores/${store_id}/branches/${branch_id}/`);
-    return response.data;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Failed to get the store branches"
-    );
+>(
+  "storeDetail/get/branch/Details",
+  async ({ branch_id, store_id }, thunkAPI) => {
+    try {
+      const response = await api.get(
+        `/api/stores/${store_id}/branches/${branch_id}/`
+      );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to get the store branches"
+      );
+    }
   }
-});
+);
 
 //****************************************************
-// Store Documents 
+// Store Documents
 //****************************************************
 
 export const getStoreDocumentsList = createAsyncThunk<
   DocumentItem[],
   number,
   { rejectValue: string }
->('store/get/documents-list', async (s_id, thunkAPI) => {
+>("store/get/documents-list", async (s_id, thunkAPI) => {
   try {
-    const response = await api.get(`/api/stores/${s_id}/documents/`)
-    return response.data
+    const response = await api.get(`/api/stores/${s_id}/documents/`);
+    return response.data;
   } catch (err: any) {
-
     thunkAPI.rejectWithValue(
-      err.response?.data?.message || err.message || "Failed to get the store documents list"
-    )
+      err.response?.data?.message ||
+        err.message ||
+        "Failed to get the store documents list"
+    );
   }
-})
+});
 
 export const createStoreDocuments = createAsyncThunk<
   DocumentItem,
-  { payload: FormData, s_id: number },
+  { payload: FormData; s_id: number },
   { rejectValue: string }
->('store/create/documents', async ({ payload, s_id }, thunkAPI) => {
+>("store/create/documents", async ({ payload, s_id }, thunkAPI) => {
   try {
-    const response = await api.post(`/api/stores/${s_id}/documents/`, payload)
-    return response.data
+    const response = await api.post(`/api/stores/${s_id}/documents/`, payload);
+    return response.data;
   } catch (err: any) {
+    console.log({ err });
     thunkAPI.rejectWithValue(
-      err.response?.data?.message || err.message || "Failed to create the store documents"
-    )
+      err.response?.data?.message ||
+        err.message ||
+        "Failed to create the store documents"
+    );
   }
-})
+});
 
 //##################################################
-// Social Media 
+// Social Media
 //##################################################
 
 export const getSocialMediaList = createAsyncThunk<
-  SocialMedia[],
+  SocialMediaResp[],
   number,
   { rejectValue: string }
 >("storeDetail/get/social-media-list", async (s_id, thunkAPI) => {
@@ -192,23 +221,49 @@ export const getSocialMediaList = createAsyncThunk<
     return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Failed to get social media list"
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to get social media list"
     );
   }
 });
 
 export const createSocialMedia = createAsyncThunk<
-  SocialMedia,
-  { payload: SocialMedia, s_id: number },
+  SocialMediaResp[],
+  { payload: SocialMedia; s_id: number },
   { rejectValue: string }
 >("storeDetail/create/social-media", async ({ payload, s_id }, thunkAPI) => {
   try {
-    const response = await api.post(`/api/stores/${s_id}/social-media/`, payload);
+    const response = await api.post(
+      `/api/stores/${s_id}/social-media/`,
+      payload
+    );
     return response.data;
   } catch (error: any) {
+    console.log(error);
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || error.message || "Failed to create social media item"
+      error.response?.data?.errors[0]?.message ||
+        error.message ||
+        "Failed to create social media item"
     );
   }
 });
 
+export const deleteSocialMedia = createAsyncThunk<
+  SocialMediaResp[],
+  { s_id: number; id: number },
+  { rejectValue: string }
+>("storeDetail/delete/social-media", async ({ s_id, id }, thunkAPI) => {
+  try {
+    const response = await api.delete(
+      `/api/stores/${s_id}/social-media/${id}/`
+    );
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to delete social media item"
+    );
+  }
+});

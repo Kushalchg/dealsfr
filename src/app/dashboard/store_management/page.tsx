@@ -1,32 +1,13 @@
 "use client";
 
-import BranchCard from "@/app/_components/storeManagement/BranchCard";
 import BranchSection from "@/app/_components/storeManagement/BranchSection";
+import SocialMediaSection from "@/app/_components/storeManagement/SocialMediaSection";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Label } from "@radix-ui/react-label";
+import { useAppSelector } from "@/redux/hooks";
 import {
   Edit,
   Files,
@@ -34,18 +15,15 @@ import {
   Mail,
   MapPin,
   Phone,
-  Plus,
   PlusCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 const StoreManager = () => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const { storeDetailData, branchDetailsData } = useAppSelector((s) => s.store);
-  const [socialModal, setSocialModal] = useState<boolean>(false);
 
   const handleStoreDetailEdit = (id: number) => {
     router.push(`/dashboard/store_setup/`);
@@ -57,11 +35,6 @@ const StoreManager = () => {
       router.push("/dashboard/create_branch/?action=edit");
     }
   }, [branchDetailsData]);
-
-  const handleAddSocial = () => {
-    console.log("closed modal");
-    setSocialModal(false);
-  };
 
   const storeTypeLabels: Record<string, string> = {
     DEPT: "Department Store",
@@ -174,68 +147,10 @@ const StoreManager = () => {
                 </p>
               </div>
             </div>
+            <div>
+              <SocialMediaSection />
+            </div>
 
-            <Dialog
-              onOpenChange={(value) => setSocialModal(value)}
-              open={socialModal}
-            >
-              <DialogTrigger
-                onClick={() => setSocialModal(true)}
-                className=" border p-2 rounded-lg border-dashed"
-              >
-                <Plus />
-              </DialogTrigger>
-              <DialogContent className="text-foreground">
-                <DialogHeader>
-                  <DialogTitle>Add Social Media Links</DialogTitle>
-                  <DialogDescription>
-                    Add you store social media links from where user can
-                    interract.
-                  </DialogDescription>
-                  <div className="grid gap-4">
-                    <div className="grid gap-3">
-                      <Label htmlFor="name-1">Social Media Platform</Label>
-                      <Select onValueChange={(v) => console.log(v)}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select Platform" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="TWITTER">Twitter</SelectItem>
-                          <SelectItem value="FACEBOOK">Facebook</SelectItem>
-                          <SelectItem value="TIKTOK">TikTok</SelectItem>
-                          <SelectItem value="INSTAGRAM">Instagram</SelectItem>
-                          <SelectItem value="WHATSAPP">WhatsApp</SelectItem>
-                          <SelectItem value="LINKEDIN">LinkedIn</SelectItem>
-                          <SelectItem value="YOUTUBE">YouTube</SelectItem>
-                          <SelectItem value="WEBSITE">Website</SelectItem>
-                          <SelectItem value="OTHER">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="grid gap-3">
-                      <Label htmlFor="platform-url">Platform Url</Label>
-                      <Input
-                        id="platform-url"
-                        name="platform-url"
-                        placeholder="https://thedealsfr.com/"
-                      />
-                    </div>
-                  </div>
-                </DialogHeader>
-
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button type="button" variant="secondary">
-                      Close
-                    </Button>
-                  </DialogClose>
-                  <Button type="submit" onClick={() => handleAddSocial()}>
-                    Confirm
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
             <Separator className="my-4" />
             <div>
               <BranchSection />

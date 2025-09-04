@@ -4,6 +4,7 @@ import {
   createStore,
   createStoreBranch,
   createStoreDocuments,
+  deleteSocialMedia,
   getBranchDetails,
   getBranchesList,
   getSocialMediaList,
@@ -17,6 +18,7 @@ import {
   DocumentItem,
   GetStoreDetailResponse,
   SocialMedia,
+  SocialMediaResp,
   StoreItem,
 } from "./types";
 
@@ -58,11 +60,14 @@ interface StoreInitialState {
   branchDetailsError: string | null;
 
   //social media list data
-  socialMediaData: SocialMedia[] | null;
+  socialMediaData: SocialMediaResp[] | null;
   socialMediaError: string | null;
   //social media create data
-  socialMediaCreateData: SocialMedia | null;
+  socialMediaCreateData: SocialMediaResp[] | null;
   socialMediaCreateError: string | null;
+  //social media delete data
+  socialMediaDeleteData: SocialMediaResp[] | null;
+  socialMediaDeleteError: string | null;
 }
 
 // Initial state
@@ -109,6 +114,9 @@ const initialState: StoreInitialState = {
   //social media create data
   socialMediaCreateData: null,
   socialMediaCreateError: null,
+  //social media delete data
+  socialMediaDeleteData: null,
+  socialMediaDeleteError: null,
 };
 
 const storeSlice = createSlice({
@@ -159,6 +167,8 @@ const storeSlice = createSlice({
     clearSocialMediaState: (state) => {
       state.socialMediaData = null;
       state.socialMediaError = null;
+      state.socialMediaDeleteData = null;
+      state.socialMediaDeleteError = null;
     },
 
     clearSocialMediaCreateState: (state) => {
@@ -388,7 +398,7 @@ const storeSlice = createSlice({
       })
       .addCase(
         getSocialMediaList.fulfilled,
-        (state, action: PayloadAction<SocialMedia[]>) => {
+        (state, action: PayloadAction<SocialMediaResp[]>) => {
           state.socialMediaStateLoading = false;
           state.socialMediaData = action.payload;
           state.socialMediaError = null;
@@ -411,9 +421,10 @@ const storeSlice = createSlice({
       })
       .addCase(
         createSocialMedia.fulfilled,
-        (state, action: PayloadAction<SocialMedia>) => {
+        (state, action: PayloadAction<SocialMediaResp[]>) => {
           state.socialMediaStateLoading = false;
           state.socialMediaCreateData = action.payload;
+          state.socialMediaData = action.payload;
           state.socialMediaCreateError = null;
         }
       )
@@ -424,6 +435,29 @@ const storeSlice = createSlice({
           state.socialMediaStateLoading = false;
           state.socialMediaCreateError =
             action.payload || "Failed to create social media item";
+        }
+      )
+
+      //delete social media
+      .addCase(deleteSocialMedia.pending, (state) => {
+        state.socialMediaStateLoading = true;
+        state.socialMediaDeleteError = null;
+      })
+      .addCase(
+        deleteSocialMedia.fulfilled,
+        (state, action: PayloadAction<SocialMediaResp[]>) => {
+          state.socialMediaStateLoading = false;
+          state.socialMediaData = action.payload;
+          state.socialMediaDeleteError = null;
+        }
+      )
+      .addCase(
+        deleteSocialMedia.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.socialMediaData = null;
+          state.socialMediaStateLoading = false;
+          state.socialMediaDeleteError =
+            action.payload || "Failed to delete social media item";
         }
       );
   },

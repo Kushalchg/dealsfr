@@ -1,6 +1,6 @@
 import api from "@/lib/interceptor";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BranchItem, CreateStoreBranchPayload, GetStoreDetailResponse, GetStoreListResponse, StoreItem } from "./types";
+import { BranchItem, CreateStoreBranchPayload, DocumentItem, GetStoreDetailResponse, GetStoreListResponse, SocialMedia, StoreItem } from "./types";
 
 // =============================================
 // STORE
@@ -139,6 +139,75 @@ export const getBranchDetails = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message || error.message || "Failed to get the store branches"
+    );
+  }
+});
+
+//****************************************************
+// Store Documents 
+//****************************************************
+
+export const getStoreDocumentsList = createAsyncThunk<
+  DocumentItem[],
+  number,
+  { rejectValue: string }
+>('store/get/documents-list', async (s_id, thunkAPI) => {
+  try {
+    const response = await api.get(`/api/stores/${s_id}/documents/`)
+    return response.data
+  } catch (err: any) {
+
+    thunkAPI.rejectWithValue(
+      err.response?.data?.message || err.message || "Failed to get the store documents list"
+    )
+  }
+})
+
+export const createStoreDocuments = createAsyncThunk<
+  DocumentItem,
+  { payload: FormData, s_id: number },
+  { rejectValue: string }
+>('store/create/documents', async ({ payload, s_id }, thunkAPI) => {
+  try {
+    const response = await api.post(`/api/stores/${s_id}/documents/`, payload)
+    return response.data
+  } catch (err: any) {
+    thunkAPI.rejectWithValue(
+      err.response?.data?.message || err.message || "Failed to create the store documents"
+    )
+  }
+})
+
+//##################################################
+// Social Media 
+//##################################################
+
+export const getSocialMediaList = createAsyncThunk<
+  SocialMedia[],
+  number,
+  { rejectValue: string }
+>("storeDetail/get/social-media-list", async (s_id, thunkAPI) => {
+  try {
+    const response = await api.get(`/api/stores/${s_id}/social-media/`);
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || error.message || "Failed to get social media list"
+    );
+  }
+});
+
+export const createSocialMedia = createAsyncThunk<
+  SocialMedia,
+  { payload: SocialMedia, s_id: number },
+  { rejectValue: string }
+>("storeDetail/create/social-media", async ({ payload, s_id }, thunkAPI) => {
+  try {
+    const response = await api.post(`/api/stores/${s_id}/social-media/`, payload);
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || error.message || "Failed to create social media item"
     );
   }
 });

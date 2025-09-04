@@ -51,7 +51,7 @@ const navigationItems = [
   {
     title: "Store Management",
     icon: BarChart3,
-    href: "/dashboard/storeMgmt",
+    href: "/dashboard/store_management",
   },
   {
     title: "Layout Preview",

@@ -23,7 +23,7 @@ export interface GetStoreListResponse {
 }
 
 //to get the store details by providing specific store key
-interface SocialMedia {
+export interface SocialMedia {
   platform: string;
   url: string;
   alt_text: string;
@@ -88,3 +88,16 @@ export interface CreateStoreBranchPayload {
   latitude: string;
   longitude: string;
 }
+
+//******************************
+//DOCUMENTS
+//******************************
+
+export interface DocumentItem {
+  id: number;
+  name: string;
+  file: string;
+  uploaded_at: string;
+  is_verified: boolean
+}
+

@@ -51,22 +51,24 @@ const BranchCard = ({ branch }: BranchCardTypes) => {
               {branch.address}, {branch.city}
             </div>
           </div>
-          <div className="flex gap-1">
-            <Button
-              onClick={() => handleBranchEdit(branch.id, storeDetailData.id)}
-              variant="ghost"
-              size="icon"
-            >
-              <Edit />
-            </Button>
-            <Button
-              onClick={() => handleBranchDelete(branch.id, storeDetailData.id)}
-              variant="destructive"
-              size="icon"
-            >
-              <Trash2 />
-            </Button>
-          </div>
+          {storeDetailData && (
+            <div className="flex gap-1">
+              <Button
+                onClick={() => handleBranchEdit(branch.id, storeDetailData.id)}
+                variant="ghost"
+                size="icon"
+              >
+                <Edit />
+              </Button>
+              <Button
+                onClick={() => handleBranchDelete(branch.id, storeDetailData.id)}
+                variant="destructive"
+                size="icon"
+              >
+                <Trash2 />
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

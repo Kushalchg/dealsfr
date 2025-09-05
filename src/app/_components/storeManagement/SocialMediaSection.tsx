@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
-import { createSocialMedia, deleteSocialMedia, getSocialMediaList } from "@/redux/features/store/store"
+import { createSocialMedia, deleteSocialMedia } from "@/redux/features/store/store"
 import { clearSocialMediaCreateState } from "@/redux/features/store/storeSlice"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -39,7 +39,6 @@ import {
 } from "react-icons/fa";
 import { capitalize } from "@/lib/utils"
 import { SocialMediaResp } from "@/redux/features/store/types"
-import api from "@/lib/interceptor"
 
 const ALL_PLATFORM = [
   "TWITTER",
@@ -94,9 +93,7 @@ export default function SocialMediaSection() {
     if (!selectedItem || !storeDetailData) return
     try {
       console.log("delete", selectedItem)
-      // Here call your redux deleteSocialMedia(selectedItem.id)
       dispatch(deleteSocialMedia({ s_id: storeDetailData.id, id: selectedItem.id }))
-
       setDeleteModal(false)
       setSelectedItem(null)
       toast.success(`${selectedItem.platform} deleted`, { richColors: true })
@@ -104,10 +101,6 @@ export default function SocialMediaSection() {
       toast.error(` Error while ${selectedItem.platform} delete`, { richColors: true })
     }
   }
-
-  useEffect(() => {
-    storeDetailData && dispatch(getSocialMediaList(storeDetailData.id))
-  }, [storeDetailData])
 
   useEffect(() => {
     if (socialMediaCreateData) {
@@ -135,7 +128,7 @@ export default function SocialMediaSection() {
               return (
                 <Tooltip key={index.toString()}>
                   <TooltipTrigger
-                    className="bg-accent rounded-md p-2"
+                    className="bg-accent rounded-md p-2 cursor-pointer"
                     onClick={() => {
                       setSelectedItem(item)
                       setDeleteModal(true)
@@ -154,7 +147,7 @@ export default function SocialMediaSection() {
 
           <DialogTrigger
             onClick={() => setSocialModal(true)}
-            className="border p-1 rounded-lg border-dashed"
+            className="border p-1 rounded-lg border-dashed cursor-pointer"
           >
             <Plus />
           </DialogTrigger>

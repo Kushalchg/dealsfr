@@ -8,7 +8,6 @@ import {
   GetStoreListResponse,
   SocialMedia,
   SocialMediaResp,
-  StoreItem,
 } from "./types";
 
 // =============================================
@@ -30,8 +29,8 @@ export const createStore = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data.message ||
-        error.message ||
-        "Failed to create the store"
+      error.message ||
+      "Failed to create the store"
     );
   }
 });
@@ -51,8 +50,8 @@ export const updateStore = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to create the store"
+      error.message ||
+      "Failed to create the store"
     );
   }
 });
@@ -68,8 +67,8 @@ export const getStoreList = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to get the store list data"
+      error.message ||
+      "Failed to get the store list data"
     );
   }
 });
@@ -85,8 +84,8 @@ export const getStoreDetail = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to get the store details"
+      error.message ||
+      "Failed to get the store details"
     );
   }
 });
@@ -106,8 +105,8 @@ export const getBranchesList = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to get the store branches"
+      error.message ||
+      "Failed to get the store branches"
     );
   }
 });
@@ -139,8 +138,8 @@ export const createStoreBranch = createAsyncThunk<
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message ||
-          error.message ||
-          "Failed to get the store branches"
+        error.message ||
+        "Failed to get the store branches"
       );
     }
   }
@@ -161,8 +160,8 @@ export const getBranchDetails = createAsyncThunk<
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message ||
-          error.message ||
-          "Failed to get the store branches"
+        error.message ||
+        "Failed to get the store branches"
       );
     }
   }
@@ -183,26 +182,47 @@ export const getStoreDocumentsList = createAsyncThunk<
   } catch (err: any) {
     thunkAPI.rejectWithValue(
       err.response?.data?.message ||
-        err.message ||
-        "Failed to get the store documents list"
+      err.message ||
+      "Failed to get the store documents list"
     );
   }
 });
 
 export const createStoreDocuments = createAsyncThunk<
-  DocumentItem,
+  DocumentItem[],
   { payload: FormData; s_id: number },
   { rejectValue: string }
 >("store/create/documents", async ({ payload, s_id }, thunkAPI) => {
   try {
-    const response = await api.post(`/api/stores/${s_id}/documents/`, payload);
+    const response = await api.post(`/api/stores/${s_id}/documents/`, payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (err: any) {
     console.log({ err });
     thunkAPI.rejectWithValue(
       err.response?.data?.message ||
-        err.message ||
-        "Failed to create the store documents"
+      err.message ||
+      "Failed to create the store documents"
+    );
+  }
+});
+
+export const deleteStoreDocuments = createAsyncThunk<
+  DocumentItem[],
+  { s_id: number; id: number },
+  { rejectValue: string }
+>("store/delete/documents", async ({ s_id, id }, thunkAPI) => {
+  try {
+    const response = await api.delete(`/api/stores/${s_id}/documents/${id}/`);
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message ||
+      error.message ||
+      "Failed to delete the store documents"
     );
   }
 });
@@ -222,8 +242,8 @@ export const getSocialMediaList = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to get social media list"
+      error.message ||
+      "Failed to get social media list"
     );
   }
 });
@@ -243,8 +263,8 @@ export const createSocialMedia = createAsyncThunk<
     console.log(error);
     return thunkAPI.rejectWithValue(
       error.response?.data?.errors[0]?.message ||
-        error.message ||
-        "Failed to create social media item"
+      error.message ||
+      "Failed to create social media item"
     );
   }
 });
@@ -262,8 +282,8 @@ export const deleteSocialMedia = createAsyncThunk<
   } catch (error: any) {
     return thunkAPI.rejectWithValue(
       error.response?.data?.message ||
-        error.message ||
-        "Failed to delete social media item"
+      error.message ||
+      "Failed to delete social media item"
     );
   }
 });

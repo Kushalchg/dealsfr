@@ -30,6 +30,11 @@ const StoreManager = () => {
     console.log({ id });
   };
 
+  const handleDocumentsClick = (id: number) => {
+    router.push(`/dashboard/store_management/documents`);
+    console.log({ id });
+  };
+
   useEffect(() => {
     if (branchDetailsData) {
       router.push("/dashboard/create_branch/?action=edit");
@@ -65,7 +70,7 @@ const StoreManager = () => {
       )}
 
       {storeDetailData && (
-        <Card className="w-full transition-colors">
+        <Card className="w-full transition-colors border-0 rounded-none">
           <CardHeader>
             <div className="flex justify-between items-start flex-wrap gap-4">
               <div className="flex items-center gap-4">
@@ -96,7 +101,7 @@ const StoreManager = () => {
               </div>
               <div className="flex gap-5 flex-wrap">
                 <Button
-                  onClick={() => handleStoreDetailEdit(storeDetailData.id)}
+                  onClick={() => handleDocumentsClick(storeDetailData.id)}
                   variant={"outline"}
                   className="flex flex-row"
                 >

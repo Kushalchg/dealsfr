@@ -19,7 +19,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   createStore,
-  getStoreDetail,
   updateStore,
 } from "@/redux/features/store/store";
 import {

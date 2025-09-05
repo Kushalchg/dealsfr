@@ -5,6 +5,7 @@ import {
   createStoreBranch,
   createStoreDocuments,
   deleteSocialMedia,
+  deleteStoreDocuments,
   getBranchDetails,
   getBranchesList,
   getSocialMediaList,
@@ -17,7 +18,6 @@ import {
   BranchItem,
   DocumentItem,
   GetStoreDetailResponse,
-  SocialMedia,
   SocialMediaResp,
   StoreItem,
 } from "./types";
@@ -46,8 +46,11 @@ interface StoreInitialState {
   storeDocumentsData: DocumentItem[] | null;
   storeDocumentsError: string | null;
   //Store Documents Create Data
-  storeDocumentsCreateData: DocumentItem | null;
+  storeDocumentsCreateData: DocumentItem[] | null;
   storeDocumentsCreateError: string | null;
+  //Store Documents Delete Data
+  storeDocumentsDeleteData: DocumentItem[] | null;
+  storeDocumentsDeleteError: string | null;
 
   //branch list data of store
   branchesData: BranchItem[] | null;
@@ -97,6 +100,9 @@ const initialState: StoreInitialState = {
   //Store Documents Create Data
   storeDocumentsCreateData: null,
   storeDocumentsCreateError: null,
+  //Store Documents Delete Data
+  storeDocumentsDeleteData: null,
+  storeDocumentsDeleteError: null,
 
   //for list of branches of specific store
   branchesData: null,
@@ -157,6 +163,8 @@ const storeSlice = createSlice({
     clearStoreDocumentsState: (state) => {
       state.storeDocumentsData = null;
       state.storeDocumentsError = null;
+      state.storeDocumentsDeleteData = null;
+      state.storeDocumentsDeleteError = null;
     },
 
     clearStoreDocumentsCreateState: (state) => {
@@ -372,7 +380,7 @@ const storeSlice = createSlice({
       })
       .addCase(
         createStoreDocuments.fulfilled,
-        (state, action: PayloadAction<DocumentItem>) => {
+        (state, action: PayloadAction<DocumentItem[]>) => {
           state.documentsStateLoading = false;
           state.storeDocumentsCreateData = action.payload;
           state.storeDocumentsCreateError = null;
@@ -385,6 +393,28 @@ const storeSlice = createSlice({
           state.documentsStateLoading = false;
           state.storeDocumentsCreateError =
             action.payload || "Failed to create store document";
+        }
+      )
+      //delete store documents
+      .addCase(deleteStoreDocuments.pending, (state) => {
+        state.documentsStateLoading = true;
+        state.storeDocumentsDeleteError = null;
+      })
+      .addCase(
+        deleteStoreDocuments.fulfilled,
+        (state, action: PayloadAction<DocumentItem[]>) => {
+          state.documentsStateLoading = false;
+          state.storeDocumentsDeleteData = action.payload;
+          state.storeDocumentsData = action.payload;
+          state.storeDocumentsDeleteError = null;
+        }
+      )
+      .addCase(
+        deleteStoreDocuments.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.documentsStateLoading = false;
+          state.storeDocumentsDeleteError =
+            action.payload || "Failed to delete store document";
         }
       )
 

@@ -1,16 +1,12 @@
 import { Button } from "@/components/ui/button"
-import { Branch } from "@/redux/features/store/types"
-import { useAppDispatch, useAppSelector } from "@/redux/hooks"
+import { useAppSelector } from "@/redux/hooks"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import BranchCard from "./BranchCard"
 
 
 const BranchSection = () => {
-  const dispatch = useAppDispatch()
-  const router = useRouter()
-  const { storeDetailData, branchDetailsData } = useAppSelector((s) => s.store);
+  const { storeDetailData } = useAppSelector((s) => s.store);
 
   return (
     <div>

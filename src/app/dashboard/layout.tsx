@@ -2,7 +2,7 @@
 
 import { DashboardNav } from "@/app/_components/dashboardComp/dashboard-nav";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getBranchesList, getStoreDetail } from "@/redux/features/store/store";
+import { getBranchesList, getSocialMediaList, getStoreDetail, getStoreDocumentsList } from "@/redux/features/store/store";
 import { getUser } from "@/redux/features/user/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,8 @@ export default function DashboardLayout({
     if (userData && userData.managed_stores.length > 0) {
       dispatch(getStoreDetail(userData.managed_stores[0]))
       dispatch(getBranchesList(userData.managed_stores[0]))
+      dispatch(getStoreDocumentsList(userData.managed_stores[0]))
+      dispatch(getSocialMediaList(userData.managed_stores[0]))
     }
   }, [userData])
 

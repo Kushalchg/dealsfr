@@ -383,6 +383,7 @@ const storeSlice = createSlice({
         (state, action: PayloadAction<DocumentItem[]>) => {
           state.documentsStateLoading = false;
           state.storeDocumentsCreateData = action.payload;
+          state.storeDocumentsData = action.payload;
           state.storeDocumentsCreateError = null;
         }
       )

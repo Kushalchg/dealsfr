@@ -4,7 +4,6 @@ import {
   AddDocumentDialog,
   DocumentItem,
   DocumentList,
-  DocumentPreview,
 } from "@/app/_components/documents";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +26,6 @@ const DocumentsPage: React.FC = () => {
     null
   );
 
-  // Get store ID from Redux state or URL params
   const { storeDetailData } = useAppSelector((state) => state.store);
   const storeId = storeDetailData && storeDetailData.id || 0
 
@@ -42,8 +40,6 @@ const DocumentsPage: React.FC = () => {
       ).unwrap();
       toast.success("Document uploaded successfully");
       setIsAddDialogOpen(false);
-      // Refresh the documents list
-      dispatch(getStoreDocumentsList(storeId));
     } catch (error) {
       toast.error("Failed to upload document");
     }
@@ -56,8 +52,6 @@ const DocumentsPage: React.FC = () => {
           deleteStoreDocuments({ s_id: storeId, id: documentId })
         ).unwrap();
         toast.success("Document deleted successfully");
-        // Refresh the documents list
-        dispatch(getStoreDocumentsList(storeId));
       } catch (error) {
         toast.error("Failed to delete document");
       }
@@ -100,12 +94,6 @@ const DocumentsPage: React.FC = () => {
         isLoading={documentsStateLoading}
       />
 
-      {previewDocument && (
-        <DocumentPreview
-          document={previewDocument}
-          onClose={() => setPreviewDocument(null)}
-        />
-      )}
     </div>
   );
 };

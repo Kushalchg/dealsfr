@@ -18,6 +18,7 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
   onView,
   onDelete,
 }) => {
+
   const getFileIcon = (fileUrl: string) => {
     const extension = fileUrl.split(".").pop()?.toLowerCase();
     if (["pdf"].includes(extension || "")) return "📄";
@@ -28,11 +29,15 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
 
   const getFileType = (fileUrl: string) => {
     const extension = fileUrl.split(".").pop()?.toLowerCase();
-    if (["pdf"].includes(extension || "")) return "PDF";
+    if (["pdf"].includes(extension || "")) return "pdf";
     if (["jpg", "jpeg", "png", "gif", "webp"].includes(extension || ""))
-      return "Image";
-    return "File";
+      return "image";
+    return "file";
   };
+
+
+  const fileType = getFileType(document.file)
+
 
   return (
     <Card className="p-4 hover:shadow-md transition-shadow">
@@ -46,6 +51,29 @@ const DocumentCard: React.FC<DocumentCardProps> = ({
             <p className="text-xs text-gray-500">
               {getFileType(document.file)}
             </p>
+          </div>
+          <div>
+            {fileType === "pdf" ? (
+              <iframe
+                src={document.file}
+                className="w-full max-h-[600px] border rounded-lg"
+                title={document.name}
+              />
+            ) : fileType === "image" ? (
+              <img
+                src={document.file}
+                alt={document.name}
+                className="w-full h-auto max-h-[600px] object-contain border rounded-lg"
+              />
+            ) :
+              (
+                <img
+                  src={document.file}
+                  alt={document.name}
+                  className="w-full h-auto max-h-[600px] object-contain border rounded-lg"
+                />
+              )
+            }
           </div>
         </div>
         {document.is_verified && (

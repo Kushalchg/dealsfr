@@ -19,17 +19,18 @@ interface DocumentPreviewProps {
   onClose: () => void;
 }
 
+export const getFileType = (fileUrl: string) => {
+  const extension = fileUrl.split(".").pop()?.toLowerCase();
+  if (["pdf"].includes(extension || "")) return "pdf";
+  if (["jpg", "jpeg", "png", "gif", "webp"].includes(extension || ""))
+    return "image";
+  return "file";
+};
+
 const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   document,
   onClose,
 }) => {
-  const getFileType = (fileUrl: string) => {
-    const extension = fileUrl.split(".").pop()?.toLowerCase();
-    if (["pdf"].includes(extension || "")) return "pdf";
-    if (["jpg", "jpeg", "png", "gif", "webp"].includes(extension || ""))
-      return "image";
-    return "unknown";
-  };
 
   const fileType = getFileType(document.file);
 

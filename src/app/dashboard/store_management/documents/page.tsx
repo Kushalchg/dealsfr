@@ -28,14 +28,8 @@ const DocumentsPage: React.FC = () => {
   );
 
   // Get store ID from Redux state or URL params
-  const storeId =
-    useAppSelector((state) => state.store.storeDetailData?.id) || 1;
-
-  useEffect(() => {
-    if (storeId) {
-      dispatch(getStoreDocumentsList(storeId));
-    }
-  }, [dispatch, storeId]);
+  const { storeDetailData } = useAppSelector((state) => state.store);
+  const storeId = storeDetailData && storeDetailData.id || 0
 
   const handleAddDocument = async (formData: { name: string; file: File }) => {
     const uploadData = new FormData();
